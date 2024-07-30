@@ -1,7 +1,8 @@
 ---
-title: 'Post with a video '
-description: "This starter uses Justin Ribeiro's lite-youtube web component. Add `youtube: true` to frontmatter to activate."
+title: 'Spatial Justice'
+description: "Retrofitting built environment & equitable neighborhoods"
 date: 2022-10-31
+screenshot: './src/assets/images/screenshots/refugiolibertad.png'
 youtube: true
 ---
 

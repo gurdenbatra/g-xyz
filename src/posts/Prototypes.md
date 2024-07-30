@@ -1,7 +1,7 @@
 ---
-title: 'Post with an image '
+title: 'Prototypes'
 description: "Eleventy's own build-time image transformations. Find more info on11ty.dev/docs/plugins/image/ and edit settings in config-folder."
-date: 2022-10-12
+date: 2021-10-12
 ---
 
 This starter uses Eleventy's build-time image transformations. Find more info on https://www.11ty.dev/docs/plugins/image/ and edit settings in `config/shortcodes/imagePlaceholder`.
