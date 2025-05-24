@@ -6,14 +6,14 @@ const imageShortcodePlaceholder = async (
   src,
   alt,
   caption,
-  sizes = '(min-width: 55rem) 820px, 100vw'
+  sizes = '(min-width: 25rem) 220px, 100vw'
 ) => {
   if (!alt) {
     throw new Error(`Missing \`alt\` on myImage from: ${src}`);
   }
 
   let metadata = await Image(src, {
-    widths: [320, 570, 820],
+    widths: ["auto"],
     formats: ['avif', 'webp', 'jpeg'],
     urlPath: '/assets/images/',
     outputDir: './dist/assets/images/',
@@ -57,7 +57,7 @@ const imageShortcodePlaceholder = async (
     </picture>
     ${
       caption
-        ? `<figcaption class="cluster font-display"><p>${caption}</p>
+        ? `<figcaption class="cluster font-display"><p>${caption}yes</p>
 	</figcaption>`
         : ``
     }

@@ -1,7 +1,7 @@
 ---
 permalink: /index.html
 title: '~'
-description: 'Eleventy starter using modern CSS, fluid type, fluid spacing, flexible layout and progressive enhancement.'
+description: 'Gurden Batra Portfolio'
 layout: 'home'
 blog:
   title: 'work'
@@ -10,5 +10,4 @@ blog:
 
 ## gurden batra
 
-Design Technologist & Civic Tech Lead
-[Dark Matter Labs](https://darkmatterlabs.org/)
+Design Technologist & Civic Tech Lead at [Dark Matter Labs](https://darkmatterlabs.org/)

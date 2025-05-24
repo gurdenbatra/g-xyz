@@ -6,17 +6,19 @@ module.exports = {
     },
     {
       text: 'cv',
-      url: '/get-started/'
+      url: '/assets/images/Gurden_Batra_CV.pdf',
+      target: '_blank',
+      rel: 'noopener noreferrer'
     },
     {
       text: 'reach out',
-      url: '/built-with/'
+      url: '/reach/'
     }
   ],
   bottom: [
     {
       text: 'Built With',
-      url: '/built-with//'
+      url: '/built-with/'
     },
     {
       text: 'Privacy',

@@ -1,69 +1,27 @@
 ---
 title: 'CircuLaw'
-description: 'Civic & Legal Tech to accelerate Circular Economy in Netherlands'
+description: 'Civic & legal tech to accelerate circular economy'
 date: 2023-01-25
-screenshot: './src/assets/images/screenshots/CL_Screen1.png'
+screenshot: ''
 ---
 
-lalalala intro text
+An open source tool for city councils in Netherlands & EU to help understand the details of legal framework to be able to push it towards circularity.
 
-timeline and phase
+{% imagePlaceholder "./src/assets/images/CL_themes.png", "screenshot from CircuLaw app", ""  %}
 
-links
-
-## Journey/story
-
-Data viz to understand current legal system
-
-Can it / should it be a service? 
-
-Prototype and validate!
-
-1. Figma, Kumu, Notion etc.
-
-2. It's all about data and metadata! 
-
-3. Create protocol with team and build CSV via Google Spreadsheet
-
-4. Next.js app to render the CSV as simple list
-
-5. Add more features- search, filter, detail pages 
-
-6. All about Copy and creating understanding of legal instruments (explain what are these legal instruments)
-
-7. Basic branding, feature check, mobile design, analytics and alpha launch! (add github release link)
-
-Post alpha user testing and understanding (what did we learn from Alpha?)
-
-Post Alpha impact: user interviews, tests, traction, grants. Not real usage or engagement yet
-
-And lots of data edits, updates, additions etc. Spreadsheet system cumbersome, need for proper CMS
-
-Gathering and begin work on beta stage launch at week of circular economy.
-
-Onboard new dev team member, create schema, add Sanity CMS, add data viz, improve design from feedback and new content.
-
-Launch event.
-
-Grant, legal team, more council members, more team structure and way of working. 
-
-??? fuck around and waste everything...
-
-Structure change to match NL transition agenda
-
-Open the space for discussion
-
-Deeper with analytics
-
-AI explore
-
+[Link to the app](https://www.circulaw.nl/)
+[Link to the code](https://github.com/Dark-Matter-Labs/circulaw)
 
 ## Tech & design stack
 
-## Impact
+Next.JS
+Sanity
+Vercel
+Figma
 
-## Team and partners
+{% imagePlaceholder "./src/assets/images/CL_scroll.png", "screenshot from CircuLaw app", ""  %}
 
-## Next steps
+[Read more](https://darkmatterlabs.org/initiatives/circulaw)
+
 
 

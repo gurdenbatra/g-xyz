@@ -1,22 +1,17 @@
 [
   {
     "platform": "github",
-    "url": "https://github.com/madrilene/eleventy-excellent",
+    "url": "https://github.com/gurdenbatra",
     "icon": "github.svg"
   },
   {
-    "platform": "mastodon",
-    "url": "https://front-end.social/@lene",
-    "icon": "mastodon.svg"
-  },
-  {
-    "platform": "ko-fi",
-    "url": "https://ko-fi.com/lenesaile",
-    "icon": "kofi.svg"
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/in/gurden-batra/",
+    "icon": "linkedin.svg"
   },
   {
     "platform": "rss",
-    "url": "/feed.xml",
+    "url": "feed.xml",
     "icon": "rss.svg"
   }
 ]

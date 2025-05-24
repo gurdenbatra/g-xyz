@@ -16,8 +16,8 @@ module.exports = {
     opengraph_default: '/assets/images/opengraph-default.jpg', // fallback/default meta image
     opengraph_default_alt:
       'Visible content: Gurden’s work portfolio', // alt text for default meta image
-    twitterSite: '@gurdenbatra', // i.e. @site - twitter profile of the site
-    twitterCreator: '@gurdenbatra', // i.e. @author -  twitter profile of the site
+    twitterSite: '', // i.e. @site - twitter profile of the site
+    twitterCreator: '', // i.e. @author -  twitter profile of the site
     mastodonProfile: '' // i.e. https://front-end.social/@lene - url to your mastodon instance/profile
   },
   blog: {

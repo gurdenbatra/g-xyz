@@ -1,7 +1,7 @@
 {
-  "name": "eleventy-excellent",
-  "version": "1.5.4",
-  "description": "Eleventy starter based on the workflow suggested by Andy Bell's buildexcellentwebsit.es.",
+  "name": "g-xyz",
+  "version": "0.1.0",
+  "description": "Gurden's portfolio",
   "author": "Lene Saile",
   "license": "ISC",
   "main": ".eleventy.js",
@@ -18,7 +18,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/madrilene/eleventy-excellent.git"
+    "url": "https://github.com/gurdenbatra/g-xyz.git"
   },
   "dependencies": {
     "@11ty/eleventy": "^2.0.0",
