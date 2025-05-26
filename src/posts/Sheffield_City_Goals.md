@@ -16,6 +16,11 @@ Website for Sheffield City to engage with their citizens and share all the work 
 Readymag
 Figma
 
+## Collaborators
+
+Arianna Smaron
+Tom Beresford
+
 {% imagePlaceholder "./src/assets/images/scg-2.png", "screenshot from City Gaols site", ""  %}
 
 

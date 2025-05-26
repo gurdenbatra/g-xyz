@@ -1,5 +1,5 @@
 module.exports = {
-  url: process.env.URL || 'http://localhost:8080',
+  url: process.env.URL || 'https://gurden.xyz/',
   siteName: 'gurden.xyz',
   siteDescription:
     'Gurden’s work portfolio',
@@ -8,7 +8,7 @@ module.exports = {
   lang: 'en',
   skipContent: 'Skip to content',
   author: 'Gurden Batra',
-  authorEmail: 'gurden.batra@gmail.com',
+  authorEmail: 'gurden.batra@proton.me',
   authorWebsite: 'https://gurden.xyz',
   themeColor: '#DD4462', //  Manifest: defines the default theme color for the application
   themeBgColor: '#F3F3F3', // Manifest: defines a placeholder background color for the application page to display before its stylesheet is loaded

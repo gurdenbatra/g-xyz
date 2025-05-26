@@ -19,6 +19,11 @@ Figma
 
 {% imagePlaceholder "./src/assets/images/lp-2.png", "screenshot from Life Pact site", ""  %}
 
+## Collaborators
+
+Alessandra Puricelli
+Alicia Carvajal Rowan
+
 [Read more](https://darkmatterlabs.org/feed/life-pact)
 
 

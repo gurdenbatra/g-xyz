@@ -21,6 +21,16 @@ Figma
 
 {% imagePlaceholder "./src/assets/images/CL_scroll.png", "screenshot from CircuLaw app", ""  %}
 
+## Collaborators
+
+Romy Snijders
+Heather Griffin
+Yvonne de Mey van Streefkerk
+Theo Campbell
+Andrea Vos
+Arianna Smaron
+Anahat Kaur
+
 [Read more](https://darkmatterlabs.org/initiatives/circulaw)
 
 

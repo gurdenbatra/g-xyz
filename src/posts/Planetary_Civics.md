@@ -15,6 +15,11 @@ Static site to hold details about the initative and share resources.
 
 Webflow
 
+## Collaborators
+
+Martin Lorenz
+Prateek Shanker
+
 [Read more](https://darkmatterlabs.org/feed/planetary-civics-inquiry)
 
 

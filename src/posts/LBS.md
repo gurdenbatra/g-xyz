@@ -24,7 +24,13 @@ Figma
 
 {% imagePlaceholder "./src/assets/images/lbs-heat.png", "screenshot from LBS app", ""  %}
 
-[Read more](https://provocations.darkmatterlabs.org/treesai-is-implementing-location-based-scoring-in-stuttgart-c54c752bdaaf)
+## Collaborators
 
+Sofia Valentini
+Arianna Smaron
+Alessandra Puricelli
+Sebastian Klemm
+
+[Read more](https://provocations.darkmatterlabs.org/treesai-is-implementing-location-based-scoring-in-stuttgart-c54c752bdaaf)
 
 

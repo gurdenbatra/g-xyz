@@ -20,5 +20,10 @@ Figma
 
 {% imagePlaceholder "./src/assets/images/dm-2.png", "screenshot from Dm site", ""  %}
 
+## Collaborators
+
+Vlad Afanasiev
+Emily Harris
+
 
 
