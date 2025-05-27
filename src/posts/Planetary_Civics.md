@@ -18,7 +18,7 @@ Webflow
 ## Collaborators
 
 Martin Lorenz
-Prateek Shanker
+Prateek Shankar
 
 [Read more](https://darkmatterlabs.org/feed/planetary-civics-inquiry)
 

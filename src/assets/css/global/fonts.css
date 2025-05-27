@@ -36,3 +36,21 @@
       format('woff2'),
     url(/assets/fonts/robotomono/robotomono-variablefont_wght-webfont.woff) format('woff');
 }
+
+@font-face {
+  font-family: 'MattoneBlack';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: local(''), url(/assets/fonts/mattone/Mattone-Bold.woff2) format('woff2'),
+    url(/assets/fonts/mattone/Mattone-Bold.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Apfel';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: local(''), url(/assets/fonts/apfel/ApfelGrotezk-Regular.woff2) format('woff2'),
+    url(/assets/fonts/apfel/ApfelGrotezk-Regular.woff) format('woff');
+}

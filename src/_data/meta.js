@@ -38,7 +38,7 @@ module.exports = {
     zip: '12047',
     mobileDisplay: '',
     mobileCall: '',
-    email: 'gurden.batra@gmail.com',
+    email: 'gurden.batra@proton.me',
     cif: ''
   },
   menu: {

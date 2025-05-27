@@ -59,15 +59,6 @@
 <meta property="og:locale" content="{{ meta.locale }}" />
 <meta property="article:author" content="{{ meta.author }}" />
 
-<!-- Twitter meta -->
-<meta name="twitter:card" content="summary_large_image" />
-{% if meta.meta_data.twitterSite %}
-<meta name="twitter:site" content="{{ meta.meta_data.twitterSite }}" />
-{% endif %} {% if meta.meta_data.twitterCreator %}
-<meta name="twitter:creator" content="{{ meta.meta_data.twitterCreator }}" />
-{% endif %}
-<meta name="twitter:dnt" content="on" />
-
 <!-- Favicon -->
 <link rel="icon" href="{{ '/favicon.ico' | url }}" sizes="any" />
 <link rel="icon" href="{{ '/favicon.svg' | url }}" type="image/svg+xml" />
