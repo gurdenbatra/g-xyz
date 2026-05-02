@@ -1,0 +1,56 @@
+---
+interface Props {
+  index: number;
+  title: string;
+  tag: string;
+  year: number;
+  slug: string;
+}
+
+const { index, title, tag, year, slug } = Astro.props;
+const num = String(index).padStart(2, '0');
+---
+
+<a href={`/work/${slug}`} class="project-row">
+  <span class="project-num">{num}</span>
+  <span class="project-name">{title}</span>
+  <span class="project-tag">{tag}</span>
+  <span class="project-year">{year}</span>
+</a>
+
+<style>
+  .project-row {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto auto;
+    gap: var(--space-6);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--ink-faint);
+    text-decoration: none;
+    color: inherit;
+    align-items: baseline;
+  }
+
+  .project-row:hover .project-name {
+    font-style: italic;
+  }
+
+  .project-num,
+  .project-tag,
+  .project-year {
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+  }
+
+  .project-name {
+    font-family: 'MaziusDisplay', serif;
+    font-size: var(--text-base);
+    color: var(--ink);
+    transition: font-style var(--duration-fast) var(--easing);
+  }
+
+  .project-tag {
+    text-transform: uppercase;
+  }
+</style>
