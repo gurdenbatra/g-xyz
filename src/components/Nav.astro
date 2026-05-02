@@ -1,5 +1,91 @@
 ---
+const navLinks = [
+  { href: '/work',    label: 'Work' },
+  { href: '/story',   label: 'Story' },
+  { href: '/art',     label: 'Art' },
+  { href: '/writing', label: 'Writing' },
+  { href: '/about',   label: 'About' },
+];
+
+const currentPath = Astro.url.pathname;
 ---
+
 <nav aria-label="Main navigation">
-  <a href="/" aria-label="Gurden Batra — home">Gurden Batra</a>
+  <div class="nav-inner page-wrap">
+    <a href="/" class="nav-logo" aria-label="Gurden Batra — home">
+      Gurden Batra
+    </a>
+    <ul class="nav-links" role="list">
+      {navLinks.map(({ href, label }) => (
+        <li>
+          <a
+            href={href}
+            class="nav-link"
+            aria-current={currentPath.startsWith(href) ? 'page' : undefined}
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
 </nav>
+
+<style>
+  nav {
+    border-bottom: 1px solid var(--ink-faint);
+    position: sticky;
+    top: 0;
+    background: var(--ground);
+    z-index: 10;
+  }
+
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--space-4);
+  }
+
+  .nav-logo {
+    font-family: 'MaziusDisplay', serif;
+    font-style: italic;
+    font-size: 1.0625rem;
+    color: var(--ink);
+    text-decoration: none;
+    line-height: 1;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: var(--space-8);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-link {
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--easing);
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current='page'] {
+    color: var(--ink);
+  }
+
+  @media (max-width: 600px) {
+    .nav-links {
+      gap: var(--space-4);
+    }
+
+    .nav-link {
+      font-size: 0.5625rem;
+    }
+  }
+</style>
