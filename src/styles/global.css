@@ -41,7 +41,7 @@ body {
   transition: transform var(--duration-fast) var(--easing);
 }
 
-.skip-link:focus {
+.skip-link:focus-visible {
   transform: translateY(0);
 }
 

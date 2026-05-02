@@ -26,4 +26,7 @@ export const artSchema = z.object({
   medium:    z.enum(['canvas', 'webgl', 'svg', 'p5', 'static']),
   sourceUrl: z.string().url().optional(),
   liveEmbed: z.boolean().default(false),
-});
+}).refine(
+  (data) => !data.liveEmbed || data.sourceUrl !== undefined,
+  { message: 'sourceUrl is required when liveEmbed is true', path: ['sourceUrl'] }
+);

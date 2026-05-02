@@ -50,7 +50,7 @@ const currentPath = Astro.url.pathname;
   .nav-logo {
     font-family: 'MaziusDisplay', serif;
     font-style: italic;
-    font-size: 1.0625rem;
+    font-size: var(--text-base);
     color: var(--ink);
     text-decoration: none;
     line-height: 1;
@@ -86,6 +86,18 @@ const currentPath = Astro.url.pathname;
 
     .nav-link {
       font-size: 0.5625rem;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .nav-inner {
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .nav-links {
+      gap: var(--space-2);
+      flex-wrap: wrap;
     }
   }
 </style>

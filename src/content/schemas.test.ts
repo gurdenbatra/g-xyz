@@ -131,4 +131,25 @@ describe('artSchema', () => {
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.liveEmbed).toBe(false);
   });
+
+  it('rejects liveEmbed: true without sourceUrl', () => {
+    const result = artSchema.safeParse({
+      title: 'Test',
+      date: new Date(),
+      medium: 'webgl',
+      liveEmbed: true,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts liveEmbed: true with sourceUrl', () => {
+    const result = artSchema.safeParse({
+      title: 'Test',
+      date: new Date(),
+      medium: 'webgl',
+      liveEmbed: true,
+      sourceUrl: 'https://example.com/sketch',
+    });
+    expect(result.success).toBe(true);
+  });
 });
