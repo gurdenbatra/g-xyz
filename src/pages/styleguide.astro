@@ -65,8 +65,8 @@ import Base from '@layouts/Base.astro';
           <span class="sg-hex" style="color: var(--ground);">#6B6760</span>
         </div>
         <div class="sg-swatch" style="background: var(--ink-faint); border: 1px solid #bbb;">
-          <span class="label">--ink-faint</span>
-          <span class="sg-hex">#C4BFB6</span>
+          <span class="label" style="color: var(--ink);">--ink-faint</span>
+          <span class="sg-hex" style="color: var(--ink);">#C4BFB6</span>
         </div>
         <div class="sg-swatch" style="background: var(--art-ground);">
           <span class="label" style="color: var(--art-ink);">--art-ground</span>
@@ -211,7 +211,6 @@ import Base from '@layouts/Base.astro';
   .sg-hex {
     font-family: 'NectoMono', monospace;
     font-size: var(--text-xs);
-    opacity: 0.7;
   }
 
   .sg-spacing-list {
