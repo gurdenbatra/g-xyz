@@ -23,14 +23,14 @@ const featured = allProjects
 
   <!-- ── 2. MARGINALIA BIO ── -->
   <section class="bio-section page-wrap">
-    <p class="label section-label">About</p>
+    <h2 class="label section-label">About</h2>
     <Marginalia />
   </section>
 
   <!-- ── 3. PROJECTS INDEX ── -->
   <section class="projects-section page-wrap">
-    <p class="label section-label">Selected Work</p>
-    <ol class="projects-list" role="list">
+    <h2 class="label section-label">Selected Work</h2>
+    <ol class="projects-list">
       {featured.map((p, i) => (
         <li>
           <ProjectRow
@@ -38,7 +38,7 @@ const featured = allProjects
             title={p.data.title}
             tag={p.data.tags[0]}
             year={p.data.year}
-            slug={p.slug}
+            slug={p.id}
           />
         </li>
       ))}

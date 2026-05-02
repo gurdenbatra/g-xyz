@@ -37,7 +37,7 @@ describe('projectSchema', () => {
       description: 'test',
       role: 'dev',
       year: '2021',
-      tags: [],
+      tags: ['civic-tech'],
     });
     expect(result.success).toBe(false);
   });

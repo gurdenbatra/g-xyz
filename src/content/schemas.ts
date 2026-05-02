@@ -5,7 +5,7 @@ export const projectSchema = z.object({
   description:   z.string(),
   role:          z.string(),
   year:          z.number().int().min(1990).max(2100),
-  tags:          z.array(z.string()),
+  tags:          z.array(z.string()).min(1),
   collaborators: z.array(z.string()).optional(),
   links:         z.array(
     z.object({ label: z.string(), url: z.string().url() })
