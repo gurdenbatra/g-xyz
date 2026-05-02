@@ -1,16 +1,20 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-test.describe('Axe accessibility audit', () => {
-  test('home page has no accessibility violations', async ({ page }) => {
-    await page.goto('/');
-    const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations).toEqual([]);
-  });
+const pages = [
+  { name: 'home',           path: '/' },
+  { name: 'work index',     path: '/work' },
+  { name: 'work circulaw',  path: '/work/circulaw' },
+  { name: 'story',          path: '/story' },
+  { name: 'about',          path: '/about' },
+  { name: 'colophon',       path: '/colophon' },
+  { name: 'styleguide',     path: '/styleguide' },
+];
 
-  test('styleguide page has no accessibility violations', async ({ page }) => {
-    await page.goto('/styleguide');
+for (const { name, path } of pages) {
+  test(`${name} has no accessibility violations`, async ({ page }) => {
+    await page.goto(path);
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations).toEqual([]);
   });
-});
+}
