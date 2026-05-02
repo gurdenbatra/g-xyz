@@ -1,0 +1,110 @@
+---
+// No props — confirmed copy is fixed
+---
+
+<div class="marginalia-grid">
+
+  <!-- Left: bio paragraph with annotated phrases -->
+  <div class="marginalia-prose">
+    <p class="hero-para">
+      Gurden is the
+      <span class="mark" data-note="role">Civic Tech Lead at Dark Matter Labs</span>.
+      Over the past five years, he has led the development of civic tools including
+      <span class="mark" data-note="circulaw">CircuLaw</span>,
+      a legal registry for circular economy transitions with the City of Amsterdam and
+      <span class="mark" data-note="treesai">TreesAI</span>,
+      which models urban forestry as civic infrastructure for cities like Berlin, London, Glasgow,
+      and Canadian municipalities. He has shaped Dark Matter Labs&apos; digital identity,
+      communications, and internal tech and tools practice. With a background in
+      <span class="mark" data-note="gt">Computer Science from Georgia Tech</span>
+      and
+      <span class="mark" data-note="aalto">New Media Design from Aalto University</span>,
+      Gurden bridges governance innovation and implementation, turning systemic frameworks
+      into things people can actually use.
+    </p>
+  </div>
+
+  <!-- Right: annotation notes column -->
+  <aside class="marginalia-notes" aria-label="Annotations">
+    <div class="note" data-ref="role">
+      <span class="note-label">Role</span>
+      Berlin — since 2020
+    </div>
+    <div class="note" data-ref="circulaw">
+      <span class="note-label">Project</span>
+      Legal tooling for circular economy transitions — City of Amsterdam &amp; EU
+    </div>
+    <div class="note" data-ref="treesai">
+      <span class="note-label">Project</span>
+      Urban forest as civic infrastructure — Berlin · London · Glasgow
+    </div>
+    <div class="note" data-ref="gt">
+      <span class="note-label">Education</span>
+      Atlanta — 2009 to 2013
+    </div>
+    <div class="note" data-ref="aalto">
+      <span class="note-label">Education</span>
+      Helsinki — 2015 to 2017
+    </div>
+  </aside>
+
+</div>
+
+<style>
+  .marginalia-grid {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .hero-para {
+    font-family: 'MaziusDisplay', serif;
+    font-size: var(--text-md); /* 19px */
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  /* Annotated phrase — hairline underline; data-note used by Phase 3 JS */
+  .mark {
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .marginalia-notes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-top: var(--space-1);
+  }
+
+  .note {
+    padding-left: var(--space-4);
+    border-left: 1px solid var(--ink-faint);
+    font-family: 'NectoMono', monospace;
+    font-size: 0.6875rem; /* 11px */
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+
+  .note-label {
+    display: block;
+    font-size: var(--text-xs); /* 10px */
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  /* Mobile: single column, notes below prose */
+  @media (max-width: 700px) {
+    .marginalia-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .marginalia-notes {
+      border-top: 1px solid var(--ink-faint);
+      padding-top: var(--space-6);
+    }
+  }
+</style>
