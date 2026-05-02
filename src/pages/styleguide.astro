@@ -1,0 +1,255 @@
+---
+import Base from '@layouts/Base.astro';
+---
+
+<Base title="Styleguide">
+  <div class="sg-wrap page-wrap">
+
+    <header class="sg-header">
+      <p class="label">Design System</p>
+      <h1>Styleguide</h1>
+    </header>
+
+    <!-- ── TYPOGRAPHY ── -->
+    <section class="sg-section">
+      <h2 class="sg-section-title">Typography</h2>
+
+      <div class="sg-typeface-group">
+        <p class="sg-typeface-name">MaziusDisplay</p>
+
+        <div class="sg-subsection">
+          <p class="label">Regular</p>
+          <p class="sg-specimen-xl">The quick brown fox</p>
+          <p class="sg-specimen-lg">Civic systems built to last</p>
+          <p class="sg-specimen-body">
+            Body copy at var(--text-base) / 17px. Mazius Display Regular holds at
+            this size for project descriptions and the story section. High contrast
+            is a feature on modern screens.
+          </p>
+        </div>
+
+        <div class="sg-subsection">
+          <p class="label">Extra Italic</p>
+          <p class="sg-specimen-xl sg-italic">Design.</p>
+          <p class="sg-specimen-xl sg-italic">Code.</p>
+          <p class="sg-specimen-lg sg-italic">Bring ideas to life.</p>
+        </div>
+      </div>
+
+      <div class="sg-typeface-group">
+        <p class="sg-typeface-name">NectoMono</p>
+
+        <div class="sg-subsection">
+          <p class="label">Regular</p>
+          <p class="sg-mono">WORK · CIVIC TECH · 2021–2026</p>
+          <p class="sg-mono">01 · CircuLaw · Amsterdam · Circular Economy</p>
+          <p class="sg-mono">BERLIN — HELSINKI — ATLANTA — DELHI</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── COLOR TOKENS ── -->
+    <section class="sg-section">
+      <h2 class="sg-section-title">Color Tokens</h2>
+      <div class="sg-swatches">
+        <div class="sg-swatch" style="background: var(--ground); border: 1px solid var(--ink-faint);">
+          <span class="label">--ground</span>
+          <span class="sg-hex">#F5F2ED</span>
+        </div>
+        <div class="sg-swatch" style="background: var(--ink);">
+          <span class="label" style="color: var(--ground);">--ink</span>
+          <span class="sg-hex" style="color: var(--ground);">#1A1A18</span>
+        </div>
+        <div class="sg-swatch" style="background: var(--ink-muted);">
+          <span class="label" style="color: var(--ground);">--ink-muted</span>
+          <span class="sg-hex" style="color: var(--ground);">#6B6760</span>
+        </div>
+        <div class="sg-swatch" style="background: var(--ink-faint); border: 1px solid #bbb;">
+          <span class="label">--ink-faint</span>
+          <span class="sg-hex">#C4BFB6</span>
+        </div>
+        <div class="sg-swatch" style="background: var(--art-ground);">
+          <span class="label" style="color: var(--art-ink);">--art-ground</span>
+          <span class="sg-hex" style="color: var(--art-ink);">#0D0F10</span>
+        </div>
+        <div class="sg-swatch" style="background: var(--art-ground); border: 1px solid #333;">
+          <span class="label" style="color: var(--art-ink);">--art-ink</span>
+          <span class="sg-hex" style="color: var(--art-ink);">#E8E4DD</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SPACING ── -->
+    <section class="sg-section">
+      <h2 class="sg-section-title">Spacing</h2>
+      <div class="sg-spacing-list">
+        {[1,2,3,4,6,8,10,12,16,20,24].map(n => (
+          <div class="sg-spacing-row">
+            <span class="label">--space-{n}</span>
+            <div class="sg-spacing-bar" style={`width: calc(var(--space-${n}) * 4); height: 12px; background: var(--ink-faint);`}></div>
+            <span class="label">{n * 4}px</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── FOCUS STATE ── -->
+    <section class="sg-section">
+      <h2 class="sg-section-title">Focus State</h2>
+      <p class="sg-note">Tab to the button below to see the focus ring.</p>
+      <button class="sg-focus-demo">Focus me</button>
+    </section>
+
+    <!-- ── LABEL PATTERN ── -->
+    <section class="sg-section">
+      <h2 class="sg-section-title">Label Pattern</h2>
+      <p class="label">This is the .label class — mono, 10px, uppercase, tracked</p>
+    </section>
+
+  </div>
+</Base>
+
+<style>
+  .sg-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .sg-header {
+    margin-bottom: var(--space-16);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: var(--space-8);
+  }
+
+  .sg-header h1 {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    margin-top: var(--space-2);
+  }
+
+  .sg-section {
+    margin-bottom: var(--space-16);
+    padding-bottom: var(--space-16);
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .sg-section-title {
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-weight: 400;
+    margin-bottom: var(--space-8);
+  }
+
+  .sg-subsection {
+    margin-bottom: var(--space-10);
+  }
+
+  .sg-typeface-group {
+    margin-bottom: var(--space-12);
+  }
+
+  .sg-typeface-name {
+    font-size: var(--text-sm);
+    color: var(--ink);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .sg-subsection .label {
+    margin-bottom: var(--space-3);
+    display: block;
+  }
+
+  .sg-specimen-xl {
+    font-size: var(--text-3xl);
+    line-height: 1.05;
+    margin-bottom: var(--space-2);
+  }
+
+  .sg-specimen-lg {
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    margin-bottom: var(--space-2);
+  }
+
+  .sg-specimen-body {
+    font-size: var(--text-base);
+    line-height: 1.7;
+    max-width: 55ch;
+  }
+
+  .sg-italic {
+    font-style: italic;
+  }
+
+  .sg-mono {
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    line-height: 2;
+  }
+
+  .sg-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .sg-swatch {
+    padding: var(--space-8) var(--space-4) var(--space-4);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-height: 100px;
+  }
+
+  .sg-hex {
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    opacity: 0.7;
+  }
+
+  .sg-spacing-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .sg-spacing-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .sg-spacing-row .label {
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .sg-note {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .sg-focus-demo {
+    padding: var(--space-3) var(--space-6);
+    background: transparent;
+    border: 1px solid var(--ink-faint);
+    cursor: pointer;
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .sg-focus-demo:hover {
+    border-color: var(--ink);
+  }
+</style>
