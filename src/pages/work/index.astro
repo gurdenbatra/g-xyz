@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@layouts/Base.astro';
+import ProjectRow from '@components/ProjectRow.astro';
+
+const projects = await getCollection('projects');
+const sorted = projects.sort((a, b) => b.data.year - a.data.year);
+---
+
+<Base
+  title="Work"
+  description="Projects and work by Gurden Batra — civic tech, design, and development."
+>
+  <div class="work-wrap page-wrap">
+
+    <header class="work-header">
+      <p class="label">All Work</p>
+      <h1>Projects</h1>
+    </header>
+
+    <ol class="projects-list">
+      {sorted.map((p, i) => (
+        <li>
+          <ProjectRow
+            index={i + 1}
+            title={p.data.title}
+            tag={p.data.tags[0]}
+            year={p.data.year}
+            slug={p.id.replace(/\.[^.]+$/, '')}
+          />
+        </li>
+      ))}
+    </ol>
+
+  </div>
+</Base>
+
+<style>
+  .work-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .work-header {
+    margin-bottom: var(--space-12);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: var(--space-8);
+  }
+
+  .work-header h1 {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    margin-top: var(--space-2);
+  }
+
+  .projects-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--ink);
+  }
+</style>
