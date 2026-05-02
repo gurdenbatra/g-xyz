@@ -4,7 +4,7 @@ import Base from '@layouts/Base.astro';
 import ProjectRow from '@components/ProjectRow.astro';
 
 const projects = await getCollection('projects');
-const sorted = projects.sort((a, b) => b.data.year - a.data.year);
+const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
 ---
 
 <Base
@@ -13,10 +13,10 @@ const sorted = projects.sort((a, b) => b.data.year - a.data.year);
 >
   <div class="work-wrap page-wrap">
 
-    <header class="work-header">
+    <div class="work-header">
       <p class="label">All Work</p>
       <h1>Projects</h1>
-    </header>
+    </div>
 
     <ol class="projects-list">
       {sorted.map((p, i) => (

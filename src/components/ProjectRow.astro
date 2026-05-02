@@ -12,7 +12,7 @@ const num = String(index).padStart(2, '0');
 ---
 
 <a href={`/work/${slug}`} class="project-row">
-  <span class="project-num">{num}</span>
+  <span class="project-num" aria-hidden="true">{num}</span>
   <span class="project-name">{title}</span>
   <span class="project-tag">{tag}</span>
   <span class="project-year">{year}</span>
