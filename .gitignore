@@ -15,3 +15,18 @@ src/_includes/scripts
 .history
 
 .DS_Store
+
+# Astro
+dist/
+.astro/
+
+# pnpm
+node_modules/
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Superpowers
+.superpowers/
