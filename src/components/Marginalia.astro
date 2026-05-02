@@ -50,6 +50,52 @@
 
 </div>
 
+<script>
+  const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const notes = Array.from(document.querySelectorAll<HTMLElement>('.note[data-ref]'));
+  const marks = Array.from(document.querySelectorAll<HTMLElement>('.mark[data-note]'));
+
+  // Stagger notes in on load — skip entirely if reduced-motion (CSS already shows them)
+  if (!isReduced) {
+    notes.forEach((note) => {
+      note.setAttribute('aria-hidden', 'true');
+      note.style.opacity = '0';
+      note.style.transform = 'translateY(4px)';
+    });
+    notes.forEach((note, i) => {
+      setTimeout(() => {
+        note.style.opacity = '1';
+        note.style.transform = 'translateY(0)';
+        // Expose to accessibility tree only after transition finishes
+        const onEnd = () => {
+          note.removeAttribute('aria-hidden');
+          note.removeEventListener('transitionend', onEnd);
+        };
+        note.addEventListener('transitionend', onEnd);
+      }, 200 + i * 350);
+    });
+  }
+
+  // Hover sync: dim all notes, highlight matching one
+  marks.forEach((mark) => {
+    const key = mark.getAttribute('data-note');
+
+    mark.addEventListener('mouseenter', () => {
+      mark.classList.add('is-active');
+      notes.forEach((note) => {
+        note.style.opacity = note.getAttribute('data-ref') === key ? '1' : '0.15';
+      });
+    });
+
+    mark.addEventListener('mouseleave', () => {
+      mark.classList.remove('is-active');
+      notes.forEach((note) => {
+        note.style.opacity = '1';
+      });
+    });
+  });
+</script>
+
 <style>
   .marginalia-grid {
     display: grid;
@@ -65,9 +111,15 @@
     color: var(--ink);
   }
 
-  /* Annotated phrase — hairline underline; data-note used by Phase 3 JS */
+  /* Annotated phrase — hover-sync cursor + border highlight */
   .mark {
     border-bottom: 1px solid var(--ink-faint);
+    cursor: crosshair;
+    transition: border-bottom-color 200ms ease;
+  }
+
+  .mark.is-active {
+    border-bottom-color: var(--ink);
   }
 
   .marginalia-notes {
@@ -85,6 +137,7 @@
     line-height: 1.5;
     letter-spacing: 0.04em;
     color: var(--ink);
+    transition: opacity 300ms ease, transform 350ms ease;
   }
 
   .note-label {
