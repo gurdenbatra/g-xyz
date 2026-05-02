@@ -38,7 +38,7 @@ const featured = allProjects
             title={p.data.title}
             tag={p.data.tags[0]}
             year={p.data.year}
-            slug={p.id}
+            slug={p.id.replace(/\.[^.]+$/, '')}
           />
         </li>
       ))}
