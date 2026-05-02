@@ -1,0 +1,52 @@
+---
+import Base from '@layouts/Base.astro';
+---
+
+<Base
+  title="Story"
+  description="The life and work of Gurden Batra — from Delhi to Atlanta, Helsinki, and Berlin."
+>
+  <div class="story-wrap page-wrap">
+
+    <header class="story-header">
+      <p class="label">Life Narrative</p>
+      <h1>Story</h1>
+    </header>
+
+    <div class="story-content">
+      <p class="story-placeholder">
+        Full narrative coming soon.
+      </p>
+    </div>
+
+  </div>
+</Base>
+
+<style>
+  .story-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .story-header {
+    margin-bottom: var(--space-16);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: var(--space-8);
+  }
+
+  .story-header h1 {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    margin-top: var(--space-2);
+  }
+
+  .story-content {
+    max-width: 640px;
+    font-size: var(--text-base);
+    line-height: 1.75;
+  }
+
+  .story-placeholder {
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+</style>
