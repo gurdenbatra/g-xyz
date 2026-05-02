@@ -1,0 +1,185 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Base from '@layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(p => ({
+    params: { slug: p.id.replace(/\.[^.]+$/, '') },
+    props: { project: p },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, description, role, year, tags, collaborators, links } = project.data;
+const { Content } = await project.render();
+---
+
+<Base title={title} description={description}>
+  <article class="project-wrap page-wrap">
+
+    <header class="project-header">
+      <p class="label">{tags.join(' · ')}</p>
+      <h1 class="project-title">{title}</h1>
+      <p class="project-description">{description}</p>
+    </header>
+
+    <dl class="project-meta">
+      <div class="meta-row">
+        <dt class="label">Role</dt>
+        <dd>{role}</dd>
+      </div>
+      <div class="meta-row">
+        <dt class="label">Year</dt>
+        <dd>{year}</dd>
+      </div>
+      {collaborators && collaborators.length > 0 && (
+        <div class="meta-row">
+          <dt class="label">With</dt>
+          <dd>{collaborators.join(', ')}</dd>
+        </div>
+      )}
+      {links && links.length > 0 && (
+        <div class="meta-row">
+          <dt class="label">Links</dt>
+          <dd class="meta-links">
+            {links.map(l => (
+              <a href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
+            ))}
+          </dd>
+        </div>
+      )}
+    </dl>
+
+    <div class="project-content">
+      <Content />
+    </div>
+
+    <footer class="project-footer">
+      <a href="/work" class="back-link label">← All projects</a>
+    </footer>
+
+  </article>
+</Base>
+
+<style>
+  .project-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .project-header {
+    margin-bottom: var(--space-12);
+    max-width: 720px;
+  }
+
+  .project-header .label {
+    margin-bottom: var(--space-4);
+    display: block;
+  }
+
+  .project-title {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    line-height: 1.05;
+    margin-bottom: var(--space-6);
+  }
+
+  .project-description {
+    font-size: var(--text-md);
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  .project-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-6);
+    border-top: 1px solid var(--ink-faint);
+    border-bottom: 1px solid var(--ink-faint);
+    padding-block: var(--space-8);
+    margin-bottom: var(--space-12);
+  }
+
+  .meta-row dt {
+    margin-bottom: var(--space-1);
+  }
+
+  .meta-row dd {
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+
+  .meta-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .meta-links a {
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink-faint);
+    transition: border-color var(--duration-fast) var(--easing);
+  }
+
+  .meta-links a:hover {
+    border-color: var(--ink);
+  }
+
+  .project-content {
+    max-width: 640px;
+    font-size: var(--text-base);
+    line-height: 1.75;
+  }
+
+  .project-content :global(h2) {
+    font-size: var(--text-xl);
+    font-style: italic;
+    margin-block: var(--space-10) var(--space-4);
+  }
+
+  .project-content :global(h3) {
+    font-size: var(--text-lg);
+    font-style: italic;
+    margin-block: var(--space-8) var(--space-3);
+  }
+
+  .project-content :global(p) {
+    margin-bottom: var(--space-6);
+  }
+
+  .project-content :global(a) {
+    color: var(--ink);
+    border-bottom: 1px solid var(--ink-faint);
+    text-decoration: none;
+    transition: border-color var(--duration-fast) var(--easing);
+  }
+
+  .project-content :global(a:hover) {
+    border-color: var(--ink);
+  }
+
+  .project-footer {
+    margin-top: var(--space-20);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--ink-faint);
+  }
+
+  .back-link {
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--easing);
+  }
+
+  .back-link:hover {
+    color: var(--ink);
+  }
+</style>
