@@ -38,7 +38,7 @@ test.describe('Base layout accessibility', () => {
 
   test('nav landmark is present', async ({ page }) => {
     await page.goto('/');
-    const nav = page.locator('nav');
+    const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav).toBeAttached();
   });
 
@@ -52,7 +52,7 @@ test.describe('Base layout accessibility', () => {
 test.describe('Nav component', () => {
   test('nav contains links to all main sections', async ({ page }) => {
     await page.goto('/');
-    const nav = page.locator('nav');
+    const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav.locator('a[href="/work"]')).toBeAttached();
     await expect(nav.locator('a[href="/story"]')).toBeAttached();
     await expect(nav.locator('a[href="/art"]')).toBeAttached();
@@ -62,7 +62,8 @@ test.describe('Nav component', () => {
 
   test('nav logo links to home', async ({ page }) => {
     await page.goto('/');
-    const logoLink = page.locator('nav a[href="/"]');
+    const nav = page.getByRole('navigation', { name: 'Main navigation' });
+    const logoLink = nav.locator('a[href="/"]');
     await expect(logoLink).toBeAttached();
   });
 });
