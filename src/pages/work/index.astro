@@ -27,6 +27,7 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
             tag={p.data.tags[0]}
             year={p.data.year}
             slug={p.id.replace(/\.[^.]+$/, '')}
+            description={p.data.description}
           />
         </li>
       ))}

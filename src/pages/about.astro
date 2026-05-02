@@ -4,7 +4,7 @@ import Base from '@layouts/Base.astro';
 
 <Base
   title="About"
-  description="Gurden Batra — Civic Tech Lead and Design Technologist based in Berlin."
+  description="Gurden Batra — Civic Tech Lead, Design Technologist, and builder of civic tools. Based in Berlin."
 >
   <div class="about-wrap page-wrap">
 
@@ -14,14 +14,48 @@ import Base from '@layouts/Base.astro';
     </div>
 
     <div class="about-content">
+
       <p class="about-bio">
         Civic Tech Lead at Dark Matter Labs, Berlin. Building tools that help cities
         navigate the legal, ecological, and civic complexity of the 21st century.
         Background in Computer Science (Georgia Tech) and New Media Design (Aalto University).
       </p>
 
+      <section class="journey-section" aria-labelledby="journey-heading">
+        <h2 id="journey-heading" class="label section-heading">Background</h2>
+        <ol class="timeline" role="list">
+          <li class="timeline-item">
+            <span class="timeline-year label">2020 –</span>
+            <div class="timeline-body">
+              <strong>Civic Tech Lead</strong>, Dark Matter Labs — Berlin.
+              Leading development of civic tools for circular economy, urban forestry,
+              and governance innovation. Projects include CircuLaw and TreesAI.
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-year label">2015 – 17</span>
+            <div class="timeline-body">
+              <strong>M.S. New Media Design</strong>, Aalto University — Helsinki.
+              Intersection of design, technology, and social systems.
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-year label">2009 – 13</span>
+            <div class="timeline-body">
+              <strong>B.S. Computer Science</strong>, Georgia Tech — Atlanta.
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-year label">Origin</span>
+            <div class="timeline-body">
+              Born and raised in Delhi, India.
+            </div>
+          </li>
+        </ol>
+      </section>
+
       <section class="contact-section" aria-labelledby="contact-heading">
-        <h2 id="contact-heading" class="label contact-heading">Get in touch</h2>
+        <h2 id="contact-heading" class="label section-heading">Get in touch</h2>
         <ul class="contact-list" role="list">
           <li>
             <a href="mailto:gurden@darkmatterlabs.org" class="contact-link label">
@@ -60,6 +94,7 @@ import Base from '@layouts/Base.astro';
           </li>
         </ul>
       </section>
+
     </div>
 
   </div>
@@ -89,12 +124,55 @@ import Base from '@layouts/Base.astro';
   .about-bio {
     font-size: var(--text-md);
     line-height: 1.65;
-    margin-bottom: var(--space-12);
+    margin-bottom: var(--space-16);
   }
 
-  .contact-heading {
+  .section-heading {
     display: block;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  /* ── TIMELINE ── */
+  .journey-section {
+    margin-bottom: var(--space-16);
+  }
+
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: var(--space-6);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--ink-faint);
+    align-items: start;
+  }
+
+  .timeline-year {
+    color: var(--ink-muted);
+    padding-top: 2px;
+  }
+
+  .timeline-body {
+    font-size: var(--text-sm);
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .timeline-body strong {
+    font-style: italic;
+  }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    margin-bottom: var(--space-16);
   }
 
   .contact-list {

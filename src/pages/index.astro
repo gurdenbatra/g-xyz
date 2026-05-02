@@ -14,12 +14,48 @@ const featured = allProjects
 
   <!-- ── 1. SKILLS HERO ── -->
   <section class="hero page-wrap">
-    <h1 class="tagline" aria-label="Design. Code. Bring ideas to life.">
-      <span class="tagline-italic" aria-hidden="true">Design.</span>
-      <span class="tagline-italic" aria-hidden="true">Code.</span>
-      <span class="tagline-regular" aria-hidden="true">Bring ideas to life.</span>
+    <h1 class="tagline" aria-label="Designer. Coder. And many things in between.">
+      <span class="tagline-word" id="role-top" aria-hidden="true">Designer</span>
+      <span class="tagline-word" id="role-bottom" aria-hidden="true">Coder</span>
     </h1>
   </section>
+
+  <script>
+    const topRoles = [
+      'Designer', 'Service Designer', 'Interaction Designer',
+      'Speculative Designer', 'Critical Designer', 'New Media Designer',
+      'Strategic Designer', 'Rapid Prototyper', 'Writer',
+    ];
+    const bottomRoles = [
+      'Coder', 'Backend Engineer', 'Frontend Engineer',
+      'Full-Stack Engineer', 'QA Engineer', 'Systems Engineer',
+      'Creative Technologist',
+    ];
+
+    const HOLD = 2800;
+    const FADE = 380;
+
+    function cycle(el: HTMLElement | null, roles: string[], delay: number) {
+      if (!el) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      let idx = 0;
+      setTimeout(() => {
+        setInterval(() => {
+          idx = (idx + 1) % roles.length;
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(-10px)';
+          setTimeout(() => {
+            el.textContent = roles[idx];
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+          }, FADE);
+        }, HOLD);
+      }, delay);
+    }
+
+    cycle(document.getElementById('role-top') as HTMLElement, topRoles, 1200);
+    cycle(document.getElementById('role-bottom') as HTMLElement, bottomRoles, 2400);
+  </script>
 
   <!-- ── 2. MARGINALIA BIO ── -->
   <section class="bio-section page-wrap">
@@ -39,6 +75,7 @@ const featured = allProjects
             tag={p.data.tags[0]}
             year={p.data.year}
             slug={p.id.replace(/\.[^.]+$/, '')}
+            description={p.data.description}
           />
         </li>
       ))}
@@ -67,23 +104,17 @@ const featured = allProjects
     display: flex;
     flex-direction: column;
     gap: 0;
-    line-height: 0.95;
+    line-height: 0.92;
   }
 
-  .tagline-italic {
+  .tagline-word {
+    display: block;
     font-family: 'MaziusDisplay', serif;
     font-style: italic;
     font-size: var(--text-4xl);
     letter-spacing: -0.02em;
     color: var(--ink);
-  }
-
-  .tagline-regular {
-    font-family: 'MaziusDisplay', serif;
-    font-style: normal;
-    font-size: clamp(1.5rem, 3.5vw, 3rem);
-    color: var(--ink-muted);
-    margin-top: var(--space-4);
+    transition: opacity 380ms ease, transform 380ms ease;
   }
 
   /* ── BIO ── */

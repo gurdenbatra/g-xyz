@@ -5,36 +5,82 @@ interface Props {
   tag: string;
   year: number;
   slug: string;
+  description?: string;
 }
 
-const { index, title, tag, year, slug } = Astro.props;
+const { index, title, tag, year, slug, description } = Astro.props;
 const num = String(index).padStart(2, '0');
 ---
 
 <a href={`/work/${slug}`} class="project-row">
-  <span class="project-num" aria-hidden="true">{num}</span>
-  <span class="project-name">{title}</span>
-  <span class="project-tag">{tag}</span>
-  <span class="project-year">{year}</span>
+  <div class="project-main">
+    <span class="project-title">{title}</span>
+    {description && (
+      <span class="project-desc">{description}</span>
+    )}
+  </div>
+  <div class="project-meta">
+    <span class="project-tag">{tag}</span>
+    <span class="project-year">{year}</span>
+  </div>
 </a>
 
 <style>
   .project-row {
     display: grid;
-    grid-template-columns: 2.5rem 1fr auto auto;
+    grid-template-columns: 1fr auto;
     gap: var(--space-6);
-    padding: var(--space-4) 0;
+    padding: var(--space-5) var(--space-4);
     border-bottom: 1px solid var(--ink-faint);
     text-decoration: none;
     color: inherit;
-    align-items: baseline;
+    align-items: start;
+    transition: background var(--duration-fast) var(--easing),
+                border-left-color var(--duration-fast) var(--easing);
+    border-left: 2px solid transparent;
+    margin-left: -2px;
   }
 
-  .project-row:hover .project-name {
-    font-style: italic;
+  .project-row:hover {
+    background: color-mix(in srgb, var(--ink) 4%, var(--ground));
+    border-left-color: var(--ink);
   }
 
-  .project-num,
+  .project-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .project-title {
+    font-family: 'MaziusDisplay', serif;
+    font-size: var(--text-lg);
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .project-desc {
+    font-family: 'NectoMono', monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.03em;
+    color: var(--ink-muted);
+    line-height: 1.5;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .project-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-1);
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+
   .project-tag,
   .project-year {
     font-family: 'NectoMono', monospace;
@@ -43,13 +89,19 @@ const num = String(index).padStart(2, '0');
     color: var(--ink-muted);
   }
 
-  .project-name {
-    font-family: 'MaziusDisplay', serif;
-    font-size: var(--text-base);
-    color: var(--ink);
-  }
-
   .project-tag {
     text-transform: uppercase;
+  }
+
+  @media (max-width: 500px) {
+    .project-row {
+      grid-template-columns: 1fr;
+    }
+
+    .project-meta {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-4);
+    }
   }
 </style>

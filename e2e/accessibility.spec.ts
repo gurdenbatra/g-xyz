@@ -54,7 +54,6 @@ test.describe('Nav component', () => {
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav.locator('a[href="/work"]')).toBeAttached();
-    await expect(nav.locator('a[href="/story"]')).toBeAttached();
     await expect(nav.locator('a[href="/art"]')).toBeAttached();
     await expect(nav.locator('a[href="/writing"]')).toBeAttached();
     await expect(nav.locator('a[href="/about"]')).toBeAttached();

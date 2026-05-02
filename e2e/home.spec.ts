@@ -3,9 +3,8 @@ import { test, expect } from '@playwright/test';
 test.describe('Home page', () => {
   test('skills tagline is visible', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Design.')).toBeVisible();
-    await expect(page.getByText('Code.')).toBeVisible();
-    await expect(page.getByText('Bring ideas to life.')).toBeVisible();
+    await expect(page.locator('#role-top')).toBeVisible();
+    await expect(page.locator('#role-bottom')).toBeVisible();
   });
 
   test('Marginalia bio paragraph is present', async ({ page }) => {
@@ -16,7 +15,7 @@ test.describe('Home page', () => {
   test('Marginalia annotation notes are visible', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByText('Berlin — since 2020')).toBeVisible();
-    await expect(page.getByText(/City of Amsterdam/)).toBeVisible();
+    await expect(page.getByText('Amsterdam municipality & EU')).toBeVisible();
   });
 
   test('projects section has all three featured projects', async ({ page }) => {

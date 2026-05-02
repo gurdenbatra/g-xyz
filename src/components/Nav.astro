@@ -1,7 +1,6 @@
 ---
 const navLinks = [
   { href: '/work',    label: 'Work' },
-  { href: '/story',   label: 'Story' },
   { href: '/art',     label: 'Art' },
   { href: '/writing', label: 'Writing' },
   { href: '/about',   label: 'About' },
@@ -12,8 +11,8 @@ const currentPath = Astro.url.pathname;
 
 <nav aria-label="Main navigation">
   <div class="nav-inner page-wrap">
-    <a href="/" class="nav-logo" aria-label="Gurden Batra — home">
-      Gurden Batra
+    <a href="/" class="nav-logo" aria-label="Gurden.xyz — home">
+      Gurden.xyz
     </a>
     <ul class="nav-links" role="list">
       {navLinks.map(({ href, label }) => (

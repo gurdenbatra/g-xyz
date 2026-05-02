@@ -1,11 +1,15 @@
 ---
-const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
   <div class="footer-inner page-wrap">
     <span class="footer-copy label">
-      © {year} Gurden Batra
+      <a
+        href="https://creativecommons.org/licenses/by/4.0/"
+        rel="license noopener noreferrer"
+        target="_blank"
+        class="cc-link"
+      >CC BY 4.0</a> Gurden Batra
     </span>
     <nav class="footer-nav" aria-label="Footer navigation">
       <ul role="list">
@@ -31,6 +35,17 @@ const year = new Date().getFullYear();
 
   .footer-copy {
     color: var(--ink-muted);
+  }
+
+  .cc-link {
+    color: var(--ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink-faint);
+    transition: color var(--duration-fast) var(--easing);
+  }
+
+  .cc-link:hover {
+    color: var(--ink);
   }
 
   .footer-nav ul {
