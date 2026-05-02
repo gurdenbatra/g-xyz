@@ -1,0 +1,52 @@
+@import './reset.css';
+@import './tokens.css';
+@import './motion.css';
+@import './typography.css';
+
+html {
+  color: var(--ink);
+  background-color: var(--ground);
+  scroll-behavior: smooth;
+}
+
+body {
+  font-size: var(--text-base);
+  line-height: 1.65;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+  border-radius: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--ink);
+  color: var(--ground);
+  font-family: 'NectoMono', monospace;
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--easing);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.page-wrap {
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
