@@ -1,0 +1,210 @@
+---
+const zones = [
+  {
+    id: 'polyculture',
+    emoji: '🌿',
+    name: 'The Polyculture',
+    desc: 'Work & projects',
+    href: '/work',
+  },
+  {
+    id: 'canopy',
+    emoji: '🌳',
+    name: 'The Canopy',
+    desc: 'Art, poetry & essays',
+    href: null,
+  },
+  {
+    id: 'hive',
+    emoji: '🐝',
+    name: 'The Hive',
+    desc: 'Now & contact',
+    href: null,
+  },
+  {
+    id: 'compost',
+    emoji: '🪱',
+    name: 'The Compost',
+    desc: 'Story & origins',
+    href: '/about',
+  },
+  {
+    id: 'mycelium',
+    emoji: '🍄',
+    name: 'The Mycelium',
+    desc: 'Collaborators & network',
+    href: null,
+  },
+  {
+    id: 'beds',
+    emoji: '🛠',
+    name: 'The Beds',
+    desc: 'Colophon & care',
+    href: '/colophon',
+  },
+] as const;
+---
+
+<div
+  id="map-overlay"
+  class="map-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Garden map"
+  aria-hidden="true"
+>
+  <!-- Backdrop: click closes the overlay (wired in Task 4) -->
+  <button
+    class="map-overlay-backdrop"
+    aria-label="Close garden map"
+    tabindex="-1"
+    type="button"
+  ></button>
+
+  <div class="map-overlay-panel">
+    <nav aria-label="Garden zones">
+      <ul class="zone-list" role="list">
+        {zones.map((zone) => (
+          <li class="zone-item" data-zone={zone.id}>
+            {zone.href ? (
+              <a href={zone.href} class="zone-link">
+                <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
+                <span class="zone-text">
+                  <span class="zone-name">{zone.name}</span>
+                  <span class="zone-desc">{zone.desc}</span>
+                </span>
+              </a>
+            ) : (
+              <span class="zone-link zone-link--soon">
+                <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
+                <span class="zone-text">
+                  <span class="zone-name">{zone.name}</span>
+                  <span class="zone-desc">
+                    {zone.desc}
+                    <span class="zone-soon"> · soon</span>
+                  </span>
+                </span>
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<style>
+  .map-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    /* Delay visibility so it vanishes after the opacity fade */
+    transition:
+      opacity var(--duration-base) var(--easing),
+      visibility 0s linear var(--duration-base);
+  }
+
+  .map-overlay[aria-hidden='false'] {
+    visibility: visible;
+    opacity: 1;
+    transition:
+      opacity var(--duration-base) var(--easing),
+      visibility 0s;
+  }
+
+  .map-overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+    border: none;
+    cursor: pointer;
+  }
+
+  .map-overlay-panel {
+    position: relative;
+    z-index: 1;
+    width: min(90vw, 560px);
+    background: var(--ground);
+    padding: var(--space-10) var(--space-10);
+  }
+
+  .zone-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  .zone-link {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4);
+    border: 1px solid var(--ink-faint);
+    color: var(--ink);
+    text-decoration: none;
+    transition:
+      border-color var(--duration-fast) var(--easing),
+      background var(--duration-fast) var(--easing);
+    cursor: pointer;
+  }
+
+  .zone-link:not(.zone-link--soon):hover {
+    border-color: var(--ink-muted);
+    background: color-mix(in srgb, var(--ink) 4%, var(--ground));
+  }
+
+  .zone-link--soon {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .zone-emoji {
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .zone-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .zone-name {
+    font-family: 'MaziusDisplay', serif;
+    font-style: italic;
+    font-size: var(--text-base);
+    line-height: 1.2;
+  }
+
+  .zone-desc {
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .zone-soon {
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 500px) {
+    .zone-list {
+      grid-template-columns: 1fr;
+    }
+
+    .map-overlay-panel {
+      padding: var(--space-8) var(--space-6);
+    }
+  }
+</style>

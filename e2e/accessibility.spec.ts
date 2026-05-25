@@ -93,3 +93,33 @@ test.describe('MapToggle', () => {
     await expect(page.locator('#map-toggle')).toBeAttached();
   });
 });
+
+test.describe('MapOverlay', () => {
+  test('overlay element is in the DOM with correct ARIA attributes', async ({ page }) => {
+    await page.goto('/');
+    const overlay = page.locator('#map-overlay');
+    await expect(overlay).toBeAttached();
+    await expect(overlay).toHaveAttribute('role', 'dialog');
+    await expect(overlay).toHaveAttribute('aria-modal', 'true');
+    await expect(overlay).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  test('overlay contains links for the three active zones', async ({ page }) => {
+    await page.goto('/');
+    const overlay = page.locator('#map-overlay');
+    await expect(overlay.locator('a[href="/work"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/about"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/colophon"]')).toBeAttached();
+  });
+
+  test('overlay contains entries for all 6 zones', async ({ page }) => {
+    await page.goto('/');
+    const overlay = page.locator('#map-overlay');
+    await expect(overlay.locator('[data-zone="polyculture"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="canopy"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="hive"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="compost"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="mycelium"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="beds"]')).toBeAttached();
+  });
+});
