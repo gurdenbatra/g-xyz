@@ -1,0 +1,78 @@
+---
+import { getCollection } from 'astro:content';
+import Garden from '@layouts/Garden.astro';
+import ProjectRow from '@components/ProjectRow.astro';
+import SlowPlot from '../../components/zones/Polyculture/SlowPlot.astro';
+
+const projects = await getCollection('projects');
+const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
+---
+
+<Garden
+  title="Polyculture"
+  description="Work and projects by Gurden Batra — civic tech, design, and development — rendered as a wild plot."
+>
+  <section class="poly-wrap page-wrap">
+    <header class="poly-header">
+      <p class="label">The Polyculture</p>
+      <h1 class="poly-title">A wild plot of work.</h1>
+      <p class="poly-subtitle">
+        Each plant is a project. Hover to see its name; click to walk into it.
+      </p>
+    </header>
+
+    <SlowPlot />
+
+    <ol class="projects-list" aria-label="All projects">
+      {sorted.map((p, i) => (
+        <li>
+          <ProjectRow
+            index={i + 1}
+            title={p.data.title}
+            tag={p.data.tags[0]}
+            year={p.data.year}
+            slug={p.id.replace(/\.[^.]+$/, '')}
+            description={p.data.description}
+          />
+        </li>
+      ))}
+    </ol>
+  </section>
+</Garden>
+
+<style>
+  .poly-wrap {
+    padding-block: var(--space-12) var(--space-16);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+
+  .poly-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .poly-title {
+    font-family: 'MaziusDisplay', serif;
+    font-style: italic;
+    font-size: var(--text-3xl);
+    line-height: 1.05;
+    margin: 0;
+  }
+
+  .poly-subtitle {
+    font-size: var(--text-md);
+    color: var(--ink-muted);
+    max-width: 50ch;
+    margin: 0;
+  }
+
+  .projects-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--ink);
+  }
+</style>

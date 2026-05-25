@@ -239,14 +239,7 @@ const seeds: PlantSeed[] = projects.map((p) => ({
 
     canvas!.addEventListener('click', () => {
       if (!currentPlant) return;
-      const slug = currentPlant.slug;
-      // Expose slug for test introspection — production navigation also fires below
-      (window as unknown as { __lastSlowPlotNavSlug?: string }).__lastSlowPlotNavSlug = slug;
-      // Defer the actual navigation so observers/tests can read the exposed slug
-      // before the page context is replaced.
-      setTimeout(() => {
-        window.location.href = `/polyculture/${slug}`;
-      }, 250);
+      window.location.href = `/polyculture/${currentPlant.slug}`;
     });
 
     canvas!.style.cursor = 'pointer';
