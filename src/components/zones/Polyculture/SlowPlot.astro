@@ -1,0 +1,193 @@
+---
+import { getCollection } from 'astro:content';
+import { assignPlantType, type PlantType } from '../../../lib/plants';
+
+interface PlantSeed {
+  slug: string;
+  title: string;
+  plantType: PlantType;
+}
+
+const projects = await getCollection('projects');
+const seeds: PlantSeed[] = projects.map((p) => ({
+  slug: p.id.replace(/\.[^.]+$/, ''),
+  title: p.data.title,
+  plantType: assignPlantType(p.id.replace(/\.[^.]+$/, ''), p.data.plantType),
+}));
+---
+
+<div class="slow-plot-wrap">
+  <canvas
+    data-slow-plot
+    class="slow-plot-canvas"
+    aria-label="A garden plot illustration where each project is a plant. The list below is the keyboard-navigable equivalent."
+  ></canvas>
+  <div class="slow-plot-tag" data-slow-plot-tag aria-hidden="true"></div>
+</div>
+
+<script is:inline define:vars={{ seeds }}>
+  window.__slowPlotSeeds = seeds;
+</script>
+
+<script>
+  import { generatePlant, hashSlug, type Segment } from '../../../lib/plants';
+
+  declare global {
+    interface Window {
+      __slowPlotSeeds?: Array<{ slug: string; title: string; plantType: import('../../../lib/plants').PlantType }>;
+    }
+  }
+
+  interface Plant {
+    slug: string;
+    title: string;
+    rootX: number;
+    rootY: number;
+    segments: Segment[];
+  }
+
+  function mountSlowPlot() {
+    const canvas = document.querySelector<HTMLCanvasElement>('canvas[data-slow-plot]');
+    const seeds = window.__slowPlotSeeds;
+    if (!canvas || !seeds) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    function resize() {
+      const rect = canvas!.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas!.width = Math.floor(rect.width * dpr);
+      canvas!.height = Math.floor(rect.height * dpr);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    resize();
+
+    function buildPlants(): Plant[] {
+      const rect = canvas!.getBoundingClientRect();
+      const ground = rect.height - 20;
+      const margin = 40;
+      const usableW = rect.width - margin * 2;
+      return seeds!.map((s, i) => {
+        const h = hashSlug(s.slug);
+        const xJitter = ((h % 1000) / 1000 - 0.5) * 40;
+        const rootX = margin + ((i + 0.5) / seeds!.length) * usableW + xJitter;
+        const rootY = ground;
+        const segments = generatePlant(s.slug, s.plantType);
+        return { slug: s.slug, title: s.title, rootX, rootY, segments };
+      });
+    }
+
+    function draw(plants: Plant[]) {
+      const rect = canvas!.getBoundingClientRect();
+      ctx!.clearRect(0, 0, rect.width, rect.height);
+      ctx!.lineCap = 'round';
+      ctx!.lineJoin = 'round';
+
+      const cs = getComputedStyle(document.documentElement);
+      const stroke = cs.getPropertyValue('--ink').trim() || '#1a1a1a';
+
+      // Sort tallest-first so taller plants draw behind shorter
+      const sorted = [...plants].sort((a, b) => {
+        const ha = Math.max(...a.segments.map((s) => -s.y2));
+        const hb = Math.max(...b.segments.map((s) => -s.y2));
+        return hb - ha;
+      });
+
+      for (const plant of sorted) {
+        ctx!.strokeStyle = stroke;
+        for (const seg of plant.segments) {
+          ctx!.lineWidth = Math.max(0.6, seg.thickness * 2);
+          ctx!.beginPath();
+          ctx!.moveTo(plant.rootX + seg.x1, plant.rootY + seg.y1);
+          ctx!.lineTo(plant.rootX + seg.x2, plant.rootY + seg.y2);
+          ctx!.stroke();
+          // Tip flourishes: simple shapes per tip marker
+          if (seg.tip === 'bloom') {
+            ctx!.fillStyle = cs.getPropertyValue('--c-ochre').trim() || '#D9A857';
+            ctx!.beginPath();
+            ctx!.arc(plant.rootX + seg.x2, plant.rootY + seg.y2, 5, 0, Math.PI * 2);
+            ctx!.fill();
+          } else if (seg.tip === 'leaf') {
+            ctx!.fillStyle = cs.getPropertyValue('--c-moss').trim() || '#5A7A4A';
+            ctx!.beginPath();
+            ctx!.arc(plant.rootX + seg.x2, plant.rootY + seg.y2, 2.5, 0, Math.PI * 2);
+            ctx!.fill();
+          } else if (seg.tip === 'spike') {
+            ctx!.strokeStyle = cs.getPropertyValue('--c-indigo').trim() || '#2A3A5A';
+            ctx!.lineWidth = 1;
+            ctx!.beginPath();
+            ctx!.moveTo(plant.rootX + seg.x2 - 3, plant.rootY + seg.y2 - 3);
+            ctx!.lineTo(plant.rootX + seg.x2 + 3, plant.rootY + seg.y2 - 3);
+            ctx!.moveTo(plant.rootX + seg.x2, plant.rootY + seg.y2);
+            ctx!.lineTo(plant.rootX + seg.x2, plant.rootY + seg.y2 - 5);
+            ctx!.stroke();
+            ctx!.strokeStyle = stroke; // restore
+          }
+        }
+      }
+    }
+
+    const plants = buildPlants();
+    draw(plants);
+
+    // Re-draw on resize
+    const ro = new ResizeObserver(() => {
+      resize();
+      const fresh = buildPlants();
+      draw(fresh);
+    });
+    ro.observe(canvas!);
+  }
+
+  // Run on first load AND after every Astro view-transition
+  document.addEventListener('astro:page-load', mountSlowPlot);
+</script>
+
+<style>
+  .slow-plot-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 60vh;
+    background: var(--ground);
+    border: 1px solid var(--ink-faint);
+    overflow: hidden;
+  }
+
+  .slow-plot-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .slow-plot-tag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    transform: translate(-50%, -110%);
+    font-family: 'MaziusDisplay', serif;
+    font-style: italic;
+    font-size: var(--text-base);
+    background: var(--ground);
+    color: var(--ink);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--ink-faint);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--easing);
+    white-space: nowrap;
+  }
+
+  .slow-plot-tag[data-visible='true'] {
+    opacity: 1;
+  }
+
+  @media (max-width: 600px) {
+    .slow-plot-wrap {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>
