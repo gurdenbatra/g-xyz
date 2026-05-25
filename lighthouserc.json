@@ -3,7 +3,7 @@
     "collect": {
       "url": [
         "http://localhost:4321/",
-        "http://localhost:4321/work",
+        "http://localhost:4321/polyculture",
         "http://localhost:4321/about",
         "http://localhost:4321/colophon"
       ],

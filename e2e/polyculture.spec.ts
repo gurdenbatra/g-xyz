@@ -99,6 +99,13 @@ test.describe('Polyculture — page structure', () => {
     const back = page.locator('a.back-link');
     await expect(back).toHaveAttribute('href', '/polyculture');
   });
+
+  test('polyculture page passes axe accessibility audit', async ({ page }) => {
+    const AxeBuilder = (await import('@axe-core/playwright')).default;
+    await page.goto('/polyculture');
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations).toEqual([]);
+  });
 });
 
 test.describe('Polyculture — redirects', () => {
