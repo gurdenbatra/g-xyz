@@ -1,0 +1,73 @@
+---
+// Global cursor bee. Mounts in the root layout, listens to pointer events,
+// hides itself when prefers-reduced-motion: reduce.
+---
+
+<div id="cursor-bee" aria-hidden="true">
+  <svg viewBox="0 0 24 16" width="24" height="16">
+    <!-- body -->
+    <ellipse cx="12" cy="8" rx="6" ry="4" fill="var(--c-ochre)" />
+    <rect x="9"  y="4" width="2" height="8" fill="var(--c-ink)" />
+    <rect x="13" y="4" width="2" height="8" fill="var(--c-ink)" />
+    <!-- wings -->
+    <ellipse class="wing wing-l" cx="9"  cy="4" rx="4" ry="2" fill="var(--c-paper)" opacity="0.85" />
+    <ellipse class="wing wing-r" cx="15" cy="4" rx="4" ry="2" fill="var(--c-paper)" opacity="0.85" />
+  </svg>
+</div>
+
+<style>
+  #cursor-bee {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 16px;
+    pointer-events: none;
+    transform: translate3d(-100px, -100px, 0);
+    z-index: 50;
+    will-change: transform;
+  }
+
+  .wing {
+    transform-origin: center bottom;
+    animation: wing-flap 80ms ease-in-out infinite alternate;
+  }
+  .wing-r { animation-delay: 40ms; }
+
+  @keyframes wing-flap {
+    from { transform: scaleY(0.4); }
+    to   { transform: scaleY(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #cursor-bee { display: none; }
+  }
+</style>
+
+<script>
+  import { createBee, stepBee, type BeeState } from '../../lib/bee';
+
+  const el = document.getElementById('cursor-bee');
+  if (el && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let bee: BeeState = createBee({ x: -100, y: -100 });
+    let rafId = 0;
+
+    function onMove(e: PointerEvent) {
+      bee = { ...bee, targetX: e.clientX - 12, targetY: e.clientY - 8 };
+    }
+
+    function loop() {
+      bee = stepBee(bee, 0.18);
+      el!.style.transform = `translate3d(${bee.x}px, ${bee.y}px, 0)`;
+      rafId = requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('pointermove', onMove, { passive: true });
+    rafId = requestAnimationFrame(loop);
+
+    window.addEventListener('beforeunload', () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('pointermove', onMove);
+    });
+  }
+</script>
