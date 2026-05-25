@@ -264,3 +264,176 @@ const wormDefs: WormDefPublic[] = [
     }
   }
 </style>
+
+<script>
+  import { animate as motionAnimate, scroll } from 'motion';
+  import type { DOMKeyframesDefinition, AnimationOptions, AnimationPlaybackControls, ElementOrSelector } from 'motion';
+  import { mount as mountWorms } from './worms';
+  import type { WormDef } from './worms';
+
+  // Typed alias that always resolves to the DOM element overload
+  const animate = (
+    el: ElementOrSelector,
+    kf: DOMKeyframesDefinition,
+    opts?: AnimationOptions,
+  ): AnimationPlaybackControls => motionAnimate(el, kf, opts);
+
+  type Cleanup = () => void;
+  let cleanups: Cleanup[] = [];
+
+  function mountStrata(): void {
+    const wrap = document.querySelector<HTMLElement>('[data-strata]');
+    if (!wrap) return;
+
+    const canvas = wrap.querySelector<HTMLCanvasElement>('[data-strata-canvas]');
+    const layerEls = [...wrap.querySelectorAll<HTMLElement>('[data-layer]')];
+    const anecdoteEl = wrap.querySelector<HTMLElement>('[data-strata-anecdote]');
+    const anecdoteText = wrap.querySelector<HTMLElement>('[data-strata-anecdote-text]');
+    const anecdoteClose = wrap.querySelector<HTMLButtonElement>('[data-strata-anecdote-close]');
+    if (!canvas || layerEls.length === 0) return;
+
+    // Non-null assertions: canvas and wrap are verified above
+    const safeCanvas: HTMLCanvasElement = canvas;
+    const safeWrap: HTMLElement = wrap;
+
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ── Scroll reveal ──────────────────────────────────────────────────────────
+
+    if (!rm) {
+      // Layer 0: fade in on mount
+      const enterAnim = animate(
+        layerEls[0] as Element,
+        { opacity: [0, 1], transform: ['translateY(24px)', 'translateY(0)'] },
+        { duration: 0.55, ease: 'easeOut' },
+      );
+
+      // Layers 1–3: scroll-driven
+      const scrollStops = layerEls.slice(1).map((el) =>
+        scroll(
+          animate(
+            el as Element,
+            { opacity: [0, 1], transform: ['translateY(32px)', 'translateY(0)'] },
+            { duration: 0.5 },
+          ),
+          { target: el, offset: ['start 90%', 'start 45%'] },
+        ),
+      );
+
+      cleanups.push(() => {
+        enterAnim.stop();
+        scrollStops.forEach((stop) => stop());
+      });
+    } else {
+      // Reduced motion: instant reveal via IntersectionObserver
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const el = entry.target as HTMLElement;
+              el.style.opacity = '1';
+              el.style.transform = 'none';
+              io.unobserve(el);
+            }
+          });
+        },
+        { threshold: 0.05 },
+      );
+      layerEls.forEach((el) => {
+        el.style.opacity = '0';
+        io.observe(el);
+      });
+      cleanups.push(() => io.disconnect());
+    }
+
+    // ── Canvas sizing (DPR-aware) ──────────────────────────────────────────────
+
+    function resizeCanvas(): void {
+      const dpr = window.devicePixelRatio || 1;
+      const { width, height } = safeWrap.getBoundingClientRect();
+      safeCanvas.width = Math.round(width * dpr);
+      safeCanvas.height = Math.round(height * dpr);
+      safeCanvas.style.width = `${width}px`;
+      safeCanvas.style.height = `${height}px`;
+      const ctx = safeCanvas.getContext('2d');
+      if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    resizeCanvas();
+
+    const ro = new ResizeObserver(resizeCanvas);
+    ro.observe(safeWrap);
+    cleanups.push(() => ro.disconnect());
+
+    // ── Worm canvas ────────────────────────────────────────────────────────────
+
+    function computeLayerMidpoints(): number[] {
+      const wrapTop = safeWrap.getBoundingClientRect().top;
+      return layerEls.map((el) => {
+        const r = el.getBoundingClientRect();
+        return r.top + r.height / 2 - wrapTop;
+      });
+    }
+
+    const wormDefs: WormDef[] =
+      (window as unknown as Record<string, unknown>).__strataWormDefs as WormDef[] ?? [];
+
+    safeCanvas.style.pointerEvents = 'auto';
+
+    const wormCleanup = mountWorms(
+      safeCanvas,
+      wormDefs,
+      computeLayerMidpoints(),
+      rm,
+      (worm, clientX, clientY) => showAnecdote(worm.anecdote, clientX, clientY),
+    );
+    cleanups.push(wormCleanup);
+
+    // ── Anecdote tooltip ───────────────────────────────────────────────────────
+
+    function showAnecdote(text: string, cx: number, cy: number): void {
+      if (!anecdoteEl || !anecdoteText) return;
+      anecdoteText.textContent = `"${text}"`;
+      const top = Math.min(cy + 12, window.innerHeight - 160);
+      const left = Math.min(cx + 12, window.innerWidth - 280);
+      anecdoteEl.style.top = `${top}px`;
+      anecdoteEl.style.left = `${left}px`;
+      anecdoteEl.hidden = false;
+      anecdoteClose?.focus();
+    }
+
+    function hideAnecdote(): void {
+      if (anecdoteEl) anecdoteEl.hidden = true;
+    }
+
+    anecdoteClose?.addEventListener('click', hideAnecdote);
+
+    const escHandler = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') hideAnecdote();
+    };
+    document.addEventListener('keydown', escHandler);
+
+    const outsideClickHandler = (e: MouseEvent): void => {
+      if (anecdoteEl && !anecdoteEl.hidden && !anecdoteEl.contains(e.target as Node)) {
+        hideAnecdote();
+      }
+    };
+    document.addEventListener('click', outsideClickHandler, { capture: true });
+
+    cleanups.push(() => {
+      anecdoteClose?.removeEventListener('click', hideAnecdote);
+      document.removeEventListener('keydown', escHandler);
+      document.removeEventListener('click', outsideClickHandler, { capture: true });
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    cleanups = [];
+    mountStrata();
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    cleanups.forEach((fn) => fn());
+    cleanups = [];
+  });
+</script>
