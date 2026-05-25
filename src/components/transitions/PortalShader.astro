@@ -1,0 +1,52 @@
+---
+---
+<style is:global>
+  /*
+   * View-transition portal reveal: old page contracts to a point;
+   * new page expands from the same point. Clip-path origin defaults
+   * to centre; future phases can set --vt-origin-x/y from click coords.
+   */
+  @keyframes portal-contract {
+    to {
+      clip-path: circle(0% at var(--vt-origin-x, 50%) var(--vt-origin-y, 50%));
+      opacity: 0;
+    }
+  }
+
+  @keyframes portal-reveal {
+    from {
+      clip-path: circle(0% at var(--vt-origin-x, 50%) var(--vt-origin-y, 50%));
+      opacity: 0;
+    }
+    to {
+      clip-path: circle(150% at var(--vt-origin-x, 50%) var(--vt-origin-y, 50%));
+      opacity: 1;
+    }
+  }
+
+  @keyframes portal-fade-out {
+    to { opacity: 0; }
+  }
+
+  @keyframes portal-fade-in {
+    from { opacity: 0; }
+  }
+
+  ::view-transition-old(root) {
+    animation: 260ms ease-in portal-contract;
+  }
+
+  ::view-transition-new(root) {
+    animation: 320ms ease-out portal-reveal;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root) {
+      animation: 120ms ease portal-fade-out;
+    }
+
+    ::view-transition-new(root) {
+      animation: 120ms ease portal-fade-in;
+    }
+  }
+</style>

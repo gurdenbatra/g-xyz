@@ -5,6 +5,7 @@ import Footer from '@components/Footer.astro';
 import CursorBee from '../components/bee/CursorBee.astro';
 import MapToggle from '../components/map/MapToggle.astro';
 import MapOverlay from '../components/map/MapOverlay.astro';
+import PortalShader from '../components/transitions/PortalShader.astro';
 import { seasonFor } from '../lib/season';
 import '../styles/global.css';
 
@@ -36,6 +37,7 @@ const season = seasonFor(new Date());
     <link rel="preload" href="/fonts/MaziusDisplay-Extraitalic.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/NectoMono-Regular.woff2"         as="font" type="font/woff2" crossorigin />
     <ClientRouter />
+    <PortalShader />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>

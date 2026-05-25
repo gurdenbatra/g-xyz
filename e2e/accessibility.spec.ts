@@ -54,6 +54,12 @@ test.describe('Garden layout accessibility', () => {
     await expect(page).toHaveURL(/\/work/);
     await expect(page.locator('main#main-content')).toBeVisible();
   });
+
+  test('navigation still completes after PortalShader is added', async ({ page }) => {
+    await page.goto('/work');
+    await page.goto('/');
+    await expect(page.locator('main#main-content')).toBeVisible();
+  });
 });
 
 test.describe('Nav component', () => {
