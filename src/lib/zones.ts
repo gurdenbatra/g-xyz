@@ -46,7 +46,7 @@ export const zones: readonly Zone[] = [
     name: 'The Compost',
     shortDesc: 'Story',
     longDesc: 'Story & origins',
-    href: '/about',
+    href: '/compost',
   },
   {
     id: 'mycelium',

@@ -4,7 +4,7 @@
       "url": [
         "http://localhost:4321/",
         "http://localhost:4321/polyculture",
-        "http://localhost:4321/about",
+        "http://localhost:4321/compost",
         "http://localhost:4321/colophon"
       ],
       "startServerCommand": "pnpm preview --host 127.0.0.1 --port 4321",

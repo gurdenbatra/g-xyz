@@ -8,5 +8,6 @@ export default defineConfig({
   redirects: {
     '/work': '/polyculture',
     '/work/[slug]': '/polyculture/[slug]',
+    '/about': '/compost',
   },
 });

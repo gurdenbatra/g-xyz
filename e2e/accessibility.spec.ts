@@ -74,14 +74,14 @@ test.describe('Nav component', () => {
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav.locator('a[href="/polyculture"]')).not.toBeAttached();
-    await expect(nav.locator('a[href="/about"]')).not.toBeAttached();
+    await expect(nav.locator('a[href="/compost"]')).not.toBeAttached();
   });
 
   test('active zones are reachable via the map overlay', async ({ page }) => {
     await page.goto('/');
     const overlay = page.locator('#map-overlay');
     await expect(overlay.locator('a[href="/polyculture"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/about"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/compost"]')).toBeAttached();
     await expect(overlay.locator('a[href="/colophon"]')).toBeAttached();
   });
 });
@@ -120,7 +120,7 @@ test.describe('MapOverlay', () => {
     await page.goto('/');
     const overlay = page.locator('#map-overlay');
     await expect(overlay.locator('a[href="/polyculture"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/about"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/compost"]')).toBeAttached();
     await expect(overlay.locator('a[href="/colophon"]')).toBeAttached();
   });
 
