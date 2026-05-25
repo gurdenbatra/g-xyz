@@ -38,10 +38,23 @@
   font-display: swap;
 }
 
+:root {
+  --font-serif:   'MaziusDisplay', Georgia, 'Times New Roman', serif;
+  --font-mono:    'NectoMono', 'Courier New', monospace;
+  --font-display: 'MaziusDisplay', Georgia, serif; /* Phase 1 stand-in; will swap to a geometric sans in Canopy phase */
+}
+
 html {
-  font-family: 'MaziusDisplay', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.font-poster {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .font-display {
