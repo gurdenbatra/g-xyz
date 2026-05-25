@@ -56,6 +56,16 @@ const season = seasonFor(new Date());
     <CursorBee />
 
     <script>
+      function closeMap() {
+        const toggle = document.getElementById('map-toggle') as HTMLButtonElement | null;
+        const overlay = document.getElementById('map-overlay') as HTMLElement | null;
+        if (!toggle || !overlay) return;
+        overlay.setAttribute('aria-hidden', 'true');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open garden map');
+        toggle.focus();
+      }
+
       function initMap() {
         const toggle = document.getElementById('map-toggle') as HTMLButtonElement | null;
         const overlay = document.getElementById('map-overlay') as HTMLElement | null;
@@ -72,27 +82,25 @@ const season = seasonFor(new Date());
           firstFocusable?.focus();
         }
 
-        function closeMap() {
-          overlay!.setAttribute('aria-hidden', 'true');
-          toggle!.setAttribute('aria-expanded', 'false');
-          toggle!.setAttribute('aria-label', 'Open garden map');
-          toggle!.focus();
-        }
-
         toggle.addEventListener('click', () => {
           toggle.getAttribute('aria-expanded') === 'true' ? closeMap() : openMap();
         });
 
         backdrop?.addEventListener('click', closeMap);
-
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && overlay!.getAttribute('aria-hidden') === 'false') {
-            closeMap();
-          }
-        });
       }
 
-      // Run on first load AND after every Astro view-transition (DOM swap)
+      // Escape handler binds once to document (which persists across view-transitions).
+      // Looks up overlay at call time so it works after DOM swaps.
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const overlay = document.getElementById('map-overlay');
+        if (overlay?.getAttribute('aria-hidden') === 'false') {
+          closeMap();
+        }
+      });
+
+      // Toggle/backdrop listeners re-bind per page-load because those DOM nodes
+      // are swapped by ClientRouter; old listeners die with the old elements.
       document.addEventListener('astro:page-load', initMap);
     </script>
   </body>
