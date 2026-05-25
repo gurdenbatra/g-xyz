@@ -1,48 +1,5 @@
 ---
-const zones = [
-  {
-    id: 'polyculture',
-    emoji: '🌿',
-    name: 'The Polyculture',
-    desc: 'Work & projects',
-    href: '/work',
-  },
-  {
-    id: 'canopy',
-    emoji: '🌳',
-    name: 'The Canopy',
-    desc: 'Art, poetry & essays',
-    href: null,
-  },
-  {
-    id: 'hive',
-    emoji: '🐝',
-    name: 'The Hive',
-    desc: 'Now & contact',
-    href: null,
-  },
-  {
-    id: 'compost',
-    emoji: '🪱',
-    name: 'The Compost',
-    desc: 'Story & origins',
-    href: '/about',
-  },
-  {
-    id: 'mycelium',
-    emoji: '🍄',
-    name: 'The Mycelium',
-    desc: 'Collaborators & network',
-    href: null,
-  },
-  {
-    id: 'beds',
-    emoji: '🛠',
-    name: 'The Beds',
-    desc: 'Colophon & care',
-    href: '/colophon',
-  },
-] as const;
+import { zones } from '../../lib/zones';
 ---
 
 <div
@@ -71,7 +28,7 @@ const zones = [
                 <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
                 <span class="zone-text">
                   <span class="zone-name">{zone.name}</span>
-                  <span class="zone-desc">{zone.desc}</span>
+                  <span class="zone-desc">{zone.longDesc}</span>
                 </span>
               </a>
             ) : (
@@ -80,7 +37,7 @@ const zones = [
                 <span class="zone-text">
                   <span class="zone-name">{zone.name}</span>
                   <span class="zone-desc">
-                    {zone.desc}
+                    {zone.longDesc}
                     <span class="zone-soon"> · soon</span>
                   </span>
                 </span>

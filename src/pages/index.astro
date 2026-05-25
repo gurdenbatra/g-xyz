@@ -1,68 +1,15 @@
 ---
 import Garden from '@layouts/Garden.astro';
+import { zones, type ZoneId } from '../lib/zones';
 
-const zones = [
-  {
-    id: 'polyculture',
-    emoji: '🌿',
-    name: 'The Polyculture',
-    desc: 'Work',
-    href: '/work',
-    color: 'var(--c-moss)',
-    textColor: 'var(--c-paper)',
-    delay: '0s',
-  },
-  {
-    id: 'canopy',
-    emoji: '🌳',
-    name: 'The Canopy',
-    desc: 'Art',
-    href: null,
-    color: 'var(--c-chartreuse)',
-    textColor: 'var(--c-ink)',
-    delay: '0.3s',
-  },
-  {
-    id: 'hive',
-    emoji: '🐝',
-    name: 'The Hive',
-    desc: 'Now',
-    href: null,
-    color: 'var(--c-ochre)',
-    textColor: 'var(--c-ink)',
-    delay: '0.6s',
-  },
-  {
-    id: 'compost',
-    emoji: '🪱',
-    name: 'The Compost',
-    desc: 'Story',
-    href: '/about',
-    color: 'var(--c-soil)',
-    textColor: 'var(--c-paper)',
-    delay: '0.15s',
-  },
-  {
-    id: 'mycelium',
-    emoji: '🍄',
-    name: 'The Mycelium',
-    desc: 'Network',
-    href: null,
-    color: 'var(--c-indigo)',
-    textColor: 'var(--c-paper)',
-    delay: '0.45s',
-  },
-  {
-    id: 'beds',
-    emoji: '🛠',
-    name: 'The Beds',
-    desc: 'Care',
-    href: '/colophon',
-    color: 'var(--ink-faint)',
-    textColor: 'var(--c-ink)',
-    delay: '0.75s',
-  },
-] as const;
+const zoneVisuals: Record<ZoneId, { color: string; textColor: string; delay: string }> = {
+  polyculture: { color: 'var(--c-moss)', textColor: 'var(--c-paper)', delay: '0s' },
+  canopy: { color: 'var(--c-chartreuse)', textColor: 'var(--c-ink)', delay: '0.3s' },
+  hive: { color: 'var(--c-ochre)', textColor: 'var(--c-ink)', delay: '0.6s' },
+  compost: { color: 'var(--c-soil)', textColor: 'var(--c-paper)', delay: '0.15s' },
+  mycelium: { color: 'var(--c-indigo)', textColor: 'var(--c-paper)', delay: '0.45s' },
+  beds: { color: 'var(--ink-faint)', textColor: 'var(--c-ink)', delay: '0.75s' },
+};
 ---
 
 <Garden title="Home">
@@ -73,33 +20,36 @@ const zones = [
     </p>
 
     <div class="garden-map" role="list" aria-label="Garden zones">
-      {zones.map((zone) => (
-        <div
-          class="zone-patch"
-          data-zone={zone.id}
-          style={`--zone-color: ${zone.color}; --zone-text: ${zone.textColor}; --zone-delay: ${zone.delay};`}
-          role="listitem"
-        >
-          {zone.href ? (
-            <a
-              href={zone.href}
-              class="zone-inner zone-inner--link"
-              aria-label={`${zone.name} — ${zone.desc}`}
-            >
-              <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
-              <span class="zone-name">{zone.name}</span>
-              <span class="zone-desc label">{zone.desc}</span>
-            </a>
-          ) : (
-            <div class="zone-inner zone-inner--soon" aria-label={`${zone.name} — coming soon`}>
-              <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
-              <span class="zone-name">{zone.name}</span>
-              <span class="zone-desc label">{zone.desc}</span>
-              <span class="zone-badge label">Soon</span>
-            </div>
-          )}
-        </div>
-      ))}
+      {zones.map((zone) => {
+        const v = zoneVisuals[zone.id];
+        return (
+          <div
+            class="zone-patch"
+            data-zone={zone.id}
+            style={`--zone-color: ${v.color}; --zone-text: ${v.textColor}; --zone-delay: ${v.delay};`}
+            role="listitem"
+          >
+            {zone.href ? (
+              <a
+                href={zone.href}
+                class="zone-inner zone-inner--link"
+                aria-label={`${zone.name} — ${zone.shortDesc}`}
+              >
+                <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
+                <span class="zone-name">{zone.name}</span>
+                <span class="zone-desc label">{zone.shortDesc}</span>
+              </a>
+            ) : (
+              <div class="zone-inner zone-inner--soon" aria-label={`${zone.name} — coming soon`}>
+                <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
+                <span class="zone-name">{zone.name}</span>
+                <span class="zone-desc label">{zone.shortDesc}</span>
+                <span class="zone-badge label">Soon</span>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   </section>
 </Garden>
