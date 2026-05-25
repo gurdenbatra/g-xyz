@@ -122,4 +122,40 @@ test.describe('MapOverlay', () => {
     await expect(overlay.locator('[data-zone="mycelium"]')).toBeAttached();
     await expect(overlay.locator('[data-zone="beds"]')).toBeAttached();
   });
+
+  test('clicking map toggle opens the overlay', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#map-toggle').click();
+    await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'false');
+    await expect(page.locator('#map-toggle')).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  test('toggle aria-label changes to "Close" when overlay is open', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#map-toggle').click();
+    await expect(page.locator('#map-toggle')).toHaveAttribute('aria-label', 'Close garden map');
+  });
+
+  test('pressing Escape closes the overlay', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#map-toggle').click();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'true');
+    await expect(page.locator('#map-toggle')).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  test('clicking the backdrop closes the overlay', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#map-toggle').click();
+    await page.locator('.map-overlay-backdrop').click();
+    await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  test('map toggle stays functional after view-transition navigation', async ({ page }) => {
+    await page.goto('/');
+    await page.click('a[href="/work"]');
+    await expect(page).toHaveURL(/\/work/);
+    await page.locator('#map-toggle').click();
+    await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'false');
+  });
 });

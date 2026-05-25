@@ -131,6 +131,15 @@ const zones = [
     width: min(90vw, 560px);
     background: var(--ground);
     padding: var(--space-10) var(--space-10);
+    /* Let clicks on panel chrome (background, padding, list gaps) fall
+       through to the backdrop. Interactive children re-enable pointer
+       events below. */
+    pointer-events: none;
+  }
+
+  .map-overlay-panel a,
+  .map-overlay-panel button {
+    pointer-events: auto;
   }
 
   .zone-list {

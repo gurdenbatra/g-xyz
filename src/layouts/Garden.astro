@@ -52,5 +52,46 @@ const season = seasonFor(new Date());
     <MapOverlay />
     <MapToggle />
     <CursorBee />
+
+    <script>
+      function initMap() {
+        const toggle = document.getElementById('map-toggle') as HTMLButtonElement | null;
+        const overlay = document.getElementById('map-overlay') as HTMLElement | null;
+        const backdrop = overlay?.querySelector<HTMLButtonElement>('.map-overlay-backdrop');
+        if (!toggle || !overlay) return;
+
+        function openMap() {
+          overlay!.setAttribute('aria-hidden', 'false');
+          toggle!.setAttribute('aria-expanded', 'true');
+          toggle!.setAttribute('aria-label', 'Close garden map');
+          const firstFocusable = overlay!.querySelector<HTMLElement>(
+            'a[href], button:not(.map-overlay-backdrop)',
+          );
+          firstFocusable?.focus();
+        }
+
+        function closeMap() {
+          overlay!.setAttribute('aria-hidden', 'true');
+          toggle!.setAttribute('aria-expanded', 'false');
+          toggle!.setAttribute('aria-label', 'Open garden map');
+          toggle!.focus();
+        }
+
+        toggle.addEventListener('click', () => {
+          toggle.getAttribute('aria-expanded') === 'true' ? closeMap() : openMap();
+        });
+
+        backdrop?.addEventListener('click', closeMap);
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && overlay!.getAttribute('aria-hidden') === 'false') {
+            closeMap();
+          }
+        });
+      }
+
+      // Run on first load AND after every Astro view-transition (DOM swap)
+      document.addEventListener('astro:page-load', initMap);
+    </script>
   </body>
 </html>
