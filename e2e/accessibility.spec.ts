@@ -50,7 +50,8 @@ test.describe('Garden layout accessibility', () => {
 
   test('navigation between pages completes without error', async ({ page }) => {
     await page.goto('/');
-    await page.click('a[href="/work"]');
+    await page.locator('#map-toggle').click();
+    await page.locator('#map-overlay a[href="/work"]').click();
     await expect(page).toHaveURL(/\/work/);
     await expect(page.locator('main#main-content')).toBeVisible();
   });
@@ -63,20 +64,25 @@ test.describe('Garden layout accessibility', () => {
 });
 
 test.describe('Nav component', () => {
-  test('nav contains links to all main sections', async ({ page }) => {
+  test('nav contains the logo link', async ({ page }) => {
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav.locator('a[href="/work"]')).toBeAttached();
-    await expect(nav.locator('a[href="/art"]')).toBeAttached();
-    await expect(nav.locator('a[href="/writing"]')).toBeAttached();
-    await expect(nav.locator('a[href="/about"]')).toBeAttached();
+    await expect(nav.locator('a[href="/"]')).toBeAttached();
   });
 
-  test('nav logo links to home', async ({ page }) => {
+  test('nav does not contain old zone links (navigation is via map overlay)', async ({ page }) => {
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    const logoLink = nav.locator('a[href="/"]');
-    await expect(logoLink).toBeAttached();
+    await expect(nav.locator('a[href="/work"]')).not.toBeAttached();
+    await expect(nav.locator('a[href="/about"]')).not.toBeAttached();
+  });
+
+  test('active zones are reachable via the map overlay', async ({ page }) => {
+    await page.goto('/');
+    const overlay = page.locator('#map-overlay');
+    await expect(overlay.locator('a[href="/work"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/about"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/colophon"]')).toBeAttached();
   });
 });
 
@@ -159,7 +165,8 @@ test.describe('MapOverlay', () => {
 
   test('map toggle stays functional after view-transition navigation', async ({ page }) => {
     await page.goto('/');
-    await page.click('a[href="/work"]');
+    await page.locator('#map-toggle').click();
+    await page.locator('#map-overlay a[href="/work"]').click();
     await expect(page).toHaveURL(/\/work/);
     await page.locator('#map-toggle').click();
     await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'false');
