@@ -1,0 +1,123 @@
+---
+import Garden from '@layouts/Garden.astro';
+import Strata from '../../components/zones/Compost/Strata.astro';
+---
+
+<Garden
+  title="The Compost — Gurden's Garden"
+  description="The decomposing layers: origins, education, and current work."
+>
+  <div class="compost-wrap page-wrap">
+
+    <header class="compost-header">
+      <p class="label zone-emoji" aria-hidden="true">🪱</p>
+      <h1>The Compost</h1>
+      <p class="compost-intro">
+        Civic Tech Lead at Dark Matter Labs, Berlin. Background in Computer Science
+        (Georgia Tech) and New Media Design (Aalto University). Originally from Delhi.
+      </p>
+    </header>
+
+    <div class="strata-section" aria-labelledby="strata-heading">
+      <h2 id="strata-heading" class="label section-heading">Strata</h2>
+      <Strata />
+    </div>
+
+    <section class="contact-section" aria-labelledby="contact-heading">
+      <h2 id="contact-heading" class="label section-heading">Get in touch</h2>
+      <ul class="contact-list" role="list">
+        <li>
+          <a href="mailto:gurden@darkmatterlabs.org" class="contact-link label">
+            gurden@darkmatterlabs.org
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://www.linkedin.com/in/gurdenbatra"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-link label"
+          >
+            LinkedIn <span aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://github.com/gurden"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-link label"
+          >
+            GitHub <span aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+</Garden>
+
+<style>
+  .compost-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .compost-header {
+    margin-bottom: var(--space-16);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: var(--space-8);
+  }
+
+  .zone-emoji {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+    display: block;
+  }
+
+  .compost-header h1 {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .compost-intro {
+    font-size: var(--text-md);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  .section-heading {
+    display: block;
+    margin-bottom: var(--space-8);
+  }
+
+  .strata-section {
+    margin-bottom: var(--space-20);
+  }
+
+  .contact-section {
+    margin-bottom: var(--space-16);
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--ink-faint);
+  }
+
+  .contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .contact-link {
+    color: var(--ink);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--easing);
+  }
+
+  .contact-link:hover {
+    color: var(--ink-muted);
+  }
+</style>
