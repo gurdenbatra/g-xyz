@@ -47,6 +47,8 @@ const seeds: PlantSeed[] = projects.map((p) => ({
     segments: Segment[];
   }
 
+  let cleanup: (() => void) | null = null;
+
   function mountSlowPlot() {
     const canvas = document.querySelector<HTMLCanvasElement>('canvas[data-slow-plot]');
     const seeds = window.__slowPlotSeeds;
@@ -172,8 +174,6 @@ const seeds: PlantSeed[] = projects.map((p) => ({
       }
     }
 
-    init();
-
     // Pause animation when canvas is off-screen
     const io = new IntersectionObserver((entries) => {
       const visible = entries[0]?.isIntersecting;
@@ -244,17 +244,34 @@ const seeds: PlantSeed[] = projects.map((p) => ({
 
     canvas!.style.cursor = 'pointer';
 
+    // ResizeObserver drives init() — observe before explicit call so the first
+    // ResizeObserver entry handles initial sizing (avoids double init).
     const ro = new ResizeObserver(init);
     ro.observe(canvas!);
 
+    // AbortController lets us remove the document-level listener on teardown
+    // without needing a reference to the handler function.
+    const ac = new AbortController();
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         cancelAnimationFrame(raf);
       } else if (!reducedMotion) {
         frame();
       }
-    });
+    }, { signal: ac.signal });
+
+    cleanup = () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      ro.disconnect();
+      ac.abort();
+    };
   }
+
+  document.addEventListener('astro:before-swap', () => {
+    cleanup?.();
+    cleanup = null;
+  });
 
   document.addEventListener('astro:page-load', mountSlowPlot);
 </script>
