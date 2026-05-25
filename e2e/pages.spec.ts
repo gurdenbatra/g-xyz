@@ -28,7 +28,7 @@ test.describe('Colophon page', () => {
 
   test('mentions Astro and Mazius', async ({ page }) => {
     await page.goto('/colophon');
-    await expect(page.getByText(/Astro/i)).toBeVisible();
-    await expect(page.getByText(/Mazius/i)).toBeVisible();
+    await expect(page.getByText(/Astro/i).first()).toBeVisible();
+    await expect(page.getByText(/Mazius/i).first()).toBeVisible();
   });
 });
