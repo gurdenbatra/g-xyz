@@ -186,6 +186,71 @@ const seeds: PlantSeed[] = projects.map((p) => ({
     });
     io.observe(canvas!);
 
+    // ── Interactions: hover tilt + tag + click navigate ────────────
+    const tagEl = canvas!.parentElement!.querySelector<HTMLElement>('[data-slow-plot-tag]');
+
+    function distanceToPlant(plant: Plant, x: number, y: number): number {
+      // Approximate "distance to plant" as distance from cursor to the plant's
+      // bounding box center. Cheap and good enough for hover.
+      const xs = plant.segments.flatMap((s) => [plant.rootX + s.x1, plant.rootX + s.x2]);
+      const ys = plant.segments.flatMap((s) => [plant.rootY + s.y1, plant.rootY + s.y2]);
+      const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+      const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+      return Math.hypot(x - cx, y - cy);
+    }
+
+    function setTag(plant: Plant | null, cursorX: number) {
+      if (!tagEl) return;
+      if (!plant) {
+        tagEl.setAttribute('data-visible', 'false');
+        return;
+      }
+      tagEl.textContent = plant.title;
+      tagEl.style.left = `${cursorX}px`;
+      const minY = Math.min(...plant.segments.map((s) => plant.rootY + s.y2));
+      tagEl.style.top = `${minY}px`;
+      tagEl.setAttribute('data-visible', 'true');
+    }
+
+    canvas!.addEventListener('mousemove', (e) => {
+      const rect = canvas!.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (plants.length === 0) return;
+      const nearest = plants.reduce((best, p) =>
+        distanceToPlant(p, x, y) < distanceToPlant(best, x, y) ? p : best,
+      );
+      // Only "select" if within ~200px of the plant center (forgiving — the
+      // canvas can be tall and plant centers sit near the bottom)
+      const within = distanceToPlant(nearest, x, y) < 200;
+      currentPlant = within ? nearest : null;
+      lastCursorX = x;
+      setTag(currentPlant, x);
+      // Under reduced motion the RAF loop is paused, so we manually redraw to
+      // reflect the tag positioning (tilt is suppressed visually but tag still moves).
+      if (reducedMotion) draw(plants, 0);
+    });
+
+    canvas!.addEventListener('mouseleave', () => {
+      currentPlant = null;
+      setTag(null, 0);
+      if (reducedMotion) draw(plants, 0);
+    });
+
+    canvas!.addEventListener('click', () => {
+      if (!currentPlant) return;
+      const slug = currentPlant.slug;
+      // Expose slug for test introspection — production navigation also fires below
+      (window as unknown as { __lastSlowPlotNavSlug?: string }).__lastSlowPlotNavSlug = slug;
+      // Defer the actual navigation so observers/tests can read the exposed slug
+      // before the page context is replaced.
+      setTimeout(() => {
+        window.location.href = `/polyculture/${slug}`;
+      }, 250);
+    });
+
+    canvas!.style.cursor = 'pointer';
+
     const ro = new ResizeObserver(init);
     ro.observe(canvas!);
 
