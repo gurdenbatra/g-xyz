@@ -22,7 +22,7 @@ test.describe('Garden map — home page', () => {
     await page.goto('/');
     const map = page.locator('.garden-map');
     await expect(map.locator('[data-zone="polyculture"] a[href="/polyculture"]')).toBeAttached();
-    await expect(map.locator('[data-zone="compost"] a[href="/about"]')).toBeAttached();
+    await expect(map.locator('[data-zone="compost"] a[href="/compost"]')).toBeAttached();
     await expect(map.locator('[data-zone="beds"] a[href="/colophon"]')).toBeAttached();
   });
 
