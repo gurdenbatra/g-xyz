@@ -5,4 +5,8 @@ export default defineConfig({
   integrations: [mdx()],
   output: 'static',
   site: 'https://gurden.xyz',
+  redirects: {
+    '/work': '/polyculture',
+    '/work/[slug]': '/polyculture/[slug]',
+  },
 });

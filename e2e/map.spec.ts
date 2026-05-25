@@ -21,7 +21,7 @@ test.describe('Garden map — home page', () => {
   test('active zones are keyboard-navigable links', async ({ page }) => {
     await page.goto('/');
     const map = page.locator('.garden-map');
-    await expect(map.locator('[data-zone="polyculture"] a[href="/work"]')).toBeAttached();
+    await expect(map.locator('[data-zone="polyculture"] a[href="/polyculture"]')).toBeAttached();
     await expect(map.locator('[data-zone="compost"] a[href="/about"]')).toBeAttached();
     await expect(map.locator('[data-zone="beds"] a[href="/colophon"]')).toBeAttached();
   });

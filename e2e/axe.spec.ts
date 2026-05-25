@@ -3,8 +3,8 @@ import AxeBuilder from '@axe-core/playwright';
 
 const pages = [
   { name: 'home',           path: '/' },
-  { name: 'work index',     path: '/work' },
-  { name: 'work circulaw',  path: '/work/circulaw' },
+  { name: 'polyculture index',     path: '/polyculture' },
+  { name: 'polyculture circulaw',  path: '/polyculture/circulaw' },
   { name: 'about',          path: '/about' },
   { name: 'colophon',       path: '/colophon' },
   { name: 'styleguide',     path: '/styleguide' },

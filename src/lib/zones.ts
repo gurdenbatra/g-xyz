@@ -22,7 +22,7 @@ export const zones: readonly Zone[] = [
     name: 'The Polyculture',
     shortDesc: 'Work',
     longDesc: 'Work & projects',
-    href: '/work',
+    href: '/polyculture',
   },
   {
     id: 'canopy',

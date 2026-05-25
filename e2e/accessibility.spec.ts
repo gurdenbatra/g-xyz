@@ -51,13 +51,13 @@ test.describe('Garden layout accessibility', () => {
   test('navigation between pages completes without error', async ({ page }) => {
     await page.goto('/');
     await page.locator('#map-toggle').click();
-    await page.locator('#map-overlay a[href="/work"]').click();
-    await expect(page).toHaveURL(/\/work/);
+    await page.locator('#map-overlay a[href="/polyculture"]').click();
+    await expect(page).toHaveURL(/\/polyculture/);
     await expect(page.locator('main#main-content')).toBeVisible();
   });
 
   test('navigation still completes after PortalShader is added', async ({ page }) => {
-    await page.goto('/work');
+    await page.goto('/polyculture');
     await page.goto('/');
     await expect(page.locator('main#main-content')).toBeVisible();
   });
@@ -73,14 +73,14 @@ test.describe('Nav component', () => {
   test('nav does not contain old zone links (navigation is via map overlay)', async ({ page }) => {
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav.locator('a[href="/work"]')).not.toBeAttached();
+    await expect(nav.locator('a[href="/polyculture"]')).not.toBeAttached();
     await expect(nav.locator('a[href="/about"]')).not.toBeAttached();
   });
 
   test('active zones are reachable via the map overlay', async ({ page }) => {
     await page.goto('/');
     const overlay = page.locator('#map-overlay');
-    await expect(overlay.locator('a[href="/work"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/polyculture"]')).toBeAttached();
     await expect(overlay.locator('a[href="/about"]')).toBeAttached();
     await expect(overlay.locator('a[href="/colophon"]')).toBeAttached();
   });
@@ -101,7 +101,7 @@ test.describe('MapToggle', () => {
   });
 
   test('map toggle is present on non-home pages too', async ({ page }) => {
-    await page.goto('/work');
+    await page.goto('/polyculture');
     await expect(page.locator('#map-toggle')).toBeAttached();
   });
 });
@@ -119,7 +119,7 @@ test.describe('MapOverlay', () => {
   test('overlay contains links for the three active zones', async ({ page }) => {
     await page.goto('/');
     const overlay = page.locator('#map-overlay');
-    await expect(overlay.locator('a[href="/work"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/polyculture"]')).toBeAttached();
     await expect(overlay.locator('a[href="/about"]')).toBeAttached();
     await expect(overlay.locator('a[href="/colophon"]')).toBeAttached();
   });
@@ -166,8 +166,8 @@ test.describe('MapOverlay', () => {
   test('map toggle stays functional after view-transition navigation', async ({ page }) => {
     await page.goto('/');
     await page.locator('#map-toggle').click();
-    await page.locator('#map-overlay a[href="/work"]').click();
-    await expect(page).toHaveURL(/\/work/);
+    await page.locator('#map-overlay a[href="/polyculture"]').click();
+    await expect(page).toHaveURL(/\/polyculture/);
     await page.locator('#map-toggle').click();
     await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'false');
   });

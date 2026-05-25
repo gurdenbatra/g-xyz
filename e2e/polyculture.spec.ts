@@ -100,3 +100,16 @@ test.describe('Polyculture — page structure', () => {
     await expect(back).toHaveAttribute('href', '/polyculture');
   });
 });
+
+test.describe('Polyculture — redirects', () => {
+  test('GET /work redirects to /polyculture', async ({ page }) => {
+    const resp = await page.goto('/work');
+    expect(resp).not.toBeNull();
+    expect(page.url()).toMatch(/\/polyculture\/?$/);
+  });
+
+  test('GET /work/circulaw redirects to /polyculture/circulaw', async ({ page }) => {
+    await page.goto('/work/circulaw');
+    expect(page.url()).toMatch(/\/polyculture\/circulaw\/?$/);
+  });
+});
