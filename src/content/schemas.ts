@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export const PLANT_TYPES = ['fern', 'sunflower', 'thistle', 'vine', 'grass', 'shrub'] as const;
+export type PlantType = (typeof PLANT_TYPES)[number];
+
 export const projectSchema = z.object({
   title:         z.string(),
   description:   z.string(),
@@ -12,6 +15,7 @@ export const projectSchema = z.object({
   ).optional(),
   featured:      z.boolean().default(false),
   heroImage:     z.string().optional(),
+  plantType:     z.enum(PLANT_TYPES).optional(),
 });
 
 export const poemSchema = z.object({

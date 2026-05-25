@@ -77,6 +77,42 @@ describe('projectSchema', () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it('accepts a project with plantType set', () => {
+    const result = projectSchema.parse({
+      title: 'Test',
+      description: 'A test project',
+      role: 'Dev',
+      year: 2024,
+      tags: ['tag'],
+      plantType: 'fern',
+    });
+    expect(result.plantType).toBe('fern');
+  });
+
+  it('accepts a project with plantType omitted (it is optional)', () => {
+    const result = projectSchema.parse({
+      title: 'Test',
+      description: 'A test project',
+      role: 'Dev',
+      year: 2024,
+      tags: ['tag'],
+    });
+    expect(result.plantType).toBeUndefined();
+  });
+
+  it('rejects a project with an invalid plantType', () => {
+    expect(() =>
+      projectSchema.parse({
+        title: 'Test',
+        description: 'A test project',
+        role: 'Dev',
+        year: 2024,
+        tags: ['tag'],
+        plantType: 'tree',
+      }),
+    ).toThrow();
+  });
 });
 
 describe('poemSchema', () => {
