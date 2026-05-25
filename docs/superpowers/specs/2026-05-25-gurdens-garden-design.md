@@ -1,7 +1,7 @@
 # Gurden's Garden — Design Spec
 
 **Date:** 2026-05-25
-**Status:** Draft for review
+**Status:** Phase 1 (Foundation) complete; Phase 2 (The Map) next
 **Replaces:** the current portfolio site at gurden.xyz (Astro 4, conventional layout)
 
 ---
