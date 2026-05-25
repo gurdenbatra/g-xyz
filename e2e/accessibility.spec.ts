@@ -47,6 +47,13 @@ test.describe('Garden layout accessibility', () => {
     const footer = page.locator('footer');
     await expect(footer).toBeAttached();
   });
+
+  test('navigation between pages completes without error', async ({ page }) => {
+    await page.goto('/');
+    await page.click('a[href="/work"]');
+    await expect(page).toHaveURL(/\/work/);
+    await expect(page.locator('main#main-content')).toBeVisible();
+  });
 });
 
 test.describe('Nav component', () => {
