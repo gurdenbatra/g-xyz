@@ -1,11 +1,26 @@
 :root {
-  /* ── Color ── */
-  --ground:      #F5F2ED;
-  --ink:         #1A1A18;
-  --ink-muted:   #6B6760;
-  --ink-faint:   #C4BFB6;
-  --art-ground:  #0D0F10;
+  /* ── Named palette (earth-rooted riso) ── */
+  --c-paper:      #F1E8D0;
+  --c-soil:       #8A4F2E;
+  --c-ochre:      #D9A857;
+  --c-moss:       #5A7A4A;
+  --c-indigo:     #2A3A5A;
+  --c-chartreuse: #C4D670;
+  --c-ink:        #1A1A1A;
+
+  /* ── Semantic tokens (mapped to palette) ── */
+  --ground:      var(--c-paper);
+  --ink:         var(--c-ink);
+  --ink-muted:   #4A4A48;            /* neutral, contrast-safe muted text */
+  --ink-faint:   #B8B0A0;            /* borders / dividers */
+  --art-ground:  #0D0F10;            /* night surfaces, reserved for v2 */
   --art-ink:     #E8E4DD;
+
+  /* ── Accent tokens (overridden by seasonal.css) ── */
+  --accent:      var(--c-moss);
+  --accent-2:    var(--c-ochre);
+  --accent-3:    var(--c-indigo);
+  --pollen:      var(--c-chartreuse);  /* used by generative layer */
 
   /* ── Type scale (base 17px, ratio ~1.25) ── */
   --text-xs:   0.625rem;   /* 10px  — Necto Mono labels */
