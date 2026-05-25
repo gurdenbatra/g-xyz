@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import Base from '@layouts/Base.astro';
+import Garden from '@layouts/Garden.astro';
 import Marginalia from '@components/Marginalia.astro';
 import ProjectRow from '@components/ProjectRow.astro';
 
@@ -10,7 +10,7 @@ const featured = allProjects
   .sort((a, b) => b.data.year - a.data.year);
 ---
 
-<Base title="Home">
+<Garden title="Home">
 
   <!-- ── 1. SKILLS HERO ── -->
   <section class="hero page-wrap">
@@ -93,7 +93,7 @@ const featured = allProjects
     </div>
   </section>
 
-</Base>
+</Garden>
 
 <script>
   const PORTAL_VERT = `
