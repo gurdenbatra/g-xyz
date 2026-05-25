@@ -17,19 +17,19 @@
     "lhci": "pnpm build && lhci autorun"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.9",
     "@astrojs/mdx": "^4.0.0",
     "astro": "^5.0.0",
     "motion": "^11.0.0",
-    "ogl": "^1.0.0",
-    "typescript": "^6.0.3"
+    "ogl": "^1.0.0"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
     "@axe-core/playwright": "^4.11.3",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.45.0",
     "@vitest/ui": "^2.0.0",
     "jsdom": "^29.1.1",
+    "typescript": "^6.0.3",
     "vitest": "^2.0.0",
     "zod": "^3.23.0"
   }
