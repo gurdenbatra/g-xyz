@@ -73,3 +73,23 @@ test.describe('Nav component', () => {
     await expect(logoLink).toBeAttached();
   });
 });
+
+test.describe('MapToggle', () => {
+  test('map toggle button is present on every page', async ({ page }) => {
+    await page.goto('/');
+    const toggle = page.locator('#map-toggle');
+    await expect(toggle).toBeAttached();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(toggle).toHaveAttribute('aria-controls', 'map-overlay');
+  });
+
+  test('map toggle has accessible label', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#map-toggle')).toHaveAttribute('aria-label', 'Open garden map');
+  });
+
+  test('map toggle is present on non-home pages too', async ({ page }) => {
+    await page.goto('/work');
+    await expect(page.locator('#map-toggle')).toBeAttached();
+  });
+});

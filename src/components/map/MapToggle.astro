@@ -1,0 +1,71 @@
+---
+---
+<button
+  id="map-toggle"
+  class="map-toggle"
+  type="button"
+  aria-expanded="false"
+  aria-controls="map-overlay"
+  aria-label="Open garden map"
+>
+  <svg
+    class="map-toggle-icon"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
+    <rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+    <rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+  </svg>
+  <span class="map-toggle-label">Map</span>
+</button>
+
+<style>
+  .map-toggle {
+    position: fixed;
+    top: var(--space-4);
+    right: var(--space-6);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--ground);
+    border: 1px solid var(--ink-faint);
+    color: var(--ink-muted);
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--easing),
+      border-color var(--duration-fast) var(--easing),
+      background var(--duration-fast) var(--easing);
+  }
+
+  .map-toggle:hover {
+    color: var(--ink);
+    border-color: var(--ink-muted);
+  }
+
+  .map-toggle[aria-expanded='true'] {
+    background: var(--ink);
+    color: var(--ground);
+    border-color: var(--ink);
+  }
+
+  @media (max-width: 600px) {
+    .map-toggle-label {
+      display: none;
+    }
+
+    .map-toggle {
+      padding: var(--space-2) var(--space-3);
+    }
+  }
+</style>
