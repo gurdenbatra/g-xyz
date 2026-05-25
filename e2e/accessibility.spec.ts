@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Base layout accessibility', () => {
+test.describe('Garden layout accessibility', () => {
   test('skip link is present in DOM', async ({ page }) => {
     await page.goto('/');
     const skipLink = page.locator('a.skip-link[href="#main-content"]');
