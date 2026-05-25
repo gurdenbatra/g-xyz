@@ -24,4 +24,23 @@ test.describe('Polyculture — Slow Plot canvas', () => {
     expect(size.w).toBeGreaterThan(0);
     expect(size.h).toBeGreaterThan(0);
   });
+
+  test('canvas is animating (frames change over time)', async ({ page }) => {
+    await page.goto('/polyculture-preview');
+    const before = await page.locator('canvas[data-slow-plot]').screenshot();
+    await page.waitForTimeout(600);
+    const after = await page.locator('canvas[data-slow-plot]').screenshot();
+    expect(Buffer.compare(before, after)).not.toBe(0);
+  });
+
+  test('animation is suppressed under prefers-reduced-motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/polyculture-preview');
+    // Wait briefly to let any RAF kick in, then sample two frames 600ms apart
+    await page.waitForTimeout(200);
+    const before = await page.locator('canvas[data-slow-plot]').screenshot();
+    await page.waitForTimeout(600);
+    const after = await page.locator('canvas[data-slow-plot]').screenshot();
+    expect(Buffer.compare(before, after)).toBe(0);
+  });
 });
