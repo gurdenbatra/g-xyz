@@ -1,0 +1,33 @@
+/*
+ * Seasonal modifier. The root layout sets data-season on <html> on first
+ * paint; these selectors swap accent tokens for the rest of the session.
+ * Body text + structural tokens (--ink, --ground) never change.
+ */
+
+[data-season='spring'] {
+  --accent:   var(--c-moss);
+  --accent-2: var(--c-chartreuse);
+  --accent-3: var(--c-ochre);
+  --pollen:   var(--c-chartreuse);
+}
+
+[data-season='summer'] {
+  --accent:   var(--c-ochre);
+  --accent-2: var(--c-moss);
+  --accent-3: var(--c-soil);
+  --pollen:   #F5D050;
+}
+
+[data-season='autumn'] {
+  --accent:   var(--c-soil);
+  --accent-2: var(--c-ochre);
+  --accent-3: var(--c-indigo);
+  --pollen:   #D97732;
+}
+
+[data-season='winter'] {
+  --accent:   var(--c-indigo);
+  --accent-2: var(--c-soil);
+  --accent-3: var(--c-moss);
+  --pollen:   #6A8090;
+}
