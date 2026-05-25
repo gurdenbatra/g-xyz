@@ -1,13 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
-import Base from '@layouts/Base.astro';
+import Garden from '@layouts/Garden.astro';
 import ProjectRow from '@components/ProjectRow.astro';
 
 const projects = await getCollection('projects');
 const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
 ---
 
-<Base
+<Garden
   title="Work"
   description="Projects and work by Gurden Batra — civic tech, design, and development."
 >
@@ -34,7 +34,7 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     </ol>
 
   </div>
-</Base>
+</Garden>
 
 <style>
   .work-wrap {

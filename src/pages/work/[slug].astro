@@ -1,6 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
-import Base from '@layouts/Base.astro';
+import Garden from '@layouts/Garden.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -19,7 +19,7 @@ const { title, description, role, year, tags, collaborators, links } = project.d
 const { Content } = await project.render();
 ---
 
-<Base title={title} description={description}>
+<Garden title={title} description={description}>
   <article class="project-wrap page-wrap">
 
     <header class="project-header">
@@ -64,7 +64,7 @@ const { Content } = await project.render();
     </footer>
 
   </article>
-</Base>
+</Garden>
 
 <style>
   .project-wrap {
