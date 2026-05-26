@@ -38,7 +38,7 @@ export const zones: readonly Zone[] = [
     name: 'The Hive',
     shortDesc: 'Now',
     longDesc: 'Now & contact',
-    href: null,
+    href: '/hive',
   },
   {
     id: 'compost',

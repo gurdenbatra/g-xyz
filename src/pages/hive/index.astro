@@ -1,0 +1,66 @@
+---
+import Garden from '@layouts/Garden.astro';
+import LiveFlock from '../../components/zones/Hive/LiveFlock.astro';
+---
+
+<Garden
+  title="The Hive — Gurden's Garden"
+  description="What I'm working on now, what I'm reading, and how to reach me."
+>
+  <div class="hive-wrap page-wrap">
+
+    <header class="hive-header">
+      <p class="label zone-emoji" aria-hidden="true">🐝</p>
+      <h1>The Hive</h1>
+      <p class="hive-intro">
+        What I'm carrying right now, what I'm reading, and how to reach me.
+      </p>
+    </header>
+
+    <section class="flock-section" aria-labelledby="flock-heading">
+      <h2 id="flock-heading" class="label section-heading">Live Flock</h2>
+      <LiveFlock />
+    </section>
+
+  </div>
+</Garden>
+
+<style>
+  .hive-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .hive-header {
+    margin-bottom: var(--space-16);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: var(--space-8);
+  }
+
+  .zone-emoji {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+    display: block;
+  }
+
+  .hive-header h1 {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .hive-intro {
+    font-size: var(--text-md);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  .section-heading {
+    display: block;
+    margin-bottom: var(--space-8);
+  }
+
+  .flock-section {
+    margin-bottom: var(--space-20);
+  }
+</style>

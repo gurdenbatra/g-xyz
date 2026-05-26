@@ -5,7 +5,8 @@
         "http://localhost:4321/",
         "http://localhost:4321/polyculture",
         "http://localhost:4321/compost",
-        "http://localhost:4321/beds"
+        "http://localhost:4321/beds",
+        "http://localhost:4321/hive"
       ],
       "startServerCommand": "pnpm preview --host 127.0.0.1 --port 4321",
       "startServerReadyPattern": "Local",
