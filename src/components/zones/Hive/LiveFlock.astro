@@ -133,6 +133,7 @@ const rawFlowers: RawFlower[] = [
     const cChartreuse  = style.getPropertyValue('--c-chartreuse').trim()  || '#C4D670';
     const cInk         = style.getPropertyValue('--c-ink').trim()         || '#1A1A1A';
     const cPaper       = style.getPropertyValue('--c-paper').trim()       || '#F1E8D0';
+    const fontMono     = style.getPropertyValue('--font-mono').trim()     || 'monospace';
 
     function kindColor(kind: 'carrying' | 'reading' | 'contact'): string {
       if (kind === 'carrying') return cMoss;
@@ -207,7 +208,7 @@ const rawFlowers: RawFlower[] = [
       // Label below flower
       ctx!.globalAlpha = 0.75;
       ctx!.fillStyle   = cInk;
-      ctx!.font        = '11px monospace';
+      ctx!.font        = `11px ${fontMono}`;
       ctx!.textAlign   = 'center';
       ctx!.textBaseline = 'top';
       ctx!.fillText(f.label, x, y + FLOWER_R + 15);

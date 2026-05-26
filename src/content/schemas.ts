@@ -40,7 +40,7 @@ export const nowSchema = z.object({
   reading:  z.array(z.object({ label: z.string().min(1), detail: z.string().min(1) })).min(1),
   contact:  z.array(z.object({
     label:  z.string().min(1),
-    url:    z.string().min(1),
+    url:    z.union([z.string().url(), z.string().startsWith('mailto:')]),
     detail: z.string().min(1).optional(),
   })).min(1),
 });
