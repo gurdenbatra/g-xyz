@@ -23,10 +23,10 @@ describe('layoutFlowers', () => {
     }
   });
 
-  it('places flowers with y in [0.1, 0.9]', () => {
+  it('places flowers with y in [0.15, 0.85]', () => {
     for (const f of layoutFlowers(rawFlowers, W, H)) {
-      expect(f.y).toBeGreaterThanOrEqual(0.1);
-      expect(f.y).toBeLessThanOrEqual(0.9);
+      expect(f.y).toBeGreaterThanOrEqual(0.15);
+      expect(f.y).toBeLessThanOrEqual(0.85);
     }
   });
 

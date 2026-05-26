@@ -54,7 +54,8 @@ function clampMag(vx: number, vy: number, max: number): [number, number] {
 
 /**
  * Deterministically places flowers using a sunflower phyllotaxis layout.
- * Positions are normalized to [0.1, 0.9] × [0.15, 0.85].
+ * Positions are normalized to [0.1, 0.9] × [0.15, 0.85] — independent of canvas size.
+ * `_w` and `_h` are accepted for API consistency with resize() callers but unused.
  */
 export function layoutFlowers(rawFlowers: RawFlower[], _w: number, _h: number): FlowerDef[] {
   const count = rawFlowers.length;
@@ -75,10 +76,10 @@ export function createFlock(count: number, w: number, h: number, seed: number): 
   const bees: FlockBee[] = [];
   let s = seed;
   for (let i = 0; i < count; i++) {
-    s = lcg(s); const x  = (s / 0xffffffff) * w;
-    s = lcg(s); const y  = (s / 0xffffffff) * h;
-    s = lcg(s); const vx = ((s / 0xffffffff) * 2 - 1) * MAX_SPEED * 0.5;
-    s = lcg(s); const vy = ((s / 0xffffffff) * 2 - 1) * MAX_SPEED * 0.5;
+    s = lcg(s); const x  = (s / 2**32) * w;
+    s = lcg(s); const y  = (s / 2**32) * h;
+    s = lcg(s); const vx = ((s / 2**32) * 2 - 1) * MAX_SPEED * 0.5;
+    s = lcg(s); const vy = ((s / 2**32) * 2 - 1) * MAX_SPEED * 0.5;
     bees.push({ id: i, x, y, vx, vy, targetFlower: null, pollenFlower: null });
   }
   return bees;
