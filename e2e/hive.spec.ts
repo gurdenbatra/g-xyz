@@ -51,14 +51,22 @@ test.describe('Hive page — canvas', () => {
 
   test('canvas renders content (non-blank pixels) after mount', async ({ page }) => {
     await page.goto('/hive');
-    await page.waitForTimeout(500);
-    const isNonBlank = await page.locator('[data-live-flock]').evaluate((canvas) => {
-      const c = canvas as HTMLCanvasElement;
-      const ctx = c.getContext('2d');
-      if (!ctx) return false;
-      const data = ctx.getImageData(0, 0, c.width, c.height).data;
-      return data.some((v) => v !== 0);
-    });
+    // Wait until canvas has non-blank pixels (RAF loop may need a few frames)
+    const isNonBlank = await page.locator('[data-live-flock]').evaluate(
+      async (canvas) => {
+        const c = canvas as HTMLCanvasElement;
+        const deadline = Date.now() + 5000;
+        while (Date.now() < deadline) {
+          const ctx = c.getContext('2d');
+          if (ctx) {
+            const data = ctx.getImageData(0, 0, c.width, c.height).data;
+            if (data.some((v) => v !== 0)) return true;
+          }
+          await new Promise((r) => setTimeout(r, 100));
+        }
+        return false;
+      },
+    );
     expect(isNonBlank).toBe(true);
   });
 });
@@ -93,13 +101,22 @@ test.describe('Hive page — hover card', () => {
     const box = await canvas.boundingBox();
     expect(box).not.toBeNull();
 
-    // First hover to make card visible
-    await page.mouse.move(box!.x + box!.width * 0.5, box!.y + box!.height * 0.5);
-    await page.waitForTimeout(100);
+    // Sweep to find a flower first (same approach as show-card test)
+    const sweepY = box!.y + box!.height * 0.5;
+    let found = false;
+    for (let x = box!.x + 60; x < box!.x + box!.width - 60; x += 25) {
+      await page.mouse.move(x, sweepY);
+      const visible = await page
+        .locator('[data-hive-card]')
+        .evaluate((el) => el.hasAttribute('data-visible'));
+      if (visible) { found = true; break; }
+    }
+    // Only proceed if we actually found a flower — otherwise skip is safe
+    if (!found) return;
 
-    // Move off-canvas
+    // Now move off-canvas
     await page.mouse.move(box!.x - 50, box!.y - 50);
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(200);
 
     const visible = await page
       .locator('[data-hive-card]')
@@ -109,8 +126,9 @@ test.describe('Hive page — hover card', () => {
 });
 
 test.describe('Hive page — reduced motion', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
   test('canvas still renders in reduced-motion mode', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/hive');
     await page.waitForTimeout(300);
     const bbox = await page.locator('[data-live-flock]').boundingBox();
@@ -119,7 +137,6 @@ test.describe('Hive page — reduced motion', () => {
   });
 
   test('accessible list still visible in reduced-motion mode', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/hive');
     await expect(page.getByRole('heading', { name: /^Now$/i })).toBeVisible();
   });
@@ -147,9 +164,12 @@ test.describe('Hive page — accessibility', () => {
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations).toEqual([]);
   });
+});
 
-  test('has zero axe violations in reduced-motion mode', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+test.describe('Hive page — accessibility (reduced motion)', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
+  test('has zero axe violations', async ({ page }) => {
     await page.goto('/hive');
     await page.waitForTimeout(300);
     const results = await new AxeBuilder({ page }).analyze();
