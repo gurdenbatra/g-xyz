@@ -61,7 +61,11 @@ const rawNodes: RawNode[] = [...collaborators];
     <ul role="list" class="mycelium-list">
       {ideas.map((n: CollaboratorNode) => (
         <li class="mycelium-list-item">
-          <span class="mycelium-item-label label">{n.label}</span>
+          {n.url
+            ? <a href={n.url} class="mycelium-item-label label mycelium-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
+            : <span class="mycelium-item-label label">{n.label}</span>
+          }
+          {n.role && <span class="mycelium-item-role">{n.role}</span>}
         </li>
       ))}
     </ul>
