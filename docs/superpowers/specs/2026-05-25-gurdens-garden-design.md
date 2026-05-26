@@ -1,7 +1,7 @@
 # Gurden's Garden — Design Spec
 
 **Date:** 2026-05-25
-**Status:** Phase 4 (Compost) complete; Phase 5 (Beds) next
+**Status:** Phase 5 (Beds) complete; Phase 6 (Hive) next
 **Replaces:** the current portfolio site at gurden.xyz (Astro 4, conventional layout)
 
 ---
