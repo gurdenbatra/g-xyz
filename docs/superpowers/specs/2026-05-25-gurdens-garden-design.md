@@ -1,7 +1,7 @@
 # Gurden's Garden — Design Spec
 
 **Date:** 2026-05-25
-**Status:** Phase 6 (Hive) complete; Phase 7 (Mycelium) next
+**Status:** Phase 7 (Mycelium) complete; Phase 8 (Canopy) next
 **Replaces:** the current portfolio site at gurden.xyz (Astro 4, conventional layout)
 
 ---
