@@ -165,10 +165,10 @@ describe('runToStability', () => {
     }
   });
 
-  it('energy after stability run is less than after 1 step (simulation converges)', () => {
-    const after1 = stepSimulation(initial, W, H);
+  it('energy after stability run is below stability threshold (simulation converges)', () => {
     const stable = runToStability(initial, W, H);
-    expect(stable.energy).toBeLessThan(after1.energy + 1);
+    // ENERGY_THRESH is 0.5 — runToStability should reach it within 600 steps for a 3-node graph
+    expect(stable.energy).toBeLessThan(0.5);
   });
 
   it('respects maxSteps override', () => {

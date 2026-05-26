@@ -34,6 +34,8 @@ const CENTER_K      = 0.005;  // pull toward canvas centre
 const MAX_SPEED     = 8;      // px per step cap
 const ENERGY_THRESH = 0.5;    // below this sum-of-squared-velocities → stable
 const MARGIN        = 40;     // soft-boundary margin (px)
+const MIN_DIST      = 0.001;  // guard against zero-distance spring force
+const BOUNDARY_K    = 0.1;    // soft-boundary push strength
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -115,7 +117,7 @@ export function stepSimulation(
       if (j === undefined || j <= i) continue;   // process each edge once
       const dx      = nodes[j].x - nodes[i].x;
       const dy      = nodes[j].y - nodes[i].y;
-      const dist    = Math.sqrt(dx * dx + dy * dy) || 0.001;
+      const dist    = Math.max(Math.sqrt(dx * dx + dy * dy), MIN_DIST);
       const stretch = dist - SPRING_L;
       const force   = SPRING_K * stretch;
       const nx      = (dx / dist) * force;
@@ -139,10 +141,10 @@ export function stepSimulation(
     vy += (cy - node.y) * CENTER_K;
 
     // Soft boundary repulsion
-    if (node.x < MARGIN)       vx += (MARGIN - node.x) * 0.1;
-    else if (node.x > w - MARGIN) vx -= (node.x - (w - MARGIN)) * 0.1;
-    if (node.y < MARGIN)       vy += (MARGIN - node.y) * 0.1;
-    else if (node.y > h - MARGIN) vy -= (node.y - (h - MARGIN)) * 0.1;
+    if (node.x < MARGIN)       vx += (MARGIN - node.x) * BOUNDARY_K;
+    else if (node.x > w - MARGIN) vx -= (node.x - (w - MARGIN)) * BOUNDARY_K;
+    if (node.y < MARGIN)       vy += (MARGIN - node.y) * BOUNDARY_K;
+    else if (node.y > h - MARGIN) vy -= (node.y - (h - MARGIN)) * BOUNDARY_K;
 
     [vx, vy] = clampMag(vx, vy, MAX_SPEED);
 
