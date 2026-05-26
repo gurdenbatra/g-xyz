@@ -9,5 +9,6 @@ export default defineConfig({
     '/work': '/polyculture',
     '/work/[slug]': '/polyculture/[slug]',
     '/about': '/compost',
+    '/colophon': '/beds',
   },
 });

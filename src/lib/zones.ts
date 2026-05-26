@@ -62,6 +62,6 @@ export const zones: readonly Zone[] = [
     name: 'The Beds',
     shortDesc: 'Care',
     longDesc: 'Colophon & care',
-    href: '/colophon',
+    href: '/beds',
   },
 ] as const;

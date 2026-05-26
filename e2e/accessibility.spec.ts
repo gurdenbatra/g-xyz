@@ -82,7 +82,7 @@ test.describe('Nav component', () => {
     const overlay = page.locator('#map-overlay');
     await expect(overlay.locator('a[href="/polyculture"]')).toBeAttached();
     await expect(overlay.locator('a[href="/compost"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/colophon"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/beds"]')).toBeAttached();
   });
 });
 
@@ -121,7 +121,7 @@ test.describe('MapOverlay', () => {
     const overlay = page.locator('#map-overlay');
     await expect(overlay.locator('a[href="/polyculture"]')).toBeAttached();
     await expect(overlay.locator('a[href="/compost"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/colophon"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/beds"]')).toBeAttached();
   });
 
   test('overlay contains entries for all 6 zones', async ({ page }) => {

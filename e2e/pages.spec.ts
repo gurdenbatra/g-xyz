@@ -32,15 +32,27 @@ test.describe('Compost page', () => {
   });
 });
 
-test.describe('Colophon page', () => {
+test.describe('Colophon → Beds redirect', () => {
+  test('/colophon redirects to /beds', async ({ page }) => {
+    await page.goto('/colophon');
+    expect(page.url()).toContain('/beds');
+  });
+});
+
+test.describe('Beds page', () => {
   test('loads with 200', async ({ page }) => {
-    const r = await page.goto('/colophon');
+    const r = await page.goto('/beds');
     expect(r?.status()).toBe(200);
   });
 
-  test('mentions Astro and Mazius', async ({ page }) => {
-    await page.goto('/colophon');
+  test('shows stack bed content', async ({ page }) => {
+    await page.goto('/beds');
     await expect(page.getByText(/Astro/i).first()).toBeVisible();
+    await expect(page.getByText(/Netlify/i).first()).toBeVisible();
+  });
+
+  test('shows Mazius typeface credit', async ({ page }) => {
+    await page.goto('/beds');
     await expect(page.getByText(/Mazius/i).first()).toBeVisible();
   });
 });

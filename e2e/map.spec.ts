@@ -23,7 +23,7 @@ test.describe('Garden map — home page', () => {
     const map = page.locator('.garden-map');
     await expect(map.locator('[data-zone="polyculture"] a[href="/polyculture"]')).toBeAttached();
     await expect(map.locator('[data-zone="compost"] a[href="/compost"]')).toBeAttached();
-    await expect(map.locator('[data-zone="beds"] a[href="/colophon"]')).toBeAttached();
+    await expect(map.locator('[data-zone="beds"] a[href="/beds"]')).toBeAttached();
   });
 
   test('inactive zones have no interactive link', async ({ page }) => {
