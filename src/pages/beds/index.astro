@@ -1,0 +1,67 @@
+---
+import Garden from '@layouts/Garden.astro';
+import TendedBeds from '../../components/zones/Beds/TendedBeds.astro';
+---
+
+<Garden
+  title="The Beds — Gurden's Garden"
+  description="Colophon, care protocols, and the commitments behind gurden.xyz."
+>
+  <div class="beds-wrap page-wrap">
+
+    <header class="beds-header">
+      <p class="label zone-emoji" aria-hidden="true">🛠</p>
+      <h1>The Beds</h1>
+      <p class="beds-intro">
+        What this site is built with, how it's cared for, and the commitments
+        that hold it to account.
+      </p>
+    </header>
+
+    <section class="tended-section" aria-labelledby="tended-heading">
+      <h2 id="tended-heading" class="label section-heading">Tended Beds</h2>
+      <TendedBeds />
+    </section>
+
+  </div>
+</Garden>
+
+<style>
+  .beds-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .beds-header {
+    margin-bottom: var(--space-16);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: var(--space-8);
+  }
+
+  .zone-emoji {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+    display: block;
+  }
+
+  .beds-header h1 {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .beds-intro {
+    font-size: var(--text-md);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  .section-heading {
+    display: block;
+    margin-bottom: var(--space-8);
+  }
+
+  .tended-section {
+    margin-bottom: var(--space-20);
+  }
+</style>
