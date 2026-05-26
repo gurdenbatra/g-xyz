@@ -101,11 +101,12 @@ const rawFlowers: RawFlower[] = [
   }
 
   const FLOWER_R = 8;   // px — flower center radius
+  const PETAL_R  = 5;   // px — petal radius (= FLOWER_R * 0.65 ≈ 5.2, rounded)
   const BEE_RX   = 3;   // px — bee body x radius
   const BEE_RY   = 5;   // px — bee body y radius
 
   type Cleanup = () => void;
-  let cleanups: Cleanup[] = [];
+  let cleanup: Cleanup = () => {};
 
   function mountLiveFlock(): Cleanup {
     const wrap   = document.querySelector<HTMLElement>('[data-live-flock-wrap]');
@@ -141,7 +142,7 @@ const rawFlowers: RawFlower[] = [
 
     // ── State ─────────────────────────────────────────────────────────────────
     let rafId          = 0;
-    let startTime      = 0;
+    let startTime: number | null = null;
     let hoveredFlower: number | null = null;
     let flowers: FlowerDef[] = [];
     let bees: FlockBee[]     = [];
@@ -150,7 +151,7 @@ const rawFlowers: RawFlower[] = [
 
     // ── Resize ────────────────────────────────────────────────────────────────
     function resize(): void {
-      const dpr  = window.devicePixelRatio || 1;
+      const dpr  = Math.min(window.devicePixelRatio ?? 1, 2);
       const rect = canvas!.getBoundingClientRect();
       cssW = rect.width;
       cssH = rect.height;
@@ -184,7 +185,6 @@ const rawFlowers: RawFlower[] = [
       }
 
       // 5 petals — small circles at 55% opacity, offset by FLOWER_R + 3
-      const PETAL_R    = FLOWER_R * 0.65;
       const PETAL_DIST = FLOWER_R + 3;
       ctx!.globalAlpha = 0.55;
       ctx!.fillStyle   = col;
@@ -218,9 +218,9 @@ const rawFlowers: RawFlower[] = [
     function drawBee(bee: FlockBee, t: number): void {
       const { x, y, vx, vy } = bee;
 
-      const baseAngle  = Math.atan2(vy, vx) + Math.PI / 2;
-      const waggle     = Math.sin(t * 0.005 + bee.id * 0.7) * 0.15;
-      const angle      = baseAngle + waggle;
+      const speed  = Math.sqrt(vx * vx + vy * vy);
+      const angle  = (speed > 0.01 ? Math.atan2(vy, vx) + Math.PI / 2 : Math.PI / 2)
+                     + Math.sin(t * 0.005 + bee.id * 0.7) * 0.15;
 
       ctx!.save();
       ctx!.translate(x, y);
@@ -269,7 +269,7 @@ const rawFlowers: RawFlower[] = [
 
     // ── Animation loop ────────────────────────────────────────────────────────
     function loop(ts: number): void {
-      if (startTime === 0) startTime = ts;
+      if (startTime === null) startTime = ts;
       const t = ts - startTime;
 
       if (!rm) {
@@ -294,7 +294,7 @@ const rawFlowers: RawFlower[] = [
       const topRaw  = fy - cardH - 20;
       const top     = topRaw < 8 ? fy + 20 : topRaw;
       const leftRaw = fx - 80;
-      const left    = Math.max(8, Math.min(cssW - 170, leftRaw));
+      const left    = Math.max(8, Math.min(cssW - 200, leftRaw));
       card!.style.left = `${left}px`;
       card!.style.top  = `${top}px`;
     }
@@ -365,13 +365,12 @@ const rawFlowers: RawFlower[] = [
   }
 
   document.addEventListener('astro:page-load', () => {
-    cleanups = [];
-    cleanups.push(mountLiveFlock());
+    cleanup = mountLiveFlock();
   });
 
   document.addEventListener('astro:before-swap', () => {
-    cleanups.forEach((fn) => fn());
-    cleanups = [];
+    cleanup();
+    cleanup = () => {};
   });
 </script>
 
