@@ -1,0 +1,348 @@
+---
+// src/components/zones/Beds/TendedBeds.astro
+
+interface BedItem {
+  term: string;
+  detail: string;
+  link?: string;
+}
+
+interface Bed {
+  id: string;
+  label: string;
+  emoji: string;
+  items: BedItem[];
+}
+
+const beds: Bed[] = [
+  {
+    id: 'stack',
+    label: 'Stack',
+    emoji: '⚙️',
+    items: [
+      { term: 'Framework', detail: 'Astro 5 — static, MDX, islands architecture' },
+      {
+        term: 'Typefaces',
+        detail: 'Mazius Display + Necto Mono (Collletttivo, SIL OFL), self-hosted',
+      },
+      { term: 'Hosting', detail: 'Netlify — static CDN, continuous deployment from main' },
+      { term: 'Analytics', detail: 'None.' },
+    ],
+  },
+  {
+    id: 'accessibility',
+    label: 'Accessibility',
+    emoji: '♿',
+    items: [
+      { term: 'Standard', detail: 'WCAG 2.2 AA' },
+      { term: 'Auditing', detail: 'axe-core in CI — zero violations required' },
+      {
+        term: 'Keyboard',
+        detail: 'Full navigation, visible focus rings on all interactive elements',
+      },
+      {
+        term: 'Motion',
+        detail: 'prefers-reduced-motion respected on every generative piece',
+      },
+    ],
+  },
+  {
+    id: 'performance',
+    label: 'Performance',
+    emoji: '⚡',
+    items: [
+      { term: 'LCP', detail: '< 2.5s on mid-tier mobile (Moto G4, throttled)' },
+      { term: 'TBT', detail: '< 200ms' },
+      { term: 'JS per page', detail: '< 80kb gzipped (excl. lazy-loaded zone piece)' },
+      { term: 'CSS total', detail: '< 30kb gzipped' },
+    ],
+  },
+  {
+    id: 'source',
+    label: 'Source',
+    emoji: '📖',
+    items: [
+      {
+        term: 'Repository',
+        detail: 'github.com/gurden/gurden.xyz',
+        link: 'https://github.com/gurden/gurden.xyz',
+      },
+      { term: 'License', detail: 'Content © Gurden Batra. Code MIT.' },
+    ],
+  },
+  {
+    id: 'sustainability',
+    label: 'Sustainability',
+    emoji: '🌱',
+    items: [
+      { term: 'Architecture', detail: 'Static site — no server-side compute per request' },
+      { term: 'Tracking', detail: 'None. No third-party scripts or beacons.' },
+      { term: 'Fonts', detail: 'Self-hosted. No Google Fonts, no CDN font requests.' },
+    ],
+  },
+];
+---
+
+<div class="beds-container" data-beds>
+  <!-- Floating watering can — JS positions it over the active bed -->
+  <div class="beds-can" data-beds-can aria-hidden="true">
+    <svg
+      viewBox="0 0 44 38"
+      width="44"
+      height="38"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <!-- Body -->
+      <rect x="4" y="14" width="24" height="18" rx="3" fill="currentColor" />
+      <!-- Neck -->
+      <rect x="10" y="8" width="10" height="8" rx="1" fill="currentColor" />
+      <!-- Spout -->
+      <path
+        d="M28 22 L40 16"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+      <!-- Nozzle -->
+      <circle cx="40" cy="16" r="2" fill="currentColor" />
+      <!-- Drops (shown when a bed is tended) -->
+      <circle class="drop" cx="41" cy="21" r="1.5" fill="currentColor" opacity="0" />
+      <circle class="drop" cx="38" cy="23" r="1.5" fill="currentColor" opacity="0" />
+      <circle class="drop" cx="43" cy="24" r="1.5" fill="currentColor" opacity="0" />
+      <!-- Handle -->
+      <path
+        d="M4 17 Q0 17 0 21 Q0 25 4 25"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        fill="none"
+      />
+    </svg>
+  </div>
+
+  <!-- Beds grid -->
+  <ul class="beds-grid">
+    {
+      beds.map((bed) => (
+        <li class="bed-item">
+          <article class="bed" data-bed={bed.id}>
+            <h2 class="bed-label">
+              <span aria-hidden="true" class="bed-emoji">{bed.emoji}</span>
+              {bed.label}
+            </h2>
+            <dl class="bed-items">
+              {bed.items.map((item) => (
+                <div class="bed-row">
+                  <dt class="bed-term label">{item.term}</dt>
+                  <dd class="bed-detail">
+                    {item.link ? (
+                      <a href={item.link} target="_blank" rel="noopener noreferrer">
+                        {item.detail}
+                      </a>
+                    ) : (
+                      item.detail
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </article>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  type Cleanup = () => void;
+
+  function mountBeds(): Cleanup {
+    const container = document.querySelector<HTMLElement>('[data-beds]');
+    if (!container) return () => {};
+
+    const can = container.querySelector<HTMLElement>('[data-beds-can]');
+    const bedEls = [...container.querySelectorAll<HTMLElement>('[data-bed]')];
+    if (!can || bedEls.length === 0) return () => {};
+
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let currentIndex = 0;
+    let interval = 0;
+    let isHovered = false;
+
+    function moveTo(el: HTMLElement): void {
+      const cRect = container!.getBoundingClientRect();
+      const bRect = el.getBoundingClientRect();
+      const x = bRect.left - cRect.left + bRect.width / 2 - can!.offsetWidth / 2;
+      const y = bRect.top - cRect.top - can!.offsetHeight - 6;
+      can!.style.transform = `translate(${x}px, ${y}px)`;
+      bedEls.forEach((b) => b.removeAttribute('data-tended'));
+      el.setAttribute('data-tended', '');
+    }
+
+    function startCycle(): void {
+      if (rm || isHovered) return;
+      clearInterval(interval);
+      moveTo(bedEls[currentIndex]);
+      interval = window.setInterval(() => {
+        if (isHovered) return;
+        currentIndex = (currentIndex + 1) % bedEls.length;
+        moveTo(bedEls[currentIndex]);
+      }, 2500);
+    }
+
+    const enterHandlers: Cleanup[] = bedEls.map((bed) => {
+      const h = (): void => {
+        isHovered = true;
+        clearInterval(interval);
+        moveTo(bed);
+      };
+      bed.addEventListener('mouseenter', h);
+      return () => bed.removeEventListener('mouseenter', h);
+    });
+
+    const leaveHandler = (): void => {
+      isHovered = false;
+      startCycle();
+    };
+    container.addEventListener('mouseleave', leaveHandler);
+
+    const touchHandlers: Cleanup[] = bedEls.map((bed) => {
+      const h = (): void => moveTo(bed);
+      bed.addEventListener('touchstart', h, { passive: true });
+      return () => bed.removeEventListener('touchstart', h);
+    });
+
+    can.style.opacity = '1';
+    if (!rm) startCycle();
+
+    return () => {
+      clearInterval(interval);
+      enterHandlers.forEach((fn) => fn());
+      touchHandlers.forEach((fn) => fn());
+      container.removeEventListener('mouseleave', leaveHandler);
+    };
+  }
+
+  let cleanup: Cleanup = () => {};
+
+  document.addEventListener('astro:page-load', () => {
+    cleanup = mountBeds();
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    cleanup();
+    cleanup = () => {};
+  });
+</script>
+
+<style>
+  .beds-container {
+    position: relative;
+    padding-top: var(--space-16);
+  }
+
+  .beds-can {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    color: var(--c-moss);
+    pointer-events: none;
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+    will-change: transform;
+  }
+
+  .beds-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .bed-item {
+    display: contents;
+  }
+
+  .bed {
+    border: 1px solid var(--ink-faint);
+    border-radius: 2px;
+    padding: var(--space-6) var(--space-8);
+    background: var(--ground);
+    transition: border-color var(--duration-base) var(--easing),
+      box-shadow var(--duration-base) var(--easing);
+  }
+
+  .bed[data-tended] {
+    border-color: var(--c-moss);
+    box-shadow: 0 0 0 1px var(--c-moss);
+  }
+
+  .bed:hover {
+    border-color: var(--c-moss);
+  }
+
+  .bed-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-base);
+    font-style: italic;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .bed-emoji {
+    font-style: normal;
+  }
+
+  .bed-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .bed-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2) var(--space-4);
+    align-items: baseline;
+    padding-block: var(--space-2);
+  }
+
+  .bed-term {
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  .bed-detail {
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .bed-detail a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--ink-faint);
+    transition: text-decoration-color var(--duration-fast) var(--easing);
+  }
+
+  .bed-detail a:hover {
+    text-decoration-color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .beds-can {
+      transition: none;
+    }
+    .bed {
+      transition: none;
+    }
+  }
+</style>
