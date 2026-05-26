@@ -1,0 +1,492 @@
+---
+// src/components/zones/Hive/LiveFlock.astro
+
+import { getEntry } from 'astro:content';
+import type { RawFlower } from './flock';
+
+const nowEntry = await getEntry('now', 'index');
+if (!nowEntry) throw new Error('src/content/now/index.mdx not found');
+
+const { carrying, reading, contact } = nowEntry.data;
+
+const rawFlowers: RawFlower[] = [
+  ...carrying.map((item, i) => ({
+    id: `carrying-${i}`,
+    label: item.label,
+    kind: 'carrying' as const,
+    detail: item.detail,
+  })),
+  ...reading.map((item, i) => ({
+    id: `reading-${i}`,
+    label: item.label,
+    kind: 'reading' as const,
+    detail: item.detail,
+  })),
+  ...contact.map((item, i) => ({
+    id: `contact-${i}`,
+    label: item.label,
+    kind: 'contact' as const,
+    detail: item.detail ?? item.label,
+    url: item.url,
+  })),
+];
+---
+
+<div class="live-flock-wrap" data-live-flock-wrap>
+  <canvas
+    data-live-flock
+    class="live-flock-canvas"
+    aria-label="An animated field of flowers representing current work, reading, and contact. The list below is the keyboard-navigable equivalent."
+  ></canvas>
+  <!-- Hover card — purely visual, aria-hidden; screen readers use the list below -->
+  <div class="hive-card" data-hive-card aria-hidden="true">
+    <p class="hive-card-label" data-hive-card-label></p>
+    <p class="hive-card-detail" data-hive-card-detail></p>
+  </div>
+</div>
+
+<!-- Accessible text list — keyboard-navigable equivalent of the canvas -->
+<div class="hive-lists">
+  <div class="hive-list-group">
+    <h3 class="label hive-list-title">Now</h3>
+    <ul role="list" class="hive-list">
+      {carrying.map((item) => (
+        <li class="hive-list-item">
+          <span class="hive-item-label label">{item.label}</span>
+          <span class="hive-item-detail">{item.detail}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="hive-list-group">
+    <h3 class="label hive-list-title">Reading</h3>
+    <ul role="list" class="hive-list">
+      {reading.map((item) => (
+        <li class="hive-list-item">
+          <span class="hive-item-label label">{item.label}</span>
+          <span class="hive-item-detail">{item.detail}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="hive-list-group">
+    <h3 class="label hive-list-title">Reach me</h3>
+    <ul role="list" class="hive-list">
+      {contact.map((item) => (
+        <li class="hive-list-item">
+          <a
+            href={item.url}
+            class="hive-item-label label contact-link"
+            target={item.url.startsWith('mailto:') ? undefined : '_blank'}
+            rel={item.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+          >{item.detail ?? item.label}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<script is:inline define:vars={{ rawFlowers }}>
+  window.__hiveFlowers = rawFlowers;
+</script>
+
+<script>
+  import { createFlock, layoutFlowers, stepFlock } from './flock';
+  import type { FlowerDef, FlockBee } from './flock';
+
+  declare global {
+    interface Window {
+      __hiveFlowers?: import('./flock').RawFlower[];
+    }
+  }
+
+  const FLOWER_R = 8;   // px — flower center radius
+  const BEE_RX   = 3;   // px — bee body x radius
+  const BEE_RY   = 5;   // px — bee body y radius
+
+  type Cleanup = () => void;
+  let cleanups: Cleanup[] = [];
+
+  function mountLiveFlock(): Cleanup {
+    const wrap   = document.querySelector<HTMLElement>('[data-live-flock-wrap]');
+    const canvas = document.querySelector<HTMLCanvasElement>('[data-live-flock]');
+    const card   = document.querySelector<HTMLElement>('[data-hive-card]');
+    const cardLabel  = document.querySelector<HTMLElement>('[data-hive-card-label]');
+    const cardDetail = document.querySelector<HTMLElement>('[data-hive-card-detail]');
+
+    if (!wrap || !canvas || !card || !cardLabel || !cardDetail) return () => {};
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return () => {};
+
+    const rawFlowers = window.__hiveFlowers ?? [];
+    if (rawFlowers.length === 0) return () => {};
+
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ── Resolve CSS color variables once ─────────────────────────────────────
+    const style = getComputedStyle(document.documentElement);
+    const cMoss        = style.getPropertyValue('--c-moss').trim()        || '#5A7A4A';
+    const cOchre       = style.getPropertyValue('--c-ochre').trim()       || '#D9A857';
+    const cSoil        = style.getPropertyValue('--c-soil').trim()        || '#8A4F2E';
+    const cChartreuse  = style.getPropertyValue('--c-chartreuse').trim()  || '#C4D670';
+    const cInk         = style.getPropertyValue('--c-ink').trim()         || '#1A1A1A';
+    const cPaper       = style.getPropertyValue('--c-paper').trim()       || '#F1E8D0';
+
+    function kindColor(kind: 'carrying' | 'reading' | 'contact'): string {
+      if (kind === 'carrying') return cMoss;
+      if (kind === 'reading')  return cOchre;
+      return cSoil;
+    }
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let rafId          = 0;
+    let startTime      = 0;
+    let hoveredFlower: number | null = null;
+    let flowers: FlowerDef[] = [];
+    let bees: FlockBee[]     = [];
+    let cssW = 0;
+    let cssH = 0;
+
+    // ── Resize ────────────────────────────────────────────────────────────────
+    function resize(): void {
+      const dpr  = window.devicePixelRatio || 1;
+      const rect = canvas!.getBoundingClientRect();
+      cssW = rect.width;
+      cssH = rect.height;
+      canvas!.width  = Math.round(cssW * dpr);
+      canvas!.height = Math.round(cssH * dpr);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      flowers = layoutFlowers(rawFlowers, cssW, cssH);
+      const beeCount = cssW < 640 ? 12 : 30;
+      bees = createFlock(beeCount, cssW, cssH, 42);
+    }
+
+    // ── Draw helpers ──────────────────────────────────────────────────────────
+
+    function drawFlower(f: FlowerDef, index: number): void {
+      const x   = f.x * cssW;
+      const y   = f.y * cssH;
+      const col = kindColor(f.kind);
+
+      ctx!.save();
+
+      // Hover ring
+      if (hoveredFlower === index) {
+        ctx!.beginPath();
+        ctx!.arc(x, y, FLOWER_R + 6, 0, Math.PI * 2);
+        ctx!.strokeStyle = col;
+        ctx!.globalAlpha = 0.35;
+        ctx!.lineWidth   = 1.5;
+        ctx!.stroke();
+        ctx!.globalAlpha = 1;
+      }
+
+      // 5 petals — small circles at 55% opacity, offset by FLOWER_R + 3
+      const PETAL_R    = FLOWER_R * 0.65;
+      const PETAL_DIST = FLOWER_R + 3;
+      ctx!.globalAlpha = 0.55;
+      ctx!.fillStyle   = col;
+      for (let p = 0; p < 5; p++) {
+        const angle = (p / 5) * Math.PI * 2 - Math.PI / 2;
+        const px    = x + Math.cos(angle) * PETAL_DIST;
+        const py    = y + Math.sin(angle) * PETAL_DIST;
+        ctx!.beginPath();
+        ctx!.arc(px, py, PETAL_R, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+
+      // Center circle
+      ctx!.globalAlpha = 1;
+      ctx!.fillStyle   = col;
+      ctx!.beginPath();
+      ctx!.arc(x, y, FLOWER_R, 0, Math.PI * 2);
+      ctx!.fill();
+
+      // Label below flower
+      ctx!.globalAlpha = 0.75;
+      ctx!.fillStyle   = cInk;
+      ctx!.font        = '11px monospace';
+      ctx!.textAlign   = 'center';
+      ctx!.textBaseline = 'top';
+      ctx!.fillText(f.label, x, y + FLOWER_R + 15);
+
+      ctx!.restore();
+    }
+
+    function drawBee(bee: FlockBee, t: number): void {
+      const { x, y, vx, vy } = bee;
+
+      const baseAngle  = Math.atan2(vy, vx) + Math.PI / 2;
+      const waggle     = Math.sin(t * 0.005 + bee.id * 0.7) * 0.15;
+      const angle      = baseAngle + waggle;
+
+      ctx!.save();
+      ctx!.translate(x, y);
+      ctx!.rotate(angle);
+
+      // Wings — 2 small ellipses slightly above body, white at 70% opacity
+      ctx!.globalAlpha = 0.7;
+      ctx!.fillStyle   = cPaper;
+      ctx!.beginPath();
+      ctx!.ellipse(-BEE_RX - 1, -BEE_RY + 1, BEE_RX * 1.2, BEE_RY * 0.7, -0.3, 0, Math.PI * 2);
+      ctx!.fill();
+      ctx!.beginPath();
+      ctx!.ellipse(BEE_RX + 1, -BEE_RY + 1, BEE_RX * 1.2, BEE_RY * 0.7, 0.3, 0, Math.PI * 2);
+      ctx!.fill();
+
+      // Body — ellipse, ochre fill, ink stroke
+      ctx!.globalAlpha = 1;
+      ctx!.fillStyle   = cOchre;
+      ctx!.strokeStyle = cInk;
+      ctx!.lineWidth   = 0.8;
+      ctx!.beginPath();
+      ctx!.ellipse(0, 0, BEE_RX, BEE_RY, 0, 0, Math.PI * 2);
+      ctx!.fill();
+      ctx!.stroke();
+
+      // Pollen dot — chartreuse circle above body when carrying pollen
+      if (bee.pollenFlower !== null) {
+        ctx!.fillStyle   = cChartreuse;
+        ctx!.strokeStyle = cInk;
+        ctx!.lineWidth   = 0.5;
+        ctx!.beginPath();
+        ctx!.arc(0, -BEE_RY - 3, 2.5, 0, Math.PI * 2);
+        ctx!.fill();
+        ctx!.stroke();
+      }
+
+      ctx!.restore();
+    }
+
+    // ── Draw frame ────────────────────────────────────────────────────────────
+    function draw(t: number): void {
+      ctx!.clearRect(0, 0, cssW, cssH);
+      flowers.forEach((f, i) => drawFlower(f, i));
+      bees.forEach((bee) => drawBee(bee, t));
+    }
+
+    // ── Animation loop ────────────────────────────────────────────────────────
+    function loop(ts: number): void {
+      if (startTime === 0) startTime = ts;
+      const t = ts - startTime;
+
+      if (!rm) {
+        bees = stepFlock(bees, flowers, cssW, cssH, t, hoveredFlower);
+      }
+
+      draw(t);
+      rafId = requestAnimationFrame(loop);
+    }
+
+    // ── Hover card ────────────────────────────────────────────────────────────
+    function showCard(flowerIndex: number): void {
+      const f = flowers[flowerIndex];
+      if (!f) return;
+      cardLabel!.textContent  = f.label;
+      cardDetail!.textContent = f.detail;
+      card!.setAttribute('data-visible', '');
+
+      const fx      = f.x * cssW;
+      const fy      = f.y * cssH;
+      const cardH   = card!.offsetHeight || 60;
+      const topRaw  = fy - cardH - 20;
+      const top     = topRaw < 8 ? fy + 20 : topRaw;
+      const leftRaw = fx - 80;
+      const left    = Math.max(8, Math.min(cssW - 170, leftRaw));
+      card!.style.left = `${left}px`;
+      card!.style.top  = `${top}px`;
+    }
+
+    function hideCard(): void {
+      card!.removeAttribute('data-visible');
+    }
+
+    // ── Mouse interaction ─────────────────────────────────────────────────────
+    function handleMouseMove(e: MouseEvent): void {
+      const rect   = canvas!.getBoundingClientRect();
+      const mx     = e.clientX - rect.left;
+      const my     = e.clientY - rect.top;
+      const RADIUS = 40;
+
+      let closest: number | null = null;
+      let closestDist = Infinity;
+
+      flowers.forEach((f, i) => {
+        const fx   = f.x * cssW;
+        const fy   = f.y * cssH;
+        const dist = Math.hypot(mx - fx, my - fy);
+        if (dist < RADIUS && dist < closestDist) {
+          closest     = i;
+          closestDist = dist;
+        }
+      });
+
+      if (closest !== hoveredFlower) {
+        hoveredFlower = closest;
+        if (closest !== null) {
+          showCard(closest);
+        } else {
+          hideCard();
+        }
+      }
+    }
+
+    function handleMouseLeave(): void {
+      hoveredFlower = null;
+      hideCard();
+    }
+
+    // ── ResizeObserver ────────────────────────────────────────────────────────
+    const ro = new ResizeObserver(() => {
+      resize();
+      if (rm) draw(0);
+    });
+    ro.observe(canvas);
+
+    // ── Initialise ────────────────────────────────────────────────────────────
+    resize();
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    if (rm) {
+      draw(0);
+    } else {
+      rafId = requestAnimationFrame(loop);
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      ro.disconnect();
+      canvas!.removeEventListener('mousemove', handleMouseMove);
+      canvas!.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    cleanups = [];
+    cleanups.push(mountLiveFlock());
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    cleanups.forEach((fn) => fn());
+    cleanups = [];
+  });
+</script>
+
+<style>
+  .live-flock-wrap {
+    position: relative;
+    margin-bottom: var(--space-12);
+  }
+
+  .live-flock-canvas {
+    display: block;
+    width: 100%;
+    height: 420px;
+    background: transparent;
+    cursor: crosshair;
+  }
+
+  @media (max-width: 640px) {
+    .live-flock-canvas {
+      height: 280px;
+    }
+  }
+
+  /* Hover card */
+  .hive-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--ground);
+    border: 1px solid var(--ink-faint);
+    border-radius: 2px;
+    padding: var(--space-3) var(--space-4);
+    min-width: 140px;
+    max-width: 200px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity var(--duration-fast) var(--easing),
+      transform var(--duration-fast) var(--easing);
+    z-index: 10;
+  }
+
+  .hive-card[data-visible] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hive-card-label {
+    font-size: var(--text-xs);
+    font-style: italic;
+    margin: 0 0 var(--space-1);
+    color: var(--ink-muted);
+  }
+
+  .hive-card-detail {
+    font-size: var(--text-sm);
+    margin: 0;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  /* Accessible lists */
+  .hive-lists {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--ink-faint);
+  }
+
+  .hive-list-title {
+    display: block;
+    margin-bottom: var(--space-4);
+    color: var(--ink-muted);
+  }
+
+  .hive-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .hive-list-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .hive-item-label {
+    color: var(--ink);
+  }
+
+  .hive-item-detail {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  .contact-link {
+    text-decoration: none;
+    color: var(--ink);
+    transition: color var(--duration-fast) var(--easing);
+  }
+
+  .contact-link:hover {
+    color: var(--ink-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hive-card {
+      transition: none;
+    }
+  }
+</style>
