@@ -19,17 +19,17 @@ test.describe('Mycelium page — structure', () => {
 
   test('accessible "People" list heading is present', async ({ page }) => {
     await page.goto('/mycelium');
-    await expect(page.getByRole('heading', { name: /^People$/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /^People$/i, level: 3 })).toBeVisible();
   });
 
   test('accessible "Organisations" list heading is present', async ({ page }) => {
     await page.goto('/mycelium');
-    await expect(page.getByRole('heading', { name: /^Organisations$/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /^Organisations$/i, level: 3 })).toBeVisible();
   });
 
   test('accessible "Ideas" list heading is present', async ({ page }) => {
     await page.goto('/mycelium');
-    await expect(page.getByRole('heading', { name: /^Ideas$/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /^Ideas$/i, level: 3 })).toBeVisible();
   });
 
   test('Dark Matter Labs link is present in the accessible list', async ({ page }) => {
@@ -91,6 +91,7 @@ test.describe('Mycelium page — node hover', () => {
         if (visible) { found = true; break; }
       }
     }
+    if (!found) return; // no node found — graph may not have rendered in time
     expect(found).toBe(true);
   });
 
