@@ -226,4 +226,19 @@ describe('nowSchema', () => {
     };
     expect(nowSchema.safeParse(data).success).toBe(true);
   });
+
+  it('rejects empty label string in carrying', () => {
+    const data = { ...valid, carrying: [{ label: '', detail: 'some detail' }] };
+    expect(nowSchema.safeParse(data).success).toBe(false);
+  });
+
+  it('rejects empty carrying array', () => {
+    const data = { ...valid, carrying: [] };
+    expect(nowSchema.safeParse(data).success).toBe(false);
+  });
+
+  it('rejects empty contact array', () => {
+    const data = { ...valid, contact: [] };
+    expect(nowSchema.safeParse(data).success).toBe(false);
+  });
 });

@@ -36,11 +36,11 @@ export const artSchema = z.object({
 );
 
 export const nowSchema = z.object({
-  carrying: z.array(z.object({ label: z.string(), detail: z.string() })),
-  reading:  z.array(z.object({ label: z.string(), detail: z.string() })),
+  carrying: z.array(z.object({ label: z.string().min(1), detail: z.string().min(1) })).min(1),
+  reading:  z.array(z.object({ label: z.string().min(1), detail: z.string().min(1) })).min(1),
   contact:  z.array(z.object({
-    label:  z.string(),
+    label:  z.string().min(1),
     url:    z.string().min(1),
-    detail: z.string().optional(),
-  })),
+    detail: z.string().min(1).optional(),
+  })).min(1),
 });
