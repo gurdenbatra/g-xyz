@@ -1,0 +1,497 @@
+---
+// src/components/zones/Mycelium/NodesGraph.astro
+import type { RawNode } from './graph';
+import { collaborators } from '../../../lib/collaborators';
+import type { CollaboratorNode } from '../../../lib/collaborators';
+
+const people = collaborators.filter((n: CollaboratorNode) => n.kind === 'person');
+const orgs   = collaborators.filter((n: CollaboratorNode) => n.kind === 'org');
+const ideas  = collaborators.filter((n: CollaboratorNode) => n.kind === 'idea');
+
+// Spread converts readonly CollaboratorNode[] → mutable RawNode[] (structurally identical)
+const rawNodes: RawNode[] = [...collaborators];
+---
+
+<div class="nodes-graph-wrap" data-nodes-graph-wrap>
+  <canvas
+    data-nodes-graph
+    class="nodes-graph-canvas"
+    aria-label="A force-directed graph of collaborators, organisations, and ideas. The lists below are the keyboard-navigable equivalent."
+  ></canvas>
+  <!-- Info card — purely visual, aria-hidden; screen readers use the lists below -->
+  <div class="node-card" data-node-card aria-hidden="true">
+    <p class="node-card-label" data-node-card-label></p>
+    <p class="node-card-role"  data-node-card-role></p>
+    <a class="node-card-link"  data-node-card-link href="#" target="_blank" rel="noopener noreferrer"></a>
+  </div>
+</div>
+
+<!-- Accessible lists — keyboard-navigable equivalent of the canvas -->
+<div class="mycelium-lists">
+  <div class="mycelium-list-group">
+    <h3 class="label mycelium-list-title">People</h3>
+    <ul role="list" class="mycelium-list">
+      {people.map((n: CollaboratorNode) => (
+        <li class="mycelium-list-item">
+          {n.url
+            ? <a href={n.url} class="mycelium-item-label label mycelium-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
+            : <span class="mycelium-item-label label">{n.label}</span>
+          }
+          {n.role && <span class="mycelium-item-role">{n.role}</span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="mycelium-list-group">
+    <h3 class="label mycelium-list-title">Organisations</h3>
+    <ul role="list" class="mycelium-list">
+      {orgs.map((n: CollaboratorNode) => (
+        <li class="mycelium-list-item">
+          {n.url
+            ? <a href={n.url} class="mycelium-item-label label mycelium-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
+            : <span class="mycelium-item-label label">{n.label}</span>
+          }
+          {n.role && <span class="mycelium-item-role">{n.role}</span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="mycelium-list-group">
+    <h3 class="label mycelium-list-title">Ideas</h3>
+    <ul role="list" class="mycelium-list">
+      {ideas.map((n: CollaboratorNode) => (
+        <li class="mycelium-list-item">
+          <span class="mycelium-item-label label">{n.label}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<script is:inline define:vars={{ rawNodes }}>
+  window.__graphNodes = rawNodes;
+</script>
+
+<script>
+  import { initSimulation, stepSimulation, runToStability } from './graph';
+  import type { SimulationState, GraphNode, RawNode } from './graph';
+
+  declare global {
+    interface Window {
+      __graphNodes?: RawNode[];
+    }
+  }
+
+  // ── Drawing constants ──────────────────────────────────────────────────────
+
+  const NODE_R_PERSON = 20;
+  const NODE_R_ORG    = 18;
+  const NODE_R_IDEA   = 14;
+  const PULSE_SPEED   = 0.0002;  // signal traverses edge in ~5 seconds
+  const PULSE_PHASE   = 0.37;    // golden-ratio spread between edges avoids sync
+
+  // ── Drawing helpers ────────────────────────────────────────────────────────
+
+  interface Colors {
+    moss: string; ochre: string; soil: string;
+    chartreuse: string; ink: string; inkFaint: string;
+    fontMono: string;
+  }
+
+  function nodeRadius(kind: string): number {
+    return kind === 'person' ? NODE_R_PERSON : kind === 'org' ? NODE_R_ORG : NODE_R_IDEA;
+  }
+
+  /** Manual rounded-rect path — avoids CanvasRenderingContext2D.roundRect browser compat issues. */
+  function roundedRectPath(
+    ctx: CanvasRenderingContext2D,
+    x: number, y: number, w: number, h: number, r: number,
+  ): void {
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function drawNode(
+    ctx: CanvasRenderingContext2D,
+    node: GraphNode,
+    hovered: boolean,
+    colors: Colors,
+  ): void {
+    const { x, y, kind } = node;
+    const r    = nodeRadius(kind);
+    const fill = kind === 'person' ? colors.moss : kind === 'org' ? colors.ochre : colors.soil;
+
+    ctx.beginPath();
+    if (kind === 'person') {
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+    } else if (kind === 'org') {
+      roundedRectPath(ctx, x - r, y - r, r * 2, r * 2, 4);
+    } else {
+      // Diamond
+      ctx.moveTo(x, y - r);
+      ctx.lineTo(x + r, y);
+      ctx.lineTo(x, y + r);
+      ctx.lineTo(x - r, y);
+      ctx.closePath();
+    }
+
+    ctx.fillStyle = fill;
+    ctx.fill();
+
+    if (hovered) {
+      ctx.strokeStyle = colors.ink;
+      ctx.lineWidth   = 2;
+      ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+
+    // Label below node
+    ctx.fillStyle    = colors.ink;
+    ctx.font         = `9px ${colors.fontMono}`;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(node.label, x, y + r + 4, 100);
+    ctx.textBaseline = 'alphabetic';
+  }
+
+  function drawEdge(
+    ctx: CanvasRenderingContext2D,
+    n1: GraphNode,
+    n2: GraphNode,
+    t: number,
+    highlighted: boolean,
+    colors: Colors,
+    reduced: boolean,
+    edgeIdx: number,
+  ): void {
+    ctx.beginPath();
+    ctx.moveTo(n1.x, n1.y);
+    ctx.lineTo(n2.x, n2.y);
+    ctx.strokeStyle = highlighted ? colors.ink : colors.inkFaint;
+    ctx.lineWidth   = highlighted ? 1.5 : 0.8;
+    ctx.globalAlpha = highlighted ? 0.7 : 0.35;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth   = 1;
+
+    if (!reduced) {
+      // Pulse signal dot travels along the edge
+      const progress = (t * PULSE_SPEED + edgeIdx * PULSE_PHASE) % 1;
+      const px = n1.x + (n2.x - n1.x) * progress;
+      const py = n1.y + (n2.y - n1.y) * progress;
+      ctx.beginPath();
+      ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = colors.chartreuse;
+      ctx.fill();
+    }
+  }
+
+  // ── Mount / destroy ────────────────────────────────────────────────────────
+
+  type Cleanup = () => void;
+
+  function mountNodesGraph(): Cleanup {
+    const canvas    = document.querySelector<HTMLCanvasElement>('[data-nodes-graph]');
+    const card      = document.querySelector<HTMLElement>('[data-node-card]');
+    const cardLabel = document.querySelector<HTMLElement>('[data-node-card-label]');
+    const cardRole  = document.querySelector<HTMLElement>('[data-node-card-role]');
+    const cardLink  = document.querySelector<HTMLAnchorElement>('[data-node-card-link]');
+    const rawNodes  = window.__graphNodes;
+
+    if (!canvas || !card || !cardLabel || !cardRole || !cardLink || !rawNodes) return () => {};
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return () => {};
+
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Resolve CSS custom properties once (canvas cannot use var())
+    const style  = getComputedStyle(document.documentElement);
+    const colors: Colors = {
+      moss:       style.getPropertyValue('--c-moss').trim()       || '#5A7A4A',
+      ochre:      style.getPropertyValue('--c-ochre').trim()      || '#D9A857',
+      soil:       style.getPropertyValue('--c-soil').trim()       || '#8A4F2E',
+      chartreuse: style.getPropertyValue('--c-chartreuse').trim() || '#C4D670',
+      ink:        style.getPropertyValue('--c-ink').trim()        || '#1A1A1A',
+      inkFaint:   style.getPropertyValue('--ink-faint').trim()    || '#B8B0A0',
+      fontMono:   style.getPropertyValue('--font-mono').trim()    || 'monospace',
+    };
+
+    let rafId       = 0;
+    let startTime: number | null = null;
+    let state: SimulationState = { nodes: [], energy: 0 };
+    let nodeMap     = new Map<string, GraphNode>();
+    let hoveredId: string | null = null;
+    let cssW = 0;
+    let cssH = 0;
+
+    function resize(): void {
+      const rect   = canvas!.getBoundingClientRect();
+      cssW         = rect.width;
+      cssH         = rect.height;
+      const dpr    = Math.min(window.devicePixelRatio ?? 1, 2);
+      canvas!.width  = Math.round(rect.width  * dpr);
+      canvas!.height = Math.round(rect.height * dpr);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      state   = initSimulation([...rawNodes!], cssW, cssH, 42);
+      nodeMap = new Map(state.nodes.map((n) => [n.id, n]));
+    }
+
+    function draw(t: number): void {
+      ctx!.clearRect(0, 0, cssW, cssH);
+      const { nodes } = state;
+
+      // 1. Draw edges (each undirected edge once: only when connId > node.id)
+      let edgeIdx = 0;
+      for (const node of nodes) {
+        for (const connId of node.connections) {
+          if (connId <= node.id) continue;
+          const conn = nodeMap.get(connId);
+          if (!conn) continue;
+          const highlighted = hoveredId === node.id || hoveredId === connId;
+          drawEdge(ctx!, node, conn, t, highlighted, colors, rm, edgeIdx++);
+        }
+      }
+
+      // 2. Draw nodes on top of edges
+      for (const node of nodes) {
+        drawNode(ctx!, node, node.id === hoveredId, colors);
+      }
+    }
+
+    function loop(ts: number): void {
+      if (startTime === null) startTime = ts;
+      const t = ts - startTime;
+      state   = stepSimulation(state, cssW, cssH);
+      nodeMap = new Map(state.nodes.map((n) => [n.id, n]));
+      draw(t);
+      rafId = requestAnimationFrame(loop);
+    }
+
+    function showCard(node: GraphNode): void {
+      cardLabel!.textContent = node.label;
+      cardRole!.textContent  =
+        node.role ??
+        (node.kind === 'person' ? 'Collaborator' : node.kind === 'org' ? 'Organisation' : 'Idea');
+
+      if (node.url) {
+        cardLink!.href        = node.url;
+        cardLink!.textContent = '↗ Visit';
+        cardLink!.hidden      = false;
+      } else {
+        cardLink!.hidden = true;
+      }
+
+      card!.setAttribute('data-visible', '');
+
+      const r       = nodeRadius(node.kind);
+      const cardH   = card!.offsetHeight || 70;
+      const topRaw  = node.y - cardH - 20;
+      const top     = topRaw < 8 ? node.y + r + 20 : topRaw;
+      const leftRaw = node.x - 90;
+      const left    = Math.max(8, Math.min(cssW - 200, leftRaw));
+      card!.style.left = `${left}px`;
+      card!.style.top  = `${top}px`;
+    }
+
+    function hideCard(): void {
+      card!.removeAttribute('data-visible');
+    }
+
+    function handleMouseMove(e: MouseEvent): void {
+      const rect = canvas!.getBoundingClientRect();
+      const mx   = e.clientX - rect.left;
+      const my   = e.clientY - rect.top;
+      let nearest: string | null = null;
+      let minDist = 40;
+      for (const node of state.nodes) {
+        const d = Math.sqrt((mx - node.x) ** 2 + (my - node.y) ** 2);
+        if (d < minDist) { minDist = d; nearest = node.id; }
+      }
+      if (nearest !== hoveredId) {
+        hoveredId = nearest;
+        if (hoveredId) showCard(nodeMap.get(hoveredId)!);
+        else hideCard();
+      }
+    }
+
+    function handleMouseLeave(): void {
+      hoveredId = null;
+      hideCard();
+    }
+
+    resize();
+
+    if (rm) {
+      state   = runToStability(state, cssW, cssH);
+      nodeMap = new Map(state.nodes.map((n) => [n.id, n]));
+      draw(0);
+    } else {
+      rafId = requestAnimationFrame(loop);
+    }
+
+    const ro = new ResizeObserver(() => {
+      resize();
+      if (rm) {
+        state   = runToStability(state, cssW, cssH);
+        nodeMap = new Map(state.nodes.map((n) => [n.id, n]));
+        draw(0);
+      }
+    });
+    ro.observe(canvas);
+
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      ro.disconnect();
+      canvas!.removeEventListener('mousemove', handleMouseMove);
+      canvas!.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }
+
+  let cleanup: Cleanup = () => {};
+
+  document.addEventListener('astro:page-load', () => {
+    cleanup = mountNodesGraph();
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    cleanup();
+    cleanup = () => {};
+  });
+</script>
+
+<style>
+  .nodes-graph-wrap {
+    position: relative;
+    margin-bottom: var(--space-12);
+  }
+
+  .nodes-graph-canvas {
+    display: block;
+    width: 100%;
+    height: 480px;
+    background: transparent;
+    cursor: crosshair;
+  }
+
+  @media (max-width: 640px) {
+    .nodes-graph-canvas {
+      height: 320px;
+    }
+  }
+
+  /* Info card */
+  .node-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--ground);
+    border: 1px solid var(--ink-faint);
+    border-radius: 2px;
+    padding: var(--space-3) var(--space-4);
+    min-width: 140px;
+    max-width: 200px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity var(--duration-fast) var(--easing),
+                transform var(--duration-fast) var(--easing);
+    z-index: 10;
+  }
+
+  .node-card[data-visible] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .node-card-label {
+    font-size: var(--text-xs);
+    font-style: italic;
+    margin: 0 0 var(--space-1);
+    color: var(--ink-muted);
+  }
+
+  .node-card-role {
+    font-size: var(--text-sm);
+    margin: 0 0 var(--space-2);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .node-card-link {
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+
+  .node-card-link:hover {
+    color: var(--ink);
+  }
+
+  /* Accessible lists */
+  .mycelium-lists {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--ink-faint);
+  }
+
+  .mycelium-list-title {
+    display: block;
+    margin-bottom: var(--space-4);
+    color: var(--ink-muted);
+  }
+
+  .mycelium-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .mycelium-list-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .mycelium-item-label {
+    color: var(--ink);
+  }
+
+  .mycelium-item-link {
+    text-decoration: none;
+    color: var(--ink);
+    transition: color var(--duration-fast) var(--easing);
+  }
+
+  .mycelium-item-link:hover {
+    color: var(--ink-muted);
+  }
+
+  .mycelium-item-role {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .node-card {
+      transition: none;
+    }
+  }
+</style>
