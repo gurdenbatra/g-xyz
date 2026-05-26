@@ -1,0 +1,67 @@
+---
+import Garden from '@layouts/Garden.astro';
+import NodesGraph from '../../components/zones/Mycelium/NodesGraph.astro';
+---
+
+<Garden
+  title="The Mycelium — Gurden's Garden"
+  description="Collaborators, organisations, and ideas — the network that sustains the work."
+>
+  <div class="mycelium-wrap page-wrap">
+
+    <header class="mycelium-header">
+      <p class="label zone-emoji" aria-hidden="true">🍄</p>
+      <h1>The Mycelium</h1>
+      <p class="mycelium-intro">
+        The network of collaborators, organisations, and ideas that the work
+        grows through. Signals pass between nodes.
+      </p>
+    </header>
+
+    <section class="nodes-section" aria-labelledby="nodes-heading">
+      <h2 id="nodes-heading" class="label section-heading">Nodes</h2>
+      <NodesGraph />
+    </section>
+
+  </div>
+</Garden>
+
+<style>
+  .mycelium-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .mycelium-header {
+    margin-bottom: var(--space-16);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: var(--space-8);
+  }
+
+  .zone-emoji {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+    display: block;
+  }
+
+  .mycelium-header h1 {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .mycelium-intro {
+    font-size: var(--text-md);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  .section-heading {
+    display: block;
+    margin-bottom: var(--space-8);
+  }
+
+  .nodes-section {
+    margin-bottom: var(--space-20);
+  }
+</style>

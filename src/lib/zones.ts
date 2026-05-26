@@ -54,7 +54,7 @@ export const zones: readonly Zone[] = [
     name: 'The Mycelium',
     shortDesc: 'Network',
     longDesc: 'Collaborators & network',
-    href: null,
+    href: '/mycelium',
   },
   {
     id: 'beds',
