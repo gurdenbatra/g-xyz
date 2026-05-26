@@ -34,3 +34,13 @@ export const artSchema = z.object({
   (data) => !data.liveEmbed || data.sourceUrl !== undefined,
   { message: 'sourceUrl is required when liveEmbed is true', path: ['sourceUrl'] }
 );
+
+export const nowSchema = z.object({
+  carrying: z.array(z.object({ label: z.string(), detail: z.string() })),
+  reading:  z.array(z.object({ label: z.string(), detail: z.string() })),
+  contact:  z.array(z.object({
+    label:  z.string(),
+    url:    z.string().min(1),
+    detail: z.string().optional(),
+  })),
+});

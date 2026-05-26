@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { projectSchema, poemSchema, artSchema } from './schemas';
+import { projectSchema, poemSchema, artSchema, nowSchema } from './schemas';
 
 describe('projectSchema', () => {
   it('accepts valid project frontmatter', () => {
@@ -187,5 +187,43 @@ describe('artSchema', () => {
       sourceUrl: 'https://example.com/sketch',
     });
     expect(result.success).toBe(true);
+  });
+});
+
+describe('nowSchema', () => {
+  const valid = {
+    carrying: [{ label: 'Work', detail: 'Civic tech in Berlin' }],
+    reading:  [{ label: 'A Book', detail: 'Author — subtitle' }],
+    contact:  [{ label: 'Email', url: 'mailto:test@example.com', detail: 'test@example.com' }],
+  };
+
+  it('accepts valid now frontmatter', () => {
+    expect(nowSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('accepts contact without optional detail', () => {
+    const data = {
+      ...valid,
+      contact: [{ label: 'GitHub', url: 'https://github.com/user' }],
+    };
+    expect(nowSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('rejects missing carrying field', () => {
+    const { carrying: _c, ...rest } = valid;
+    expect(nowSchema.safeParse(rest).success).toBe(false);
+  });
+
+  it('rejects empty url string', () => {
+    const data = { ...valid, contact: [{ label: 'Email', url: '' }] };
+    expect(nowSchema.safeParse(data).success).toBe(false);
+  });
+
+  it('accepts mailto: url (not filtered out by .url())', () => {
+    const data = {
+      ...valid,
+      contact: [{ label: 'Email', url: 'mailto:a@b.com', detail: 'a@b.com' }],
+    };
+    expect(nowSchema.safeParse(data).success).toBe(true);
   });
 });
