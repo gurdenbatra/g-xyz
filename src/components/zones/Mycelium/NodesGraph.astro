@@ -322,8 +322,12 @@ const rawNodes: RawNode[] = [...collaborators];
       }
       if (nearest !== hoveredId) {
         hoveredId = nearest;
-        if (hoveredId) showCard(nodeMap.get(hoveredId)!);
-        else hideCard();
+        if (hoveredId) {
+          const hovered = nodeMap.get(hoveredId);
+          if (hovered) showCard(hovered);
+        } else {
+          hideCard();
+        }
       }
     }
 
