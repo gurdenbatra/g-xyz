@@ -1,9 +1,8 @@
-import { defineCollection, z } from 'astro:content';
-import { projectSchema, poemSchema, artSchema, nowSchema } from './schemas';
+import { defineCollection } from 'astro:content';
+import { projectSchema, canopySchema, nowSchema } from './schemas';
 
 export const collections = {
   projects: defineCollection({ type: 'content', schema: projectSchema }),
-  poems:    defineCollection({ type: 'content', schema: poemSchema }),
-  art:      defineCollection({ type: 'content', schema: artSchema }),
+  canopy:   defineCollection({ type: 'content', schema: canopySchema }),
   now:      defineCollection({ type: 'content', schema: nowSchema }),
 };

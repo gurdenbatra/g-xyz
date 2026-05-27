@@ -18,21 +18,15 @@ export const projectSchema = z.object({
   plantType:     z.enum(PLANT_TYPES).optional(),
 });
 
-export const poemSchema = z.object({
-  title:        z.string(),
-  date:         z.date(),
-  customLayout: z.boolean().default(false),
-});
-
-export const artSchema = z.object({
-  title:     z.string(),
-  date:      z.date(),
-  medium:    z.enum(['canvas', 'webgl', 'svg', 'p5', 'static']),
-  sourceUrl: z.string().url().optional(),
-  liveEmbed: z.boolean().default(false),
+export const canopySchema = z.object({
+  title:       z.string(),
+  kind:        z.enum(['poem', 'essay', 'music', 'av']),
+  year:        z.number().int().min(1900).max(2100),
+  description: z.string().optional(),
+  embedUrl:    z.string().url().optional(),
 }).refine(
-  (data) => !data.liveEmbed || data.sourceUrl !== undefined,
-  { message: 'sourceUrl is required when liveEmbed is true', path: ['sourceUrl'] }
+  (d) => !['music', 'av'].includes(d.kind) || d.embedUrl !== undefined,
+  { message: 'embedUrl required for music and av', path: ['embedUrl'] }
 );
 
 export const nowSchema = z.object({
