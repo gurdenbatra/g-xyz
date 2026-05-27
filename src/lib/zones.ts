@@ -30,7 +30,7 @@ export const zones: readonly Zone[] = [
     name: 'The Canopy',
     shortDesc: 'Art',
     longDesc: 'Art, poetry & essays',
-    href: null,
+    href: '/canopy',
   },
   {
     id: 'hive',

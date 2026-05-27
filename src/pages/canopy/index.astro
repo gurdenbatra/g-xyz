@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import Garden from '@layouts/Garden.astro';
+import ScatteredNotes from '../../components/zones/Canopy/ScatteredNotes.astro';
+
+const pieces = await getCollection('canopy');
+---
+
+<Garden
+  title="The Canopy — Gurden's Garden"
+  description="Poems, essays, music, and audio-visual work — the art that grows alongside the rest."
+>
+  <div class="canopy-wrap page-wrap">
+
+    <header class="canopy-header">
+      <p class="label zone-emoji" aria-hidden="true">🌳</p>
+      <h1>The Canopy</h1>
+      <p class="canopy-intro">
+        Poems, essays, music, and audio-visual work — the art that grows alongside the rest.
+      </p>
+    </header>
+
+    <section class="scatter-section" aria-labelledby="scatter-heading">
+      <h2 id="scatter-heading" class="label section-heading">All pieces</h2>
+      <ScatteredNotes pieces={pieces} />
+    </section>
+
+  </div>
+</Garden>
+
+<style>
+  .canopy-wrap {
+    padding-block: var(--space-16);
+  }
+
+  .canopy-header {
+    margin-bottom: var(--space-16);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: var(--space-8);
+  }
+
+  .zone-emoji {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+    display: block;
+  }
+
+  .canopy-header h1 {
+    font-size: var(--text-3xl);
+    font-style: italic;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .canopy-intro {
+    font-size: var(--text-md);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  .section-heading {
+    display: block;
+    margin-bottom: var(--space-8);
+  }
+
+  .scatter-section {
+    margin-bottom: var(--space-20);
+  }
+</style>

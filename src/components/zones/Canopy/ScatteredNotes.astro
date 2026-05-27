@@ -1,0 +1,181 @@
+---
+// src/components/zones/Canopy/ScatteredNotes.astro
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  pieces: CollectionEntry<'canopy'>[];
+}
+
+const { pieces } = Astro.props;
+
+// LCG hash — deterministic integer from a string
+function lcg(n: number): number {
+  return ((n * 1664525 + 1013904223) & 0xffffffff) >>> 0;
+}
+function slugHash(slug: string): number {
+  return slug.split('').reduce((h, c) => lcg(h ^ c.charCodeAt(0)), 0);
+}
+
+// Colour per kind
+const KIND_STYLE: Record<string, { bg: string; fg: string }> = {
+  poem:  { bg: '#5A7A4A', fg: '#f1e8d0' },
+  essay: { bg: '#D9A857', fg: '#1A1A1A' },
+  music: { bg: '#8A4F2E', fg: '#f1e8d0' },
+  av:    { bg: '#2a3a5a', fg: '#f1e8d0' },
+};
+
+// Compute base positions at build time using a 900px reference width.
+// Left is stored as a percentage so it scales with the container.
+// Top is stored in px because the container has a fixed height of 420px.
+const W_REF = 900;
+const COL_W = W_REF / 3; // 300px per column
+
+const positionedPieces = pieces.map(piece => {
+  const slug = piece.id.replace(/\.[^.]+$/, '');
+  const h = slugHash(slug);
+  const col = h % 3;
+  const xPx = col * COL_W + ((h >> 4) % Math.floor(COL_W * 0.6));
+  const yPx = 20 + ((h >> 8) % 340);
+  const r   = ((h >> 12) % 17) - 8; // base rotation: −8° to +8°
+  const leftPct = ((xPx / W_REF) * 100).toFixed(2);
+  const { bg, fg } = KIND_STYLE[piece.data.kind] ?? KIND_STYLE.poem;
+  return { piece, slug, leftPct, topPx: yPx, r, bg, fg };
+});
+---
+
+<div class="scatter-wrap" data-scatter-wrap>
+  {positionedPieces.map(({ piece, slug, leftPct, topPx, r, bg, fg }) => (
+    <a
+      href={`/canopy/${slug}`}
+      class="note"
+      data-note
+      data-left-pct={leftPct}
+      data-top-px={topPx}
+      data-r={r}
+      style={`left:${leftPct}%;top:${topPx}px;transform:rotate(${r}deg);background:${bg};color:${fg};`}
+      aria-label={`${piece.data.kind}: ${piece.data.title}`}
+    >
+      <span class="note-kind">{piece.data.kind}</span>
+      <span class="note-title">{piece.data.title}</span>
+      {piece.data.description && <span class="note-desc">{piece.data.description}</span>}
+      <span class="note-year">{piece.data.year}</span>
+    </a>
+  ))}
+
+  <div class="colour-key" data-colour-key aria-hidden="true">
+    <span class="key-label">Key:</span>
+    <span class="key-item"><span class="key-swatch" style="background:#5A7A4A"></span>Poem</span>
+    <span class="key-item"><span class="key-swatch" style="background:#D9A857"></span>Essay</span>
+    <span class="key-item"><span class="key-swatch" style="background:#8A4F2E"></span>Music</span>
+    <span class="key-item"><span class="key-swatch" style="background:#2a3a5a"></span>A/V</span>
+  </div>
+</div>
+
+<style>
+  .scatter-wrap {
+    position: relative;
+    height: 420px;
+    overflow: hidden;
+    margin-bottom: var(--space-8, 2rem);
+  }
+
+  .note {
+    position: absolute;
+    padding: 10px 14px;
+    border-radius: 1px;
+    font-style: italic;
+    cursor: pointer;
+    text-decoration: none;
+    max-width: 150px;
+    box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.18);
+    transition: box-shadow 0.2s, filter 0.2s;
+    transform-origin: top center;
+  }
+
+  .note:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+    filter: brightness(1.06);
+    z-index: 10;
+  }
+
+  .note:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    z-index: 10;
+  }
+
+  .note-kind {
+    display: block;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.75;
+    margin-bottom: 4px;
+    font-style: normal;
+  }
+
+  .note-title {
+    display: block;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .note-desc {
+    display: block;
+    font-size: 9px;
+    opacity: 0.7;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .note-year {
+    display: block;
+    font-size: 8px;
+    opacity: 0.55;
+    margin-top: 5px;
+    font-style: normal;
+  }
+
+  .colour-key {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .key-label {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #B8B0A0;
+  }
+
+  .key-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    color: #4A4A48;
+    font-style: normal;
+  }
+
+  .key-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .scatter-wrap {
+      height: auto;
+      min-height: 520px;
+    }
+
+    .note {
+      max-width: 120px;
+    }
+  }
+</style>
