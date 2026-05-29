@@ -25,7 +25,6 @@ import { zones } from '../../lib/zones';
           <li class="zone-item" data-zone={zone.id}>
             {zone.href ? (
               <a href={zone.href} class="zone-link">
-                <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
                 <span class="zone-text">
                   <span class="zone-name">{zone.name}</span>
                   <span class="zone-desc">{zone.longDesc}</span>
@@ -33,7 +32,6 @@ import { zones } from '../../lib/zones';
               </a>
             ) : (
               <span class="zone-link zone-link--soon">
-                <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
                 <span class="zone-text">
                   <span class="zone-name">{zone.name}</span>
                   <span class="zone-desc">
@@ -130,13 +128,6 @@ import { zones } from '../../lib/zones';
   .zone-link--soon {
     opacity: 0.4;
     cursor: default;
-  }
-
-  .zone-emoji {
-    font-size: 1.5rem;
-    line-height: 1;
-    flex-shrink: 0;
-    margin-top: 2px;
   }
 
   .zone-text {
