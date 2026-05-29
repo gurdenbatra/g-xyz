@@ -1,0 +1,189 @@
+---
+// src/components/zones/Canopy/PieceDetail.astro
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry:   CollectionEntry<'canopy'>;
+  Content: unknown; // Astro MDX component
+}
+
+const { entry, Content } = Astro.props;
+const { title, kind, year, description, embedUrl } = entry.data;
+
+const KIND_COLOR: Record<string, string> = {
+  poem:  '#4a6e39',
+  essay: '#D9A857',
+  music: '#8A4F2E',
+  av:    '#2a3a5a',
+};
+const kindColor = KIND_COLOR[kind] ?? '#f1e8d0';
+
+function platformName(url: string): string {
+  if (url.includes('soundcloud')) return 'SoundCloud';
+  if (url.includes('instagram'))  return 'Instagram';
+  return 'original source';
+}
+---
+
+<div class="piece-wrap page-wrap">
+
+  <a href="/canopy" class="back-link">← The Canopy</a>
+
+  <div class="piece-shell">
+    <div class="piece-meta">
+      <span class="piece-kind" style={`color:${kindColor}`}>{kind}</span>
+      <span class="piece-sep" aria-hidden="true">·</span>
+      <span class="piece-year">{year}</span>
+    </div>
+
+    <h1 class="piece-title">{title}</h1>
+
+    {description && <p class="piece-description">{description}</p>}
+
+    {(kind === 'poem' || kind === 'essay') && (
+      <div class={`piece-body piece-body--${kind}`}>
+        <!-- @ts-ignore Astro MDX Content component -->
+        <Content />
+      </div>
+    )}
+
+    {(kind === 'music' || kind === 'av') && embedUrl && (
+      <div class="piece-embed-wrap">
+        <iframe
+          src={embedUrl}
+          loading="lazy"
+          title={title}
+          class="piece-embed"
+          scrolling="no"
+          allow="autoplay"
+          width="100%"
+          height="166"
+        ></iframe>
+        <a
+          href={embedUrl}
+          class="piece-source-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ↗ Open on {platformName(embedUrl)}
+        </a>
+      </div>
+    )}
+  </div>
+
+</div>
+
+<style>
+  .piece-wrap {
+    padding-block: var(--space-16);
+    max-width: 600px;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4A4A48;
+    text-decoration: none;
+    margin-bottom: var(--space-12, 3rem);
+  }
+
+  .back-link:hover {
+    color: var(--c-paper, #f1e8d0);
+  }
+
+  .piece-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: var(--space-4, 1rem);
+  }
+
+  .piece-kind {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-style: normal;
+  }
+
+  .piece-sep {
+    font-size: 8px;
+    color: #3a3a3a;
+  }
+
+  .piece-year {
+    font-size: 8px;
+    color: #4A4A48;
+    font-style: normal;
+  }
+
+  .piece-title {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-style: italic;
+    color: var(--c-paper, #f1e8d0);
+    line-height: 1.25;
+    margin-bottom: var(--space-8, 2rem);
+  }
+
+  .piece-description {
+    font-size: 11px;
+    color: #6b6b6b;
+    margin-bottom: var(--space-8, 2rem);
+    line-height: 1.6;
+  }
+
+  /* Poem body */
+  .piece-body--poem {
+    font-size: 13px;
+    color: #c8c0b0;
+    line-height: 2;
+    font-style: italic;
+    white-space: pre-line;
+  }
+
+  .piece-body--poem p {
+    margin-bottom: var(--space-4, 1rem);
+  }
+
+  /* Essay body */
+  .piece-body--essay {
+    font-size: 14px;
+    color: #c8c0b0;
+    line-height: 1.75;
+  }
+
+  .piece-body--essay p {
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .piece-body--essay em {
+    font-style: italic;
+    color: var(--c-paper, #f1e8d0);
+  }
+
+  /* Embed */
+  .piece-embed-wrap {
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .piece-embed {
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 1px;
+  }
+
+  .piece-source-link {
+    display: inline-block;
+    margin-top: var(--space-4, 1rem);
+    font-size: 9px;
+    color: #4A4A48;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+
+  .piece-source-link:hover {
+    color: var(--c-paper, #f1e8d0);
+  }
+</style>
