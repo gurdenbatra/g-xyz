@@ -10,6 +10,9 @@ function beeX() {
 
 test.describe('Cursor bee', () => {
   test('tracks the pointer on the homepage', async ({ page }) => {
+    // The bee is suppressed under reduced motion; pin it so the test is
+    // deterministic regardless of the CI environment's default.
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.goto('/');
     await page.mouse.move(500, 300);
     await page.waitForFunction(
@@ -27,6 +30,7 @@ test.describe('Cursor bee', () => {
   });
 
   test('keeps tracking after a client-side navigation', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.goto('/');
     await page.mouse.move(500, 300);
     // Navigate client-side via ClientRouter by clicking a homepage zone link.
@@ -43,6 +47,7 @@ test.describe('Cursor bee', () => {
       { timeout: 3000 },
     );
     const x = await page.evaluate(beeX);
+    expect(x).not.toBeNull();
     expect(x as number).toBeGreaterThan(0);
   });
 });
