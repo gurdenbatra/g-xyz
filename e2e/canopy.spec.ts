@@ -37,6 +37,15 @@ test.describe('Canopy index — reduced motion', () => {
     await page.goto('/canopy');
     await expect(page.locator('[data-note]').first()).toBeVisible();
   });
+
+  test('note positions are set without animation under reduced motion', async ({ page }) => {
+    await page.goto('/canopy');
+    // Notes should have non-empty left/top inline styles from build time
+    const note = page.locator('[data-note]').first();
+    const style = await note.getAttribute('style');
+    expect(style).toMatch(/left:-?\d/);
+    expect(style).toMatch(/top:-?\d/);
+  });
 });
 
 // ── Accessibility ─────────────────────────────────────────────────────────────
