@@ -26,12 +26,7 @@ test.describe('Garden map — home page', () => {
     await expect(map.locator('[data-zone="beds"] a[href="/beds"]')).toBeAttached();
     await expect(map.locator('[data-zone="hive"] a[href="/hive"]')).toBeAttached();
     await expect(map.locator('[data-zone="mycelium"] a[href="/mycelium"]')).toBeAttached();
-  });
-
-  test('inactive zones have no interactive link', async ({ page }) => {
-    await page.goto('/');
-    const map = page.locator('.garden-map');
-    await expect(map.locator('[data-zone="canopy"] a')).not.toBeAttached();
+    await expect(map.locator('[data-zone="canopy"] a[href="/canopy"]')).toBeAttached();
   });
 
   test('zone breathing animation is suppressed under prefers-reduced-motion', async ({ page }) => {
