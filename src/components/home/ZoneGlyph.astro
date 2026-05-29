@@ -1,0 +1,84 @@
+---
+import type { ZoneId } from '../../lib/zones';
+
+interface Props {
+  id: ZoneId;
+}
+
+const { id } = Astro.props;
+---
+
+<span class="zone-glyph" aria-hidden="true">
+  {id === 'polyculture' && (
+    <svg viewBox="0 0 36 36" role="presentation">
+      <path class="s-moss" d="M18 34 V14" />
+      <path class="s-moss" d="M18 22 Q8 18 6 9" />
+      <path class="s-moss" d="M18 18 Q28 14 30 6" />
+      <circle class="f-ochre" cx="6" cy="9" r="2" />
+      <circle class="f-ochre" cx="30" cy="6" r="2" />
+    </svg>
+  )}
+  {id === 'canopy' && (
+    <svg viewBox="0 0 36 36" role="presentation">
+      <path class="s-soil" d="M18 34 V20" />
+      <circle class="f-moss" cx="18" cy="13" r="11" />
+    </svg>
+  )}
+  {id === 'hive' && (
+    <svg viewBox="0 0 36 36" role="presentation">
+      <path class="s-ochre" d="M18 3 L31 10.5 V25.5 L18 33 L5 25.5 V10.5 Z" />
+    </svg>
+  )}
+  {id === 'compost' && (
+    <svg viewBox="0 0 36 36" role="presentation">
+      <path class="s-soil" d="M4 11 H32 M4 20 H32 M4 29 H32" />
+      <path class="s-chart" d="M9 29 q4 -6 8 0 t8 0" />
+    </svg>
+  )}
+  {id === 'mycelium' && (
+    <svg viewBox="0 0 36 36" role="presentation">
+      <path class="s-moss" d="M18 32 V18 M18 18 L7 7 M18 18 L29 8 M18 18 V4" />
+      <circle class="f-moss" cx="7" cy="7" r="2.5" />
+      <circle class="f-moss" cx="29" cy="8" r="2.5" />
+      <circle class="f-moss" cx="18" cy="4" r="2.5" />
+    </svg>
+  )}
+  {id === 'beds' && (
+    <svg viewBox="0 0 36 36" role="presentation">
+      <path class="s-soil" d="M5 28 H31" />
+      <path class="s-moss" d="M18 28 V14" />
+      <path class="s-moss" d="M18 20 Q10 17 9 10" />
+      <path class="s-moss" d="M18 18 Q26 15 27 9" />
+    </svg>
+  )}
+</span>
+
+<style>
+  .zone-glyph {
+    display: block;
+  }
+
+  .zone-glyph svg {
+    width: 34px;
+    height: 34px;
+    display: block;
+  }
+
+  /* Strokes (outlines) */
+  .zone-glyph path,
+  .zone-glyph circle {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .s-moss  { stroke: var(--c-moss); }
+  .s-soil  { stroke: var(--c-soil); }
+  .s-ochre { stroke: var(--c-ochre); }
+  .s-chart { stroke: var(--c-chartreuse); }
+
+  /* Solid fills (dots, crown) */
+  .f-moss  { fill: var(--c-moss);  stroke: none; }
+  .f-ochre { fill: var(--c-ochre); stroke: none; }
+</style>
