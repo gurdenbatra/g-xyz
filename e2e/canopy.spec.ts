@@ -99,12 +99,14 @@ test.describe('Canopy detail — music', () => {
 // ── Navigation ────────────────────────────────────────────────────────────────
 
 test.describe('Canopy index — navigation', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
   test('clicking a note navigates to its detail page', async ({ page }) => {
     await page.goto('/canopy');
     const firstNote = page.locator('[data-note]').first();
     const href = await firstNote.getAttribute('href');
     expect(href).toMatch(/^\/canopy\//);
-    await firstNote.click({ force: true });
+    await firstNote.click();
     await expect(page).toHaveURL(/\/canopy\/.+/);
   });
 });
