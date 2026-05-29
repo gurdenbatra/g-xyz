@@ -195,7 +195,15 @@ const positionedPieces = pieces.map(piece => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) return; // inline styles from SSG already set correct positions
 
-    const H = 420; // scatter container height in px
+    const H = wrap.clientHeight || 420; // scatter container height in px
+
+    // Pre-compute per-note constants (dataset values never change)
+    const noteData = notes.map(note => ({
+      el:      note,
+      br:      parseFloat(note.dataset.r       ?? '0'),
+      leftPct: parseFloat(note.dataset.leftPct ?? '0'),
+      topPx:   parseFloat(note.dataset.topPx   ?? '0'),
+    }));
 
     let rafId: number;
 
@@ -207,19 +215,16 @@ const positionedPieces = pieces.map(piece => {
         return;
       }
 
-      notes.forEach(note => {
-        const br        = parseFloat(note.dataset.r ?? '0');
-        const leftPct   = parseFloat(note.dataset.leftPct ?? '0');
-        const topPx     = parseFloat(note.dataset.topPx ?? '0');
-        const x         = (leftPct / 100) * W;
-        const y         = topPx;
+      noteData.forEach(nd => {
+        const x  = (nd.leftPct / 100) * W;
+        const y  = nd.topPx;
 
         const nx    = x / W;
         const ny    = y / H;
-        const windR = noise2D(nx + t, ny + t) * 4;        // ±4° rotation delta
-        const driftY = noise2D(nx, ny + t * 0.5) * 3;     // ±3px vertical drift
+        const windR  = noise2D(nx + t, ny + t) * 4;
+        const driftY = noise2D(nx, ny + t * 0.5) * 3;
 
-        note.style.transform = `rotate(${br + windR}deg) translateY(${driftY}px)`;
+        nd.el.style.transform = `rotate(${nd.br + windR}deg) translateY(${driftY}px)`;
       });
 
       rafId = requestAnimationFrame(tick);
