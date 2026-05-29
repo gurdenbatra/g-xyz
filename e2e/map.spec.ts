@@ -49,24 +49,29 @@ test.describe('Garden home page', () => {
     }
   });
 
-  test('focusing a zone reveals its description hint', async ({ page }) => {
+  test('each zone shows its description as an always-visible label', async ({ page }) => {
     await page.goto('/');
-    const link = page.locator('#main-content a.zone-link[data-zone="polyculture"]');
-    await link.focus();
-    // Wait for the CSS opacity transition to settle (cross-browser)
-    await page.waitForFunction(
-      () => {
-        const hint = document.querySelector(
-          '#main-content a.zone-link[data-zone="polyculture"] .zone-hint',
-        ) as HTMLElement | null;
-        return hint ? parseFloat(getComputedStyle(hint).opacity) > 0 : false;
-      },
-      { timeout: 2000 },
+    const label = page.locator(
+      '#main-content a.zone-link[data-zone="polyculture"] .zone-label',
     );
-    const opacity = await link.locator('.zone-hint').evaluate(
-      (el) => getComputedStyle(el).opacity,
-    );
-    expect(parseFloat(opacity)).toBeGreaterThan(0);
+    await expect(label).toHaveText('Work & projects');
+    const opacity = await label.evaluate((el) => getComputedStyle(el).opacity);
+    expect(parseFloat(opacity)).toBe(1);
+  });
+
+  test('zone names are not rendered on the homepage', async ({ page }) => {
+    await page.goto('/');
+    const text = await page.locator('#main-content').innerText();
+    for (const name of [
+      'The Polyculture',
+      'The Canopy',
+      'The Hive',
+      'The Compost',
+      'The Mycelium',
+      'The Beds',
+    ]) {
+      expect(text).not.toContain(name);
+    }
   });
 
   test('no emoji characters appear on the homepage', async ({ page }) => {

@@ -4,15 +4,18 @@ import { zones, type ZoneId } from '../lib/zones';
 import ZoneGlyph from '../components/home/ZoneGlyph.astro';
 import GardenFlora from '../components/home/GardenFlora.astro';
 
-// Authored scatter coordinates (≥768px). Each link is centered on its anchor
-// via translate(-50%,-50%). Positions hug the edges to clear the centered title.
+// Garden cross-section: position encodes ecology (no drawn connections).
+//   sky    — canopy (the tree) + hive (bees around it)
+//   ground — polyculture + beds frame the wordmark
+//   soil   — compost (the heap) + mycelium (threads beside it)
+// Each link is centered on its anchor via translate(-50%, -50%).
 const zonePos: Record<ZoneId, { x: string; y: string }> = {
-  polyculture: { x: '11%', y: '14%' },
-  canopy: { x: '86%', y: '12%' },
-  hive: { x: '7%', y: '55%' },
-  compost: { x: '92%', y: '57%' },
-  mycelium: { x: '22%', y: '86%' },
-  beds: { x: '77%', y: '85%' },
+  canopy: { x: '36%', y: '13%' },
+  hive: { x: '64%', y: '13%' },
+  polyculture: { x: '12%', y: '50%' },
+  beds: { x: '88%', y: '50%' },
+  compost: { x: '38%', y: '87%' },
+  mycelium: { x: '62%', y: '87%' },
 };
 ---
 
@@ -34,8 +37,7 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
               style={`--zx:${pos.x};--zy:${pos.y};`}
             >
               <ZoneGlyph id={zone.id} />
-              <span class="zone-name">{zone.name}</span>
-              <span class="zone-hint">{zone.longDesc}</span>
+              <span class="zone-label">{zone.longDesc}</span>
             </a>
           </li>
         );
@@ -83,7 +85,7 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-5);
+    gap: var(--space-6);
     z-index: 1;
   }
 
@@ -95,41 +97,42 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-1);
+    gap: var(--space-2);
     text-decoration: none;
     color: var(--ink);
   }
 
-  .zone-name {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: var(--text-lg);
-    line-height: 1.1;
+  .zone-link :global(.zone-glyph) {
+    transition: transform var(--duration-base) var(--easing);
   }
 
-  .zone-hint {
+  .zone-label {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--c-soil);
-    opacity: 0;
-    transition: opacity var(--duration-base) var(--easing);
   }
 
-  .zone-link:hover .zone-name,
-  .zone-link:focus-visible .zone-name {
+  /* Hover/focus only emphasizes — the label is always visible. */
+  .zone-link:hover .zone-label,
+  .zone-link:focus-visible .zone-label {
     text-decoration: underline;
   }
 
-  .zone-link:hover .zone-hint,
-  .zone-link:focus-within .zone-hint {
-    opacity: 1;
+  .zone-link:hover :global(.zone-glyph),
+  .zone-link:focus-visible :global(.zone-glyph) {
+    transform: scale(1.06);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .zone-hint {
+    .zone-link :global(.zone-glyph) {
       transition: none;
+    }
+
+    .zone-link:hover :global(.zone-glyph),
+    .zone-link:focus-visible :global(.zone-glyph) {
+      transform: none;
     }
   }
 
