@@ -47,10 +47,12 @@
 <script>
   import { createBee, stepBee, type BeeState } from '../../lib/bee';
 
-  const el = document.getElementById('cursor-bee');
-  if (el && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduce) {
     let bee: BeeState = createBee({ x: -100, y: -100 });
-    let rafId = 0;
+    // Mutable so we can re-point it at the swapped node after navigation.
+    let el: HTMLElement | null = document.getElementById('cursor-bee');
 
     function onMove(e: PointerEvent) {
       bee = { ...bee, targetX: e.clientX - 12, targetY: e.clientY - 8 };
@@ -58,16 +60,18 @@
 
     function loop() {
       bee = stepBee(bee, 0.18);
-      el!.style.transform = `translate3d(${bee.x}px, ${bee.y}px, 0)`;
-      rafId = requestAnimationFrame(loop);
+      if (el) el.style.transform = `translate3d(${bee.x}px, ${bee.y}px, 0)`;
+      requestAnimationFrame(loop);
     }
 
-    window.addEventListener('pointermove', onMove, { passive: true });
-    rafId = requestAnimationFrame(loop);
-
-    window.addEventListener('beforeunload', () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('pointermove', onMove);
+    // ClientRouter swaps <body> on client-side navigation, detaching the old
+    // node. window/document persist across view transitions, so we keep ONE
+    // loop + listener and just re-acquire the freshly-swapped element here.
+    document.addEventListener('astro:page-load', () => {
+      el = document.getElementById('cursor-bee');
     });
+
+    window.addEventListener('pointermove', onMove, { passive: true });
+    requestAnimationFrame(loop);
   }
 </script>
