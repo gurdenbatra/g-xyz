@@ -8,7 +8,6 @@ export type ZoneId =
 
 export interface Zone {
   id: ZoneId;
-  emoji: string;
   name: string;
   shortDesc: string;
   longDesc: string;
@@ -18,7 +17,6 @@ export interface Zone {
 export const zones: readonly Zone[] = [
   {
     id: 'polyculture',
-    emoji: '🌿',
     name: 'The Polyculture',
     shortDesc: 'Work',
     longDesc: 'Work & projects',
@@ -26,7 +24,6 @@ export const zones: readonly Zone[] = [
   },
   {
     id: 'canopy',
-    emoji: '🌳',
     name: 'The Canopy',
     shortDesc: 'Art',
     longDesc: 'Art, poetry & essays',
@@ -34,7 +31,6 @@ export const zones: readonly Zone[] = [
   },
   {
     id: 'hive',
-    emoji: '🐝',
     name: 'The Hive',
     shortDesc: 'Now',
     longDesc: 'Now & contact',
@@ -42,7 +38,6 @@ export const zones: readonly Zone[] = [
   },
   {
     id: 'compost',
-    emoji: '🪱',
     name: 'The Compost',
     shortDesc: 'Story',
     longDesc: 'Story & origins',
@@ -50,7 +45,6 @@ export const zones: readonly Zone[] = [
   },
   {
     id: 'mycelium',
-    emoji: '🍄',
     name: 'The Mycelium',
     shortDesc: 'Network',
     longDesc: 'Collaborators & network',
@@ -58,7 +52,6 @@ export const zones: readonly Zone[] = [
   },
   {
     id: 'beds',
-    emoji: '🛠',
     name: 'The Beds',
     shortDesc: 'Care',
     longDesc: 'Colophon & care',
