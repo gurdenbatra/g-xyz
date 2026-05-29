@@ -35,6 +35,7 @@ const season = seasonFor(new Date());
     <title>{pageTitle}</title>
     <link rel="preload" href="/fonts/MaziusDisplay-Regular.woff2"     as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/MaziusDisplay-Extraitalic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/MaziusDisplay-ExtraItalicBold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/NectoMono-Regular.woff2"         as="font" type="font/woff2" crossorigin />
     <ClientRouter />
     <PortalShader />
@@ -43,7 +44,7 @@ const season = seasonFor(new Date());
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <header role="banner">
-      <Nav />
+      <Nav home={title === 'Home'} />
     </header>
 
     <main id="main-content" tabindex="-1">

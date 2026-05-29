@@ -37,7 +37,7 @@ test.describe('Garden layout accessibility', () => {
   });
 
   test('nav landmark is present', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/polyculture');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav).toBeAttached();
   });
@@ -65,16 +65,22 @@ test.describe('Garden layout accessibility', () => {
 
 test.describe('Nav component', () => {
   test('nav contains the logo link', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/polyculture');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav.locator('a[href="/"]')).toBeAttached();
   });
 
   test('nav does not contain old zone links (navigation is via map overlay)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/polyculture');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav.locator('a[href="/polyculture"]')).not.toBeAttached();
     await expect(nav.locator('a[href="/compost"]')).not.toBeAttached();
+  });
+
+  test('homepage has no main nav and no gurden.xyz logo', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('navigation', { name: 'Main navigation' })).toHaveCount(0);
+    await expect(page.getByText('gurden.xyz')).toHaveCount(0);
   });
 
   test('active zones are reachable via the map overlay', async ({ page }) => {

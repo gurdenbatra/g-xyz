@@ -1,13 +1,20 @@
 ---
+interface Props {
+  home?: boolean;
+}
+
+const { home = false } = Astro.props;
 ---
 
-<nav aria-label="Main navigation">
-  <div class="nav-inner page-wrap">
-    <a href="/" class="nav-logo">
-      gurden.xyz
-    </a>
-  </div>
-</nav>
+{!home && (
+  <nav aria-label="Main navigation">
+    <div class="nav-inner page-wrap">
+      <a href="/" class="nav-logo">
+        gurden.xyz
+      </a>
+    </div>
+  </nav>
+)}
 
 <style>
   nav {
