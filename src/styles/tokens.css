@@ -32,6 +32,7 @@
   --text-2xl:  3rem;       /* 48px  — mid-display */
   --text-3xl:  4.5rem;     /* 72px  — display */
   --text-4xl:  clamp(3.25rem, 7vw, 6rem); /* hero tagline, responsive */
+  --text-display: clamp(4rem, 16vw, 11rem); /* homepage masthead — far larger than --text-4xl */
 
   /* ── Spacing (4px base) ── */
   --space-1:  0.25rem;
