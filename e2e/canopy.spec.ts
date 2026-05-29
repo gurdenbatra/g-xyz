@@ -38,3 +38,13 @@ test.describe('Canopy index — reduced motion', () => {
     await expect(page.locator('[data-note]').first()).toBeVisible();
   });
 });
+
+// ── Accessibility ─────────────────────────────────────────────────────────────
+
+test.describe('Canopy — accessibility', () => {
+  test('canopy index passes axe audit', async ({ page }) => {
+    await page.goto('/canopy');
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations).toEqual([]);
+  });
+});

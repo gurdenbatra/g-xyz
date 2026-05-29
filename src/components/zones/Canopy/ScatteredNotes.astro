@@ -18,7 +18,7 @@ function slugHash(slug: string): number {
 
 // Colour per kind
 const KIND_STYLE: Record<string, { bg: string; fg: string }> = {
-  poem:  { bg: '#5A7A4A', fg: '#f1e8d0' },
+  poem:  { bg: '#4a6e39', fg: '#f1e8d0' },
   essay: { bg: '#D9A857', fg: '#1A1A1A' },
   music: { bg: '#8A4F2E', fg: '#f1e8d0' },
   av:    { bg: '#2a3a5a', fg: '#f1e8d0' },
@@ -64,7 +64,7 @@ const positionedPieces = pieces.map(piece => {
 
   <div class="colour-key" data-colour-key aria-hidden="true">
     <span class="key-label">Key:</span>
-    <span class="key-item"><span class="key-swatch" style="background:#5A7A4A"></span>Poem</span>
+    <span class="key-item"><span class="key-swatch" style="background:#4a6e39"></span>Poem</span>
     <span class="key-item"><span class="key-swatch" style="background:#D9A857"></span>Essay</span>
     <span class="key-item"><span class="key-swatch" style="background:#8A4F2E"></span>Music</span>
     <span class="key-item"><span class="key-swatch" style="background:#2a3a5a"></span>A/V</span>
@@ -75,7 +75,7 @@ const positionedPieces = pieces.map(piece => {
   .scatter-wrap {
     position: relative;
     height: 420px;
-    overflow: hidden;
+    overflow: visible;
     margin-bottom: var(--space-8, 2rem);
   }
 
