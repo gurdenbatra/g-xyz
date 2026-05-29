@@ -28,7 +28,21 @@ test.describe('Canopy index — structure', () => {
   });
 });
 
-// ── Reduced motion (structure only — wind tests added in Task 4) ───────────────
+// ── Wind animation ────────────────────────────────────────────────────────────
+
+test.describe('Canopy index — wind animation', () => {
+  test('notes receive wind drift transform when motion is allowed', async ({ page }) => {
+    await page.goto('/canopy');
+    // SSG emits rotate(Xdeg) only; the wind script adds translateY via rAF
+    const note = page.locator('[data-note]').first();
+    await expect(async () => {
+      const transform = await note.evaluate(el => (el as HTMLElement).style.transform);
+      expect(transform).toMatch(/translateY/);
+    }).toPass({ timeout: 2000 });
+  });
+});
+
+// ── Reduced motion ────────────────────────────────────────────────────────────
 
 test.describe('Canopy index — reduced motion', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } });
