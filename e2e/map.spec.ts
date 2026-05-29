@@ -1,39 +1,77 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-test.describe('Garden map — home page', () => {
-  test('home page renders the garden map section', async ({ page }) => {
+const ZONE_HREFS = [
+  '/polyculture',
+  '/canopy',
+  '/hive',
+  '/compost',
+  '/mycelium',
+  '/beds',
+] as const;
+
+const EMOJI = ['🌿', '🌳', '🐝', '🪱', '🍄', '🛠'];
+
+test.describe('Garden home page', () => {
+  test('renders the giant garden title as the h1', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.garden-map')).toBeAttached();
+    const h1 = page.locator('h1.garden-title');
+    await expect(h1).toBeAttached();
+    await expect(h1).toHaveText("Gurden's Garden");
   });
 
-  test('all 6 zone patches are present', async ({ page }) => {
+  test('garden title is rendered very large', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/');
-    const map = page.locator('.garden-map');
-    await expect(map.locator('[data-zone="polyculture"]')).toBeAttached();
-    await expect(map.locator('[data-zone="canopy"]')).toBeAttached();
-    await expect(map.locator('[data-zone="hive"]')).toBeAttached();
-    await expect(map.locator('[data-zone="compost"]')).toBeAttached();
-    await expect(map.locator('[data-zone="mycelium"]')).toBeAttached();
-    await expect(map.locator('[data-zone="beds"]')).toBeAttached();
+    await page.waitForLoadState('networkidle');
+    const fontSizePx = await page.evaluate(() => {
+      const el = document.querySelector('h1.garden-title') as HTMLElement;
+      return parseFloat(getComputedStyle(el).fontSize);
+    });
+    // clamp(4rem, 16vw, 11rem) at 1280px -> 11rem (176px). Guard "way bigger".
+    expect(fontSizePx).toBeGreaterThan(60);
   });
 
-  test('active zones are keyboard-navigable links', async ({ page }) => {
+  test('all 6 zones are present as links with correct hrefs', async ({ page }) => {
     await page.goto('/');
-    const map = page.locator('.garden-map');
-    await expect(map.locator('[data-zone="polyculture"] a[href="/polyculture"]')).toBeAttached();
-    await expect(map.locator('[data-zone="compost"] a[href="/compost"]')).toBeAttached();
-    await expect(map.locator('[data-zone="beds"] a[href="/beds"]')).toBeAttached();
-    await expect(map.locator('[data-zone="hive"] a[href="/hive"]')).toBeAttached();
-    await expect(map.locator('[data-zone="mycelium"] a[href="/mycelium"]')).toBeAttached();
-    await expect(map.locator('[data-zone="canopy"] a[href="/canopy"]')).toBeAttached();
+    const main = page.locator('#main-content');
+    for (const href of ZONE_HREFS) {
+      await expect(main.locator(`a.zone-link[href="${href}"]`)).toBeAttached();
+    }
+    await expect(main.locator('a.zone-link')).toHaveCount(6);
   });
 
-  test('zone breathing animation is suppressed under prefers-reduced-motion', async ({ page }) => {
+  test('zones carry data-zone identifiers', async ({ page }) => {
+    await page.goto('/');
+    const main = page.locator('#main-content');
+    for (const id of ['polyculture', 'canopy', 'hive', 'compost', 'mycelium', 'beds']) {
+      await expect(main.locator(`a.zone-link[data-zone="${id}"]`)).toBeAttached();
+    }
+  });
+
+  test('focusing a zone reveals its description hint', async ({ page }) => {
+    await page.goto('/');
+    const link = page.locator('#main-content a.zone-link[data-zone="polyculture"]');
+    await link.focus();
+    const opacity = await link.locator('.zone-hint').evaluate(
+      (el) => getComputedStyle(el).opacity,
+    );
+    expect(parseFloat(opacity)).toBeGreaterThan(0);
+  });
+
+  test('no emoji characters appear on the homepage', async ({ page }) => {
+    await page.goto('/');
+    const text = await page.locator('#main-content').innerText();
+    for (const e of EMOJI) {
+      expect(text).not.toContain(e);
+    }
+  });
+
+  test('flora sway is suppressed under prefers-reduced-motion', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
     const animName = await page.evaluate(() => {
-      const el = document.querySelector('.zone-patch') as HTMLElement | null;
+      const el = document.querySelector('.garden-flora__sprig') as HTMLElement | null;
       return el ? getComputedStyle(el).animationName : null;
     });
     expect(animName).toBe('none');

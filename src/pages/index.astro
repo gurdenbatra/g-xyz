@@ -1,206 +1,160 @@
 ---
 import Garden from '@layouts/Garden.astro';
 import { zones, type ZoneId } from '../lib/zones';
+import ZoneGlyph from '../components/home/ZoneGlyph.astro';
+import GardenFlora from '../components/home/GardenFlora.astro';
 
-const zoneVisuals: Record<ZoneId, { color: string; textColor: string; delay: string }> = {
-  polyculture: { color: 'var(--c-moss)', textColor: 'var(--c-paper)', delay: '0s' },
-  canopy: { color: 'var(--c-chartreuse)', textColor: 'var(--c-ink)', delay: '0.3s' },
-  hive: { color: 'var(--c-ochre)', textColor: 'var(--c-ink)', delay: '0.6s' },
-  compost: { color: 'var(--c-soil)', textColor: 'var(--c-paper)', delay: '0.15s' },
-  mycelium: { color: 'var(--c-indigo)', textColor: 'var(--c-paper)', delay: '0.45s' },
-  beds: { color: 'var(--ink-faint)', textColor: 'var(--c-ink)', delay: '0.75s' },
+// Authored scatter coordinates (≥768px). Each link is centered on its anchor
+// via translate(-50%,-50%). Positions hug the edges to clear the centered title.
+const zonePos: Record<ZoneId, { x: string; y: string }> = {
+  polyculture: { x: '11%', y: '14%' },
+  canopy: { x: '86%', y: '12%' },
+  hive: { x: '7%', y: '55%' },
+  compost: { x: '92%', y: '57%' },
+  mycelium: { x: '22%', y: '86%' },
+  beds: { x: '77%', y: '85%' },
 };
 ---
 
 <Garden title="Home">
-  <section class="map-section page-wrap" aria-label="Garden map">
-    <h1 class="map-heading label">Gurden's Garden</h1>
-    <p class="map-subtitle">
-      A garden of work, art, and connections. Choose your zone.
-    </p>
+  <section class="garden-home" aria-label="Garden home">
+    <GardenFlora />
 
-    <div class="garden-map" role="list" aria-label="Garden zones">
+    <h1 class="garden-title"><span>Gurden's</span> <span>Garden</span></h1>
+
+    <ul class="zone-field" role="list">
       {zones.map((zone) => {
-        const v = zoneVisuals[zone.id];
+        const pos = zonePos[zone.id];
         return (
-          <div
-            class="zone-patch"
-            data-zone={zone.id}
-            style={`--zone-color: ${v.color}; --zone-text: ${v.textColor}; --zone-delay: ${v.delay};`}
-            role="listitem"
-          >
-            {zone.href ? (
-              <a
-                href={zone.href}
-                class="zone-inner zone-inner--link"
-                aria-label={`${zone.name} — ${zone.shortDesc}`}
-              >
-                <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
-                <span class="zone-name">{zone.name}</span>
-                <span class="zone-desc label">{zone.shortDesc}</span>
-              </a>
-            ) : (
-              <div class="zone-inner zone-inner--soon" aria-label={`${zone.name} — coming soon`}>
-                <span class="zone-emoji" aria-hidden="true">{zone.emoji}</span>
-                <span class="zone-name">{zone.name}</span>
-                <span class="zone-desc label">{zone.shortDesc}</span>
-                <span class="zone-badge label">Soon</span>
-              </div>
-            )}
-          </div>
+          <li>
+            <a
+              class="zone-link"
+              href={zone.href ?? '#'}
+              data-zone={zone.id}
+              style={`--zx:${pos.x};--zy:${pos.y};`}
+            >
+              <ZoneGlyph id={zone.id} />
+              <span class="zone-name">{zone.name}</span>
+              <span class="zone-hint">{zone.longDesc}</span>
+            </a>
+          </li>
         );
       })}
-    </div>
+    </ul>
   </section>
 </Garden>
 
 <style>
-  /* ── MAP SECTION ── */
-  .map-section {
-    padding-block: var(--space-12) var(--space-16);
+  .garden-home {
+    position: relative;
     min-height: calc(100dvh - 4rem);
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: var(--space-8);
+    padding: var(--space-12) var(--gutter);
+    overflow: hidden;
+    text-align: center;
   }
 
-  .map-heading {
-    display: block;
-    color: var(--ink-muted);
-  }
-
-  .map-subtitle {
-    font-family: 'MaziusDisplay', serif;
+  /* ── GIANT TITLE ── */
+  .garden-title {
+    font-family: var(--font-serif);
     font-style: italic;
-    font-size: var(--text-lg);
-    color: var(--ink-muted);
-    max-width: 42ch;
+    font-weight: 700; /* resolves to MaziusDisplay ExtraItalicBold */
+    font-size: var(--text-display);
+    line-height: 0.82;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0;
+    z-index: 1;
+  }
+
+  .garden-title span {
+    display: block;
+  }
+
+  /* ── ZONE FIELD ── */
+  .zone-field {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    z-index: 1;
+  }
+
+  .zone-field li {
     margin: 0;
   }
 
-  /* ── GARDEN MAP GRID ── */
-  .garden-map {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-3);
-    flex: 1;
-  }
-
-  /* ── ZONE PATCH ── */
-  @keyframes breathe {
-    0%, 100% { transform: scale(1); }
-    50%       { transform: scale(1.015); }
-  }
-
-  .zone-patch {
-    background: var(--zone-color);
-    border-radius: 2px;
-    animation: breathe 4s ease-in-out var(--zone-delay, 0s) infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .zone-patch {
-      animation-name: none;
-    }
-  }
-
-  /* ── ZONE INNER ── */
-  .zone-inner {
-    display: flex;
+  .zone-link {
+    display: inline-flex;
     flex-direction: column;
-    gap: var(--space-2);
-    padding: var(--space-8) var(--space-6);
-    min-height: 200px;
-    height: 100%;
-    box-sizing: border-box;
-    color: var(--zone-text);
+    align-items: center;
+    gap: var(--space-1);
     text-decoration: none;
-  }
-
-  .zone-inner--link {
-    transition: filter var(--duration-fast) var(--easing);
-  }
-
-  .zone-inner--link:hover {
-    filter: brightness(1.1);
-  }
-
-  .zone-inner--soon {
-    cursor: default;
-  }
-
-  /* ── ZONE TEXT ── */
-  .zone-emoji {
-    font-size: 2rem;
-    line-height: 1;
-    display: block;
+    color: var(--ink);
   }
 
   .zone-name {
-    font-family: 'MaziusDisplay', serif;
+    font-family: var(--font-serif);
     font-style: italic;
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     line-height: 1.1;
-    display: block;
-    margin-top: auto;
   }
 
-  .zone-inner .zone-desc {
-    color: var(--zone-text);
-    display: block;
-    font-size: var(--text-md);
-    font-weight: 700;
+  .zone-hint {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-soil);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--easing);
   }
 
-  .zone-inner .zone-badge {
-    color: var(--zone-text);
-    display: inline-block;
-    border: 1px solid currentColor;
-    padding: 3px 8px;
-    font-size: var(--text-md);
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    align-self: flex-start;
-    margin-top: var(--space-1);
+  .zone-link:hover .zone-name,
+  .zone-link:focus-visible .zone-name {
+    text-decoration: underline;
   }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    .garden-map {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .zone-link:hover .zone-hint,
+  .zone-link:focus-within .zone-hint {
+    opacity: 1;
+  }
 
-    .zone-inner {
-      min-height: 160px;
-      padding: var(--space-6) var(--space-5);
-    }
-
-    .zone-name {
-      font-size: var(--text-lg);
+  @media (prefers-reduced-motion: reduce) {
+    .zone-hint {
+      transition: none;
     }
   }
 
-  @media (max-width: 480px) {
-    .garden-map {
-      grid-template-columns: 1fr;
+  /* ── SCATTER (≥768px) ── */
+  @media (min-width: 768px) {
+    .zone-field {
+      position: absolute;
+      inset: 0;
+      display: block;
+      pointer-events: none;
     }
 
-    .zone-inner {
-      min-height: 0;
-      flex-direction: row;
-      align-items: center;
-      flex-wrap: wrap;
-      padding: var(--space-5) var(--space-5);
-      gap: var(--space-3);
+    .zone-field li {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
     }
 
-    .zone-emoji {
-      font-size: 1.5rem;
-    }
-
-    .zone-name {
-      font-size: var(--text-base);
-      margin-top: 0;
+    .zone-link {
+      position: absolute;
+      left: var(--zx, 50%);
+      top: var(--zy, 50%);
+      transform: translate(-50%, -50%);
+      pointer-events: auto;
+      width: max-content;
     }
   }
 </style>
