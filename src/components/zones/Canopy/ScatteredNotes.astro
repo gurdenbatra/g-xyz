@@ -1,6 +1,7 @@
 ---
 // src/components/zones/Canopy/ScatteredNotes.astro
 import type { CollectionEntry } from 'astro:content';
+import { positionNote, KIND_STYLE } from '../../../lib/scatter';
 
 interface Props {
   pieces: CollectionEntry<'canopy'>[];
@@ -8,38 +9,10 @@ interface Props {
 
 const { pieces } = Astro.props;
 
-// LCG hash — deterministic integer from a string
-function lcg(n: number): number {
-  return ((n * 1664525 + 1013904223) & 0xffffffff) >>> 0;
-}
-function slugHash(slug: string): number {
-  return slug.split('').reduce((h, c) => lcg(h ^ c.charCodeAt(0)), 0);
-}
-
-// Colour per kind
-const KIND_STYLE: Record<string, { bg: string; fg: string }> = {
-  poem:  { bg: '#4a6e39', fg: '#f1e8d0' },
-  essay: { bg: '#D9A857', fg: '#1A1A1A' },
-  music: { bg: '#8A4F2E', fg: '#f1e8d0' },
-  av:    { bg: '#2a3a5a', fg: '#f1e8d0' },
-};
-
-// Compute base positions at build time using a 900px reference width.
-// Left is stored as a percentage so it scales with the container.
-// Top is stored in px because the container has a fixed height of 420px.
-const W_REF = 900;
-const COL_W = W_REF / 3; // 300px per column
-
 const positionedPieces = pieces.map(piece => {
   const slug = piece.id.replace(/\.[^.]+$/, '');
-  const h = slugHash(slug);
-  const col = h % 3;
-  const xPx = col * COL_W + ((h >> 4) % Math.floor(COL_W * 0.6));
-  const yPx = 20 + ((h >> 8) % 340);
-  const r   = ((h >> 12) % 17) - 8; // base rotation: −8° to +8°
-  const leftPct = ((xPx / W_REF) * 100).toFixed(2);
-  const { bg, fg } = KIND_STYLE[piece.data.kind] ?? KIND_STYLE.poem;
-  return { piece, slug, leftPct, topPx: yPx, r, bg, fg };
+  const { leftPct, topPx, r, bg, fg } = positionNote(slug, piece.data.kind);
+  return { piece, slug, leftPct, topPx, r, bg, fg };
 });
 ---
 
