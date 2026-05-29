@@ -53,6 +53,16 @@ test.describe('Garden home page', () => {
     await page.goto('/');
     const link = page.locator('#main-content a.zone-link[data-zone="polyculture"]');
     await link.focus();
+    // Wait for the CSS opacity transition to settle (cross-browser)
+    await page.waitForFunction(
+      () => {
+        const hint = document.querySelector(
+          '#main-content a.zone-link[data-zone="polyculture"] .zone-hint',
+        ) as HTMLElement | null;
+        return hint ? parseFloat(getComputedStyle(hint).opacity) > 0 : false;
+      },
+      { timeout: 2000 },
+    );
     const opacity = await link.locator('.zone-hint').evaluate(
       (el) => getComputedStyle(el).opacity,
     );
