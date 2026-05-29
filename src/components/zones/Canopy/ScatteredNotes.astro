@@ -53,7 +53,6 @@ const positionedPieces = pieces.map(piece => {
       data-top-px={topPx}
       data-r={r}
       style={`left:${leftPct}%;top:${topPx}px;transform:rotate(${r}deg);background:${bg};color:${fg};`}
-      aria-label={`${piece.data.kind}: ${piece.data.title}`}
     >
       <span class="note-kind">{piece.data.kind}</span>
       <span class="note-title">{piece.data.title}</span>
