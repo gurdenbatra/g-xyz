@@ -70,3 +70,67 @@ const SPECK_ROWS = [
     }
   }
 </style>
+
+<script>
+  import { groundHeight, pickChar, type CharMetric } from '../../lib/ascii-earth';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduce) {
+    let el: HTMLElement | null = document.querySelector('[data-earth-line]');
+    document.addEventListener('astro:page-load', () => {
+      el = document.querySelector('[data-earth-line]');
+    });
+
+    const start = () => {
+      void init();
+    };
+    if (typeof (window as Window & { requestIdleCallback?: unknown }).requestIdleCallback === 'function') {
+      (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(start);
+    } else {
+      setTimeout(start, 200);
+    }
+
+    async function init() {
+      try {
+        const pretext = await import('@chenglou/pretext');
+        const font = 'italic 13px Georgia, serif';
+        const BRIGHTNESS: Record<string, number> = {
+          '.': 0.15, "'": 0.2, ',': 0.3, '-': 0.4, '~': 0.55,
+          ':': 0.6, ';': 0.7, '^': 0.8, '"': 0.85, '*': 1,
+        };
+        const metrics: CharMetric[] = Object.keys(BRIGHTNESS).map((ch) => {
+          const prepared = pretext.prepareWithSegments(ch, font);
+          return {
+            char: ch,
+            width: pretext.measureNaturalWidth(prepared),
+            brightness: BRIGHTNESS[ch],
+          };
+        });
+        const cell = metrics.find((m) => m.char === '~');
+        if (!cell || !metrics.every((m) => Number.isFinite(m.width) && m.width > 0)) return;
+
+        el?.classList.add('ascii-earth__line--vivid');
+
+        const COLUMNS = 240;
+        const FRAME_MS = 80;
+        let last = 0;
+        function tick(now: number) {
+          if (!document.hidden && el && now - last >= FRAME_MS) {
+            last = now;
+            const t = now / 1000;
+            let line = '';
+            for (let i = 0; i < COLUMNS; i++) {
+              line += pickChar(metrics, groundHeight(i, t), cell!.width);
+            }
+            el.textContent = line;
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      } catch {
+        // pretext unavailable or measurement failed — static frame stands
+      }
+    }
+  }
+</script>
