@@ -49,6 +49,18 @@ test.describe('Garden home page', () => {
     }
   });
 
+  test('glyph filled shapes actually render (fill not stripped by base rule)', async ({ page }) => {
+    // Regression guard: a lower-specificity .f-* class once lost to the
+    // `.zone-glyph circle { fill: none }` base rule, leaving the canopy
+    // crown (and every other filled shape) invisible.
+    await page.goto('/');
+    const fill = await page
+      .locator('#main-content a.zone-link[data-zone="canopy"] .zone-glyph .f-moss')
+      .first()
+      .evaluate((el) => getComputedStyle(el).fill);
+    expect(fill).not.toBe('none');
+  });
+
   test('each zone shows its description as an always-visible label', async ({ page }) => {
     await page.goto('/');
     const label = page.locator(

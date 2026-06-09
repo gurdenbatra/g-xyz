@@ -93,12 +93,16 @@ const { id } = Astro.props;
     stroke-linejoin: round;
   }
 
-  .s-moss  { stroke: var(--c-moss); }
-  .s-soil  { stroke: var(--c-soil); }
-  .s-ochre { stroke: var(--c-ochre); }
-  .s-chart { stroke: var(--c-chartreuse); }
+  /* Color classes are prefixed with .zone-glyph so they outrank the
+     base `.zone-glyph path/circle { fill: none }` rule above — without
+     the prefix, filled shapes compute to fill:none + stroke:none and
+     vanish entirely. */
+  .zone-glyph .s-moss  { stroke: var(--c-moss); }
+  .zone-glyph .s-soil  { stroke: var(--c-soil); }
+  .zone-glyph .s-ochre { stroke: var(--c-ochre); }
+  .zone-glyph .s-chart { stroke: var(--c-chartreuse); }
 
   /* Solid fills (crown, dots, bud, mushroom cap, skep bee dot) */
-  .f-moss  { fill: var(--c-moss);  stroke: none; }
-  .f-ochre { fill: var(--c-ochre); stroke: none; }
+  .zone-glyph .f-moss  { fill: var(--c-moss);  stroke: none; }
+  .zone-glyph .f-ochre { fill: var(--c-ochre); stroke: none; }
 </style>
