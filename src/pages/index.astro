@@ -3,19 +3,25 @@ import Garden from '@layouts/Garden.astro';
 import { zones, type ZoneId } from '../lib/zones';
 import ZoneGlyph from '../components/home/ZoneGlyph.astro';
 import GardenFlora from '../components/home/GardenFlora.astro';
+import AsciiEarth from '../components/home/AsciiEarth.astro';
 
-// Garden cross-section: position encodes ecology (no drawn connections).
-//   sky    — canopy (the tree) + hive (bees around it)
-//   ground — polyculture + beds frame the wordmark
-//   soil   — compost (the heap) + mycelium (threads beside it)
-// Each link is centered on its anchor via translate(-50%, -50%).
+const ecologicalOrder: readonly ZoneId[] = [
+  'canopy',
+  'hive',
+  'polyculture',
+  'beds',
+  'compost',
+  'mycelium',
+];
+const orderedZones = ecologicalOrder.map((id) => zones.find((z) => z.id === id)!);
+
 const zonePos: Record<ZoneId, { x: string; y: string }> = {
-  canopy: { x: '36%', y: '13%' },
-  hive: { x: '64%', y: '13%' },
-  polyculture: { x: '12%', y: '50%' },
-  beds: { x: '88%', y: '50%' },
-  compost: { x: '38%', y: '87%' },
-  mycelium: { x: '62%', y: '87%' },
+  canopy: { x: '30%', y: '16%' },
+  hive: { x: '68%', y: '18%' },
+  polyculture: { x: '14%', y: '52%' },
+  beds: { x: '86%', y: '52%' },
+  compost: { x: '36%', y: '84%' },
+  mycelium: { x: '64%', y: '86%' },
 };
 ---
 
@@ -25,8 +31,10 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
 
     <h1 class="garden-title"><span>Gurden's</span> <span>Garden</span></h1>
 
+    <AsciiEarth />
+
     <ul class="zone-field" role="list">
-      {zones.map((zone) => {
+      {orderedZones.map((zone) => {
         const pos = zonePos[zone.id];
         return (
           <li>
@@ -54,17 +62,29 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--space-8);
-    padding: var(--space-12) var(--gutter);
+    gap: var(--space-6);
+    padding: var(--space-12) var(--gutter) 7rem;
     overflow: hidden;
     text-align: center;
   }
 
-  /* ── GIANT TITLE ── */
+  .garden-home::after {
+    content: '';
+    position: absolute;
+    inset: 60% 0 0 0;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in srgb, var(--c-soil) 6%, transparent)
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .garden-title {
     font-family: var(--font-serif);
     font-style: italic;
-    font-weight: 700; /* resolves to MaziusDisplay ExtraItalicBold */
+    font-weight: 700;
     font-size: var(--text-display);
     line-height: 0.82;
     letter-spacing: -0.02em;
@@ -77,7 +97,6 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
     display: block;
   }
 
-  /* ── ZONE FIELD ── */
   .zone-field {
     list-style: none;
     margin: 0;
@@ -85,7 +104,7 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-6);
+    gap: var(--space-5);
     z-index: 1;
   }
 
@@ -98,6 +117,7 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
     flex-direction: column;
     align-items: center;
     gap: var(--space-2);
+    padding: var(--space-2);
     text-decoration: none;
     color: var(--ink);
   }
@@ -114,7 +134,6 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
     color: var(--c-soil);
   }
 
-  /* Hover/focus only emphasizes — the label is always visible. */
   .zone-link:hover .zone-label,
   .zone-link:focus-visible .zone-label {
     text-decoration: underline;
@@ -122,7 +141,7 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
 
   .zone-link:hover :global(.zone-glyph),
   .zone-link:focus-visible :global(.zone-glyph) {
-    transform: scale(1.06);
+    transform: scale(1.06) rotate(-2deg);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -136,7 +155,6 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
     }
   }
 
-  /* ── SCATTER (≥768px) ── */
   @media (min-width: 768px) {
     .zone-field {
       position: absolute;

@@ -71,6 +71,22 @@ test.describe('Garden home page', () => {
     }
   });
 
+  test('zones appear in ecological order (sky → ground → soil)', async ({ page }) => {
+    await page.goto('/');
+    const order = await page.evaluate(() =>
+      Array.from(document.querySelectorAll('#main-content a.zone-link')).map(
+        (a) => (a as HTMLElement).dataset.zone,
+      ),
+    );
+    expect(order).toEqual(['canopy', 'hive', 'polyculture', 'beds', 'compost', 'mycelium']);
+  });
+
+  test('ascii earth horizon is present in static markup', async ({ page }) => {
+    await page.goto('/');
+    const text = await page.locator('.ascii-earth [data-earth-line]').textContent();
+    expect((text ?? '').length).toBeGreaterThan(100);
+  });
+
   test('each zone shows its description as an always-visible label', async ({ page }) => {
     await page.goto('/');
     const label = page.locator(

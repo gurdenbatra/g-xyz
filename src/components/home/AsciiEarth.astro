@@ -1,0 +1,70 @@
+---
+import { groundFrame } from '../../lib/ascii-earth';
+
+const earthLine = groundFrame(240, 0);
+const SPECK_ROWS = [
+  '·     .        :      .         ·       .          :     .       ·      .',
+  '   .       ·         .      :        .        ·        .     :        .',
+] as const;
+---
+
+<div class="ascii-earth" aria-hidden="true">
+  <pre class="ascii-earth__line" data-earth-line>{earthLine}</pre>
+  <pre class="ascii-earth__specks">{SPECK_ROWS[0]}</pre>
+  <pre class="ascii-earth__specks ascii-earth__specks--two">{SPECK_ROWS[1]}</pre>
+</div>
+
+<style>
+  .ascii-earth {
+    pointer-events: none;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .ascii-earth pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    white-space: pre;
+    overflow: hidden;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .ascii-earth__line {
+    font-size: 13px;
+    color: var(--c-soil);
+    opacity: 0.4;
+  }
+
+  .ascii-earth__line--vivid {
+    font-family: Georgia, serif;
+    font-style: italic;
+  }
+
+  .ascii-earth__specks {
+    display: none;
+    font-size: 11px;
+    color: var(--c-soil);
+    opacity: 0.2;
+  }
+
+  @media (min-width: 768px) {
+    .ascii-earth {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 62%;
+      z-index: 0;
+    }
+
+    .ascii-earth__specks {
+      display: block;
+      margin-top: 0.9rem;
+    }
+
+    .ascii-earth__specks--two {
+      opacity: 0.14;
+      margin-top: 1.1rem;
+    }
+  }
+</style>
