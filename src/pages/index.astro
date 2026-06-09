@@ -13,7 +13,11 @@ const ecologicalOrder: readonly ZoneId[] = [
   'compost',
   'mycelium',
 ];
-const orderedZones = ecologicalOrder.map((id) => zones.find((z) => z.id === id)!);
+const orderedZones = ecologicalOrder.flatMap((id) => {
+  const z = zones.find((zone) => zone.id === id);
+  if (!z) throw new Error(`[index.astro] Zone "${id}" not found in zones`);
+  return z;
+});
 
 const zonePos: Record<ZoneId, { x: string; y: string }> = {
   canopy: { x: '30%', y: '16%' },
