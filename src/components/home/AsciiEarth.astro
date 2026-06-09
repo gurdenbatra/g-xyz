@@ -74,12 +74,20 @@ const SPECK_ROWS = [
 <script>
   import { groundHeight, pickChar, type CharMetric } from '../../lib/ascii-earth';
 
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (!reduce) {
+  if (!reducedMotion) {
     let el: HTMLElement | null = document.querySelector('[data-earth-line]');
     document.addEventListener('astro:page-load', () => {
       el = document.querySelector('[data-earth-line]');
+    });
+
+    let rafId: number | null = null;
+    document.addEventListener('astro:before-preparation', () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
     });
 
     const start = () => {
@@ -95,6 +103,8 @@ const SPECK_ROWS = [
       try {
         const pretext = await import('@chenglou/pretext');
         const font = 'italic 13px Georgia, serif';
+        // Hand-tuned perceived ink density per character — height is used as a
+        // brightness proxy so taller terrain maps to denser, heavier chars.
         const BRIGHTNESS: Record<string, number> = {
           '.': 0.15, "'": 0.2, ',': 0.3, '-': 0.4, '~': 0.55,
           ':': 0.6, ';': 0.7, '^': 0.8, '"': 0.85, '*': 1,
@@ -112,8 +122,8 @@ const SPECK_ROWS = [
 
         el?.classList.add('ascii-earth__line--vivid');
 
-        const COLUMNS = 240;
-        const FRAME_MS = 80;
+        const COLUMNS = 240; // must match server-side groundFrame(240, 0) call
+        const FRAME_MS = 80; // ~12 fps intentional — ornamental, not smooth
         let last = 0;
         function tick(now: number) {
           if (!document.hidden && el && now - last >= FRAME_MS) {
@@ -125,9 +135,9 @@ const SPECK_ROWS = [
             }
             el.textContent = line;
           }
-          requestAnimationFrame(tick);
+          rafId = requestAnimationFrame(tick);
         }
-        requestAnimationFrame(tick);
+        rafId = requestAnimationFrame(tick);
       } catch {
         // pretext unavailable or measurement failed — static frame stands
       }
