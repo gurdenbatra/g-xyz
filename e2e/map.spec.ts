@@ -61,6 +61,16 @@ test.describe('Garden home page', () => {
     expect(fill).not.toBe('none');
   });
 
+  test('each glyph carries ASCII texture text', async ({ page }) => {
+    await page.goto('/');
+    for (const id of ['polyculture', 'canopy', 'hive', 'compost', 'mycelium', 'beds']) {
+      const count = await page
+        .locator(`#main-content a.zone-link[data-zone="${id}"] .zone-glyph text`)
+        .count();
+      expect(count, `zone ${id} should have ASCII texture`).toBeGreaterThan(0);
+    }
+  });
+
   test('each zone shows its description as an always-visible label', async ({ page }) => {
     await page.goto('/');
     const label = page.locator(
