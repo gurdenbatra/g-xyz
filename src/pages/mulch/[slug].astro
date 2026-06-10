@@ -1,7 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Garden from '@layouts/Garden.astro';
-import PieceDetail from '../../components/zones/Canopy/PieceDetail.astro';
+import PieceDetail from '../../components/zones/Mulch/PieceDetail.astro';
 
 export async function getStaticPaths() {
   const pieces = await getCollection('mulch');

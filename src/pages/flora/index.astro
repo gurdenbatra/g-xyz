@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Garden from '@layouts/Garden.astro';
 import ProjectRow from '@components/ProjectRow.astro';
-import SlowPlot from '@components/zones/Polyculture/SlowPlot.astro';
+import SlowPlot from '@components/zones/Flora/SlowPlot.astro';
 
 const projects = await getCollection('projects');
 const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
