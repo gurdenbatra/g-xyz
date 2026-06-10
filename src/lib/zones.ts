@@ -42,6 +42,8 @@ export const zones: readonly Zone[] = [
     longDesc: 'Story & origins',
     href: '/roots',
   },
+  // Name is "The Compost"; slug is /castings (worm castings) to avoid colliding
+  // with the retired /compost route, which now redirects to /roots.
   {
     id: 'castings',
     name: 'The Compost',
