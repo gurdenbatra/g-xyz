@@ -12,7 +12,7 @@ const { index, title, tag, year, slug, description } = Astro.props;
 const num = String(index).padStart(2, '0');
 ---
 
-<a href={`/polyculture/${slug}`} class="project-row">
+<a href={`/flora/${slug}`} class="project-row">
   <div class="project-main">
     <span class="project-title">{title}</span>
     {description && (

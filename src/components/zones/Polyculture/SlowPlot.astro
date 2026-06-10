@@ -239,7 +239,7 @@ const seeds: PlantSeed[] = projects.map((p) => ({
 
     canvas!.addEventListener('click', () => {
       if (!currentPlant) return;
-      window.location.href = `/polyculture/${currentPlant.slug}`;
+      window.location.href = `/flora/${currentPlant.slug}`;
     });
 
     canvas!.style.cursor = 'pointer';
