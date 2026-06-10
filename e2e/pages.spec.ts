@@ -1,58 +1,55 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('About → Compost redirect', () => {
-  test('/about redirects to /compost', async ({ page }) => {
-    await page.goto('/about');
-    expect(page.url()).toContain('/compost');
-  });
+test.describe('Legacy redirects', () => {
+  const cases: ReadonlyArray<readonly [string, string]> = [
+    ['/about', '/roots'],
+    ['/compost', '/roots'],
+    ['/colophon', '/castings'],
+    ['/beds', '/castings'],
+    ['/canopy', '/mulch'],
+    ['/polyculture', '/flora'],
+    ['/work', '/flora'],
+    ['/mycelium', '/hive'],
+  ];
+  for (const [from, to] of cases) {
+    test(`${from} redirects to ${to}`, async ({ page }) => {
+      await page.goto(from);
+      expect(page.url()).toContain(to);
+    });
+  }
 });
 
-test.describe('Compost page', () => {
+test.describe('Roots page (story & origins)', () => {
   test('loads with 200', async ({ page }) => {
-    const r = await page.goto('/compost');
+    const r = await page.goto('/roots');
     expect(r?.status()).toBe(200);
   });
 
-  test('shows name and intro text', async ({ page }) => {
-    await page.goto('/compost');
+  test('shows name and biographical strata', async ({ page }) => {
+    await page.goto('/roots');
     await expect(page.getByText(/Gurden/i).first()).toBeVisible();
     await expect(page.getByText(/Dark Matter Labs/i).first()).toBeVisible();
-  });
-
-  test('shows strata layers with biographical content', async ({ page }) => {
-    await page.goto('/compost');
     await expect(page.getByText(/Georgia Tech/i).first()).toBeVisible();
     await expect(page.getByText(/Aalto/i).first()).toBeVisible();
     await expect(page.getByText(/Delhi/i).first()).toBeVisible();
   });
 
   test('shows contact email', async ({ page }) => {
-    await page.goto('/compost');
+    await page.goto('/roots');
     await expect(page.getByRole('link', { name: /gurden@darkmatterlabs/i })).toBeVisible();
   });
 });
 
-test.describe('Colophon → Beds redirect', () => {
-  test('/colophon redirects to /beds', async ({ page }) => {
-    await page.goto('/colophon');
-    expect(page.url()).toContain('/beds');
-  });
-});
-
-test.describe('Beds page', () => {
+test.describe('Castings page (design, tech & care)', () => {
   test('loads with 200', async ({ page }) => {
-    const r = await page.goto('/beds');
+    const r = await page.goto('/castings');
     expect(r?.status()).toBe(200);
   });
 
-  test('shows stack bed content', async ({ page }) => {
-    await page.goto('/beds');
+  test('shows stack + care content', async ({ page }) => {
+    await page.goto('/castings');
     await expect(page.getByText(/Astro/i).first()).toBeVisible();
     await expect(page.getByText(/Netlify/i).first()).toBeVisible();
-  });
-
-  test('shows Mazius typeface credit', async ({ page }) => {
-    await page.goto('/beds');
     await expect(page.getByText(/Mazius/i).first()).toBeVisible();
   });
 });

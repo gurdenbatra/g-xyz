@@ -176,3 +176,16 @@ test.describe('Hive page — accessibility (reduced motion)', () => {
     expect(results.violations).toEqual([]);
   });
 });
+
+test.describe('Hive page — network section (formerly mycelium)', () => {
+  test('hive shows both the flock and the network sections', async ({ page }) => {
+    await page.goto('/hive');
+    await expect(page.getByRole('heading', { name: /live flock/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /network/i })).toBeVisible();
+  });
+
+  test('hive renders the collaborator nodes canvas', async ({ page }) => {
+    await page.goto('/hive');
+    await expect(page.locator('[data-nodes-graph]')).toBeAttached();
+  });
+});

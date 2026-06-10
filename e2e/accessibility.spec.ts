@@ -37,7 +37,7 @@ test.describe('Garden layout accessibility', () => {
   });
 
   test('nav landmark is present', async ({ page }) => {
-    await page.goto('/polyculture');
+    await page.goto('/flora');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav).toBeAttached();
   });
@@ -51,13 +51,13 @@ test.describe('Garden layout accessibility', () => {
   test('navigation between pages completes without error', async ({ page }) => {
     await page.goto('/');
     await page.locator('#map-toggle').click();
-    await page.locator('#map-overlay a[href="/polyculture"]').click();
-    await expect(page).toHaveURL(/\/polyculture/);
+    await page.locator('#map-overlay a[href="/flora"]').click();
+    await expect(page).toHaveURL(/\/flora/);
     await expect(page.locator('main#main-content')).toBeVisible();
   });
 
   test('navigation still completes after PortalShader is added', async ({ page }) => {
-    await page.goto('/polyculture');
+    await page.goto('/flora');
     await page.goto('/');
     await expect(page.locator('main#main-content')).toBeVisible();
   });
@@ -65,16 +65,16 @@ test.describe('Garden layout accessibility', () => {
 
 test.describe('Nav component', () => {
   test('nav contains the logo link', async ({ page }) => {
-    await page.goto('/polyculture');
+    await page.goto('/flora');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav.locator('a[href="/"]')).toBeAttached();
   });
 
   test('nav does not contain old zone links (navigation is via map overlay)', async ({ page }) => {
-    await page.goto('/polyculture');
+    await page.goto('/flora');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav.locator('a[href="/polyculture"]')).not.toBeAttached();
-    await expect(nav.locator('a[href="/compost"]')).not.toBeAttached();
+    await expect(nav.locator('a[href="/flora"]')).not.toBeAttached();
+    await expect(nav.locator('a[href="/roots"]')).not.toBeAttached();
   });
 
   test('homepage has no main nav and no gurden.xyz logo', async ({ page }) => {
@@ -86,9 +86,9 @@ test.describe('Nav component', () => {
   test('active zones are reachable via the map overlay', async ({ page }) => {
     await page.goto('/');
     const overlay = page.locator('#map-overlay');
-    await expect(overlay.locator('a[href="/polyculture"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/compost"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/beds"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/flora"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/roots"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/castings"]')).toBeAttached();
   });
 });
 
@@ -107,7 +107,7 @@ test.describe('MapToggle', () => {
   });
 
   test('map toggle is present on non-home pages too', async ({ page }) => {
-    await page.goto('/polyculture');
+    await page.goto('/flora');
     await expect(page.locator('#map-toggle')).toBeAttached();
   });
 });
@@ -125,20 +125,19 @@ test.describe('MapOverlay', () => {
   test('overlay contains links for the three active zones', async ({ page }) => {
     await page.goto('/');
     const overlay = page.locator('#map-overlay');
-    await expect(overlay.locator('a[href="/polyculture"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/compost"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/beds"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/flora"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/roots"]')).toBeAttached();
+    await expect(overlay.locator('a[href="/castings"]')).toBeAttached();
   });
 
-  test('overlay contains entries for all 6 zones', async ({ page }) => {
+  test('overlay contains entries for all 5 zones', async ({ page }) => {
     await page.goto('/');
     const overlay = page.locator('#map-overlay');
-    await expect(overlay.locator('[data-zone="polyculture"]')).toBeAttached();
-    await expect(overlay.locator('[data-zone="canopy"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="flora"]')).toBeAttached();
     await expect(overlay.locator('[data-zone="hive"]')).toBeAttached();
-    await expect(overlay.locator('[data-zone="compost"]')).toBeAttached();
-    await expect(overlay.locator('[data-zone="mycelium"]')).toBeAttached();
-    await expect(overlay.locator('[data-zone="beds"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="mulch"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="roots"]')).toBeAttached();
+    await expect(overlay.locator('[data-zone="castings"]')).toBeAttached();
   });
 
   test('clicking map toggle opens the overlay', async ({ page }) => {
@@ -172,8 +171,8 @@ test.describe('MapOverlay', () => {
   test('map toggle stays functional after view-transition navigation', async ({ page }) => {
     await page.goto('/');
     await page.locator('#map-toggle').click();
-    await page.locator('#map-overlay a[href="/polyculture"]').click();
-    await expect(page).toHaveURL(/\/polyculture/);
+    await page.locator('#map-overlay a[href="/flora"]').click();
+    await expect(page).toHaveURL(/\/flora/);
     await page.locator('#map-toggle').click();
     await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'false');
   });

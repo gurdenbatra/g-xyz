@@ -3,10 +3,10 @@ import AxeBuilder from '@axe-core/playwright';
 
 const pages = [
   { name: 'home',           path: '/' },
-  { name: 'polyculture index',     path: '/polyculture' },
-  { name: 'polyculture circulaw',  path: '/polyculture/circulaw' },
-  { name: 'about',          path: '/about' },
-  { name: 'colophon',       path: '/colophon' },
+  { name: 'flora index',    path: '/flora' },
+  { name: 'flora circulaw', path: '/flora/circulaw' },
+  { name: 'roots',          path: '/roots' },
+  { name: 'castings',       path: '/castings' },
   { name: 'styleguide',     path: '/styleguide' },
 ];
 

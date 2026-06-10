@@ -1,49 +1,49 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-test.describe('Beds page — structure', () => {
+test.describe('Castings page — structure', () => {
   test('loads and shows zone heading', async ({ page }) => {
-    await page.goto('/beds');
-    await expect(page.getByRole('heading', { name: /The Beds/i, level: 1 })).toBeVisible();
+    await page.goto('/castings');
+    await expect(page.getByRole('heading', { name: /The Compost/i, level: 1 })).toBeVisible();
   });
 
   test('shows intro text', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await expect(page.getByText(/cared for/i).first()).toBeVisible();
   });
 
   test('renders 5 bed articles', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await expect(page.locator('[data-bed]')).toHaveCount(5);
   });
 
   test('shows stack bed with Astro and Netlify', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await expect(page.getByText(/Astro/i).first()).toBeVisible();
     await expect(page.getByText(/Netlify/i).first()).toBeVisible();
   });
 
   test('shows typeface credit (Mazius)', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await expect(page.getByText(/Mazius/i).first()).toBeVisible();
   });
 
   test('shows source repository link', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     const repoLink = page.getByRole('link', { name: /gurden\/gurden\.xyz/i });
     await expect(repoLink).toBeVisible();
     await expect(repoLink).toHaveAttribute('href', 'https://github.com/gurden/gurden.xyz');
   });
 });
 
-test.describe('Beds page — watering can', () => {
+test.describe('Castings page — watering can', () => {
   test('watering can element is in DOM', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await expect(page.locator('[data-beds-can]')).toBeAttached();
   });
 
   test('watering can becomes visible after mount', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await page.waitForFunction(
       () => {
         const can = document.querySelector<HTMLElement>('[data-beds-can]');
@@ -58,7 +58,7 @@ test.describe('Beds page — watering can', () => {
   });
 
   test('hovering a bed sets data-tended attribute', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await page.waitForTimeout(300);
     const accessibilityBed = page.locator('[data-bed="accessibility"]');
     await accessibilityBed.hover();
@@ -67,7 +67,7 @@ test.describe('Beds page — watering can', () => {
   });
 
   test('hovering a different bed clears previous data-tended', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await page.waitForTimeout(300);
     await page.locator('[data-bed="stack"]').hover();
     await page.waitForTimeout(400);
@@ -78,36 +78,36 @@ test.describe('Beds page — watering can', () => {
   });
 });
 
-test.describe('Beds page — reduced motion', () => {
+test.describe('Castings page — reduced motion', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } });
 
   test('all 5 beds visible with reduced motion', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     for (const id of ['stack', 'accessibility', 'performance', 'source', 'sustainability']) {
       await expect(page.locator(`[data-bed="${id}"]`)).toBeVisible();
     }
   });
 
   test('no data-tended set after 3s with reduced motion (no auto-cycle)', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await page.waitForTimeout(3500);
     const tendedCount = await page.locator('[data-tended]').count();
     expect(tendedCount).toBe(0);
   });
 });
 
-test.describe('Beds page — keyboard navigation', () => {
+test.describe('Castings page — keyboard navigation', () => {
   test('repository link is keyboard-reachable', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     const link = page.getByRole('link', { name: /gurden\/gurden\.xyz/i });
     await link.focus();
     await expect(link).toBeFocused();
   });
 });
 
-test.describe('Beds page — accessibility', () => {
+test.describe('Castings page — accessibility', () => {
   test('zero axe violations', async ({ page }) => {
-    await page.goto('/beds');
+    await page.goto('/castings');
     await page.waitForTimeout(500);
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations).toEqual([]);

@@ -34,8 +34,8 @@ test.describe('Cursor bee', () => {
     await page.goto('/');
     await page.mouse.move(500, 300);
     // Navigate client-side via ClientRouter by clicking a homepage zone link.
-    await page.locator('#main-content a.zone-link[data-zone="polyculture"]').click();
-    await page.waitForURL('**/polyculture');
+    await page.locator('#main-content a.zone-link[data-zone="flora"]').click();
+    await page.waitForURL('**/flora');
     await page.mouse.move(180, 420);
     await page.waitForFunction(
       () => {

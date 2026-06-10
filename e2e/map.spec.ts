@@ -2,12 +2,11 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const ZONE_HREFS = [
-  '/polyculture',
-  '/canopy',
+  '/flora',
   '/hive',
-  '/compost',
-  '/mycelium',
-  '/beds',
+  '/mulch',
+  '/roots',
+  '/castings',
 ] as const;
 
 const EMOJI = ['🌿', '🌳', '🐝', '🪱', '🍄', '🛠'];
@@ -32,19 +31,19 @@ test.describe('Garden home page', () => {
     expect(fontSizePx).toBeGreaterThan(60);
   });
 
-  test('all 6 zones are present as links with correct hrefs', async ({ page }) => {
+  test('all 5 zones are present as links with correct hrefs', async ({ page }) => {
     await page.goto('/');
     const main = page.locator('#main-content');
     for (const href of ZONE_HREFS) {
       await expect(main.locator(`a.zone-link[href="${href}"]`)).toBeAttached();
     }
-    await expect(main.locator('a.zone-link')).toHaveCount(6);
+    await expect(main.locator('a.zone-link')).toHaveCount(5);
   });
 
   test('zones carry data-zone identifiers', async ({ page }) => {
     await page.goto('/');
     const main = page.locator('#main-content');
-    for (const id of ['polyculture', 'canopy', 'hive', 'compost', 'mycelium', 'beds']) {
+    for (const id of ['flora', 'hive', 'mulch', 'roots', 'castings']) {
       await expect(main.locator(`a.zone-link[data-zone="${id}"]`)).toBeAttached();
     }
   });
@@ -55,7 +54,7 @@ test.describe('Garden home page', () => {
     // crown (and every other filled shape) invisible.
     await page.goto('/');
     const fill = await page
-      .locator('#main-content a.zone-link[data-zone="canopy"] .zone-glyph .f-moss')
+      .locator('#main-content a.zone-link[data-zone="mulch"] .zone-glyph .f-moss')
       .first()
       .evaluate((el) => getComputedStyle(el).fill);
     expect(fill).not.toBe('none');
@@ -63,7 +62,7 @@ test.describe('Garden home page', () => {
 
   test('each glyph carries ASCII texture text', async ({ page }) => {
     await page.goto('/');
-    for (const id of ['polyculture', 'canopy', 'hive', 'compost', 'mycelium', 'beds']) {
+    for (const id of ['flora', 'hive', 'mulch', 'roots', 'castings']) {
       const count = await page
         .locator(`#main-content a.zone-link[data-zone="${id}"] .zone-glyph text`)
         .count();
@@ -78,7 +77,7 @@ test.describe('Garden home page', () => {
         (a) => (a as HTMLElement).dataset.zone,
       ),
     );
-    expect(order).toEqual(['canopy', 'hive', 'polyculture', 'beds', 'compost', 'mycelium']);
+    expect(order).toEqual(['flora', 'hive', 'mulch', 'roots', 'castings']);
   });
 
   test('ascii earth horizon is present in static markup', async ({ page }) => {
@@ -90,7 +89,7 @@ test.describe('Garden home page', () => {
   test('each zone shows its description as an always-visible label', async ({ page }) => {
     await page.goto('/');
     const label = page.locator(
-      '#main-content a.zone-link[data-zone="polyculture"] .zone-label',
+      '#main-content a.zone-link[data-zone="flora"] .zone-label',
     );
     await expect(label).toHaveText('Work & projects');
     const opacity = await label.evaluate((el) => getComputedStyle(el).opacity);
@@ -101,12 +100,11 @@ test.describe('Garden home page', () => {
     await page.goto('/');
     const text = await page.locator('#main-content').innerText();
     for (const name of [
-      'The Polyculture',
-      'The Canopy',
+      'The Flora & Fauna',
       'The Hive',
+      'The Mulch',
+      'The Roots',
       'The Compost',
-      'The Mycelium',
-      'The Beds',
     ]) {
       expect(text).not.toContain(name);
     }
