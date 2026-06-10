@@ -1,4 +1,4 @@
-// src/components/zones/Mycelium/graph.ts
+// src/components/zones/Hive/graph.ts
 // Pure force-directed graph simulation for the Nodes canvas piece.
 // No DOM dependencies. Deterministic for a given seed.
 // O(n²) per step — acceptable for ≤ 30 nodes.
