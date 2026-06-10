@@ -9,10 +9,10 @@ const { id } = Astro.props;
 ---
 
 <span class="zone-glyph" aria-hidden="true">
-  {id === 'canopy' && (
+  {id === 'mulch' && (
     <svg viewBox="0 0 48 48" role="presentation">
       <defs>
-        <clipPath id="zg-canopy-crown">
+        <clipPath id="zg-mulch-crown">
           <circle cx="24" cy="15" r="12.5" />
           <circle cx="12" cy="23" r="8.5" />
           <circle cx="36" cy="23" r="8.5" />
@@ -20,7 +20,7 @@ const { id } = Astro.props;
       </defs>
       <path class="s-soil" d="M24 46 V30" />
       <path class="s-soil" d="M24 38 L18 33 M24 34 L29 30" />
-      <g clip-path="url(#zg-canopy-crown)">
+      <g clip-path="url(#zg-mulch-crown)">
         <text class="t-chart" x="13" y="9" font-size="4.6">% @ &amp; %</text>
         <text class="t-moss" x="9" y="14" font-size="4.6">@ &amp; % @ &amp;</text>
         <text class="t-moss" x="5" y="19" font-size="4.6">&amp; % @ &amp; % @</text>
@@ -53,7 +53,7 @@ const { id } = Astro.props;
       <path class="s-ochre" d="M34 5 L37 7 M40 5 L37 7" />
     </svg>
   )}
-  {id === 'polyculture' && (
+  {id === 'flora' && (
     <svg viewBox="0 0 48 48" role="presentation">
       <path class="s-soil" d="M6 42 H42" />
       <text class="t-soil" x="7" y="46.5" font-size="4">~ , ~ . ~ , ~</text>
@@ -66,15 +66,15 @@ const { id } = Astro.props;
       <path class="s-moss" d="M36 33 Q31 31 30 26" />
     </svg>
   )}
-  {id === 'beds' && (
+  {id === 'castings' && (
     <svg viewBox="0 0 48 48" role="presentation">
       <defs>
-        <clipPath id="zg-beds-box">
+        <clipPath id="zg-castings-box">
           <rect x="8" y="32" width="32" height="9" />
         </clipPath>
       </defs>
       <path class="s-soil" d="M7 31 H41 V42 H7 Z" />
-      <g clip-path="url(#zg-beds-box)">
+      <g clip-path="url(#zg-castings-box)">
         <text class="t-soil" x="9" y="36.5" font-size="4">, ^ , ^ , ^ ,</text>
         <text class="t-soil" x="9" y="41" font-size="4">v , v , v , v</text>
       </g>
@@ -83,33 +83,20 @@ const { id } = Astro.props;
       <path class="s-moss" d="M32 31 V24 M32 28 Q28 26 27 22 M32 27 Q36 25 37 21" />
     </svg>
   )}
-  {id === 'compost' && (
+  {id === 'roots' && (
     <svg viewBox="0 0 48 48" role="presentation">
       <defs>
-        <clipPath id="zg-compost-heap">
+        <clipPath id="zg-roots-heap">
           <path d="M6 41 Q9 23 24 21 Q39 23 42 41 Z" />
         </clipPath>
       </defs>
-      <g clip-path="url(#zg-compost-heap)">
+      <g clip-path="url(#zg-roots-heap)">
         <text class="t-chart" x="19" y="28" font-size="4.2">. : .</text>
         <text class="t-soil" x="13" y="33" font-size="4.2">: ; * : ;</text>
         <text class="t-soil" x="9" y="38" font-size="4.2">* ; : * ; : *</text>
       </g>
       <path class="s-soil" d="M6 41 Q9 23 24 21 Q39 23 42 41 Z" />
       <path class="s-chart" d="M24 21 Q21 16 24 12 Q27 16 24 21" />
-    </svg>
-  )}
-  {id === 'mycelium' && (
-    <svg viewBox="0 0 48 48" role="presentation">
-      <path class="s-moss" d="M16 44 V32 M16 32 L8 22 M16 32 L25 25 M8 22 L4 13 M25 25 L31 16" />
-      <text class="t-moss" x="5.5" y="24.5" font-size="5">*</text>
-      <text class="t-moss" x="22.5" y="27.5" font-size="5">*</text>
-      <text class="t-moss" x="1.5" y="15.5" font-size="5">*</text>
-      <text class="t-moss" x="28.5" y="18.5" font-size="5">*</text>
-      <text class="t-soil" x="12" y="47" font-size="4">. · .</text>
-      <path class="s-soil" d="M37 44 V35" />
-      <path class="f-ochre" d="M30 35 Q37 28 44 35 Z" />
-      <path class="s-soil" d="M31 35 H43" />
     </svg>
   )}
 </span>

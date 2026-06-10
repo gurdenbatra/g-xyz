@@ -1,10 +1,9 @@
 export type ZoneId =
-  | 'polyculture'
-  | 'canopy'
+  | 'flora'
   | 'hive'
-  | 'compost'
-  | 'mycelium'
-  | 'beds';
+  | 'mulch'
+  | 'roots'
+  | 'castings';
 
 export interface Zone {
   id: ZoneId;
@@ -16,45 +15,38 @@ export interface Zone {
 
 export const zones: readonly Zone[] = [
   {
-    id: 'polyculture',
-    name: 'The Polyculture',
+    id: 'flora',
+    name: 'The Flora & Fauna',
     shortDesc: 'Work',
     longDesc: 'Work & projects',
-    href: '/polyculture',
-  },
-  {
-    id: 'canopy',
-    name: 'The Canopy',
-    shortDesc: 'Art',
-    longDesc: 'Art, poetry & essays',
-    href: '/canopy',
+    href: '/flora',
   },
   {
     id: 'hive',
     name: 'The Hive',
     shortDesc: 'Now',
-    longDesc: 'Now & contact',
+    longDesc: 'Now, contact & network',
     href: '/hive',
   },
   {
-    id: 'compost',
-    name: 'The Compost',
+    id: 'mulch',
+    name: 'The Mulch',
+    shortDesc: 'Art',
+    longDesc: 'Art, music, poetry & essays',
+    href: '/mulch',
+  },
+  {
+    id: 'roots',
+    name: 'The Roots',
     shortDesc: 'Story',
     longDesc: 'Story & origins',
-    href: '/compost',
+    href: '/roots',
   },
   {
-    id: 'mycelium',
-    name: 'The Mycelium',
-    shortDesc: 'Network',
-    longDesc: 'Collaborators & network',
-    href: '/mycelium',
-  },
-  {
-    id: 'beds',
-    name: 'The Beds',
+    id: 'castings',
+    name: 'The Compost',
     shortDesc: 'Care',
-    longDesc: 'Colophon & care',
-    href: '/beds',
+    longDesc: 'Design, tech & care',
+    href: '/castings',
   },
 ] as const;
