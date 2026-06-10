@@ -18,7 +18,7 @@ export const projectSchema = z.object({
   plantType:     z.enum(PLANT_TYPES).optional(),
 });
 
-export const canopySchema = z.object({
+export const mulchSchema = z.object({
   title:       z.string(),
   kind:        z.enum(['poem', 'essay', 'music', 'av']),
   year:        z.number().int().min(1900).max(2100),

@@ -4,7 +4,7 @@ import Garden from '@layouts/Garden.astro';
 import PieceDetail from '../../components/zones/Canopy/PieceDetail.astro';
 
 export async function getStaticPaths() {
-  const pieces = await getCollection('canopy');
+  const pieces = await getCollection('mulch');
   return pieces.map((entry) => ({
     params: { slug: entry.id.replace(/\.[^.]+$/, '') },
     props:  { entry },
@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-  entry: CollectionEntry<'canopy'>;
+  entry: CollectionEntry<'mulch'>;
 }
 
 const { entry } = Astro.props;

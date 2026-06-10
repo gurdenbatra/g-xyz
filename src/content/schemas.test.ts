@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { projectSchema, nowSchema, canopySchema } from './schemas';
+import { projectSchema, nowSchema, mulchSchema } from './schemas';
 
 describe('projectSchema', () => {
   it('accepts valid project frontmatter', () => {
@@ -168,9 +168,9 @@ describe('nowSchema', () => {
   });
 });
 
-describe('canopySchema', () => {
+describe('mulchSchema', () => {
   it('accepts a valid poem with no embedUrl', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'Elegy for the undercommons',
       kind: 'poem',
       year: 2023,
@@ -179,7 +179,7 @@ describe('canopySchema', () => {
   });
 
   it('accepts a valid essay with optional description', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'What civic technology actually means',
       kind: 'essay',
       year: 2024,
@@ -189,7 +189,7 @@ describe('canopySchema', () => {
   });
 
   it('accepts music with embedUrl', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'Eternal noises III',
       kind: 'music',
       year: 2024,
@@ -199,7 +199,7 @@ describe('canopySchema', () => {
   });
 
   it('accepts av with embedUrl', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'Reactive study #4',
       kind: 'av',
       year: 2023,
@@ -209,7 +209,7 @@ describe('canopySchema', () => {
   });
 
   it('rejects music without embedUrl', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'A track',
       kind: 'music',
       year: 2024,
@@ -218,7 +218,7 @@ describe('canopySchema', () => {
   });
 
   it('rejects av without embedUrl', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'A video',
       kind: 'av',
       year: 2023,
@@ -227,7 +227,7 @@ describe('canopySchema', () => {
   });
 
   it('rejects an invalid kind', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'Test',
       kind: 'photo',
       year: 2023,
@@ -236,7 +236,7 @@ describe('canopySchema', () => {
   });
 
   it('rejects a non-URL embedUrl', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'A track',
       kind: 'music',
       year: 2024,
@@ -246,7 +246,7 @@ describe('canopySchema', () => {
   });
 
   it('rejects year below 1900', () => {
-    const result = canopySchema.safeParse({
+    const result = mulchSchema.safeParse({
       title: 'Ancient poem',
       kind: 'poem',
       year: 1800,
@@ -255,7 +255,7 @@ describe('canopySchema', () => {
   });
 
   it('rejects missing title', () => {
-    const result = canopySchema.safeParse({ kind: 'poem', year: 2023 });
+    const result = mulchSchema.safeParse({ kind: 'poem', year: 2023 });
     expect(result.success).toBe(false);
   });
 });
