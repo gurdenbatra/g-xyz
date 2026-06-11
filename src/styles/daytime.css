@@ -1,0 +1,52 @@
+/*
+ * Day/night modifier. Garden.astro bakes data-daytime on <html> at build and
+ * a pre-paint script corrects it to the visitor's local hour (OS + manual
+ * toggle override). Layers on top of seasonal.css — seasons tint accents,
+ * daytime sets light/dark surfaces + warmth. A short transition makes the
+ * toggle feel intentional (disabled under reduced motion).
+ */
+:root {
+  --daytime-wash: transparent; /* sky/light wash, per phase — consumed by the ambient layer */
+}
+
+html {
+  transition: background-color var(--duration-slow) var(--easing),
+    color var(--duration-slow) var(--easing);
+}
+
+[data-daytime='dawn'] {
+  --ground: #f3e9d6;
+  --daytime-wash: rgba(217, 168, 87, 0.05);
+}
+
+[data-daytime='day'] {
+  /* defaults from tokens.css — explicit for clarity */
+  --ground: var(--c-paper);
+  --daytime-wash: transparent;
+}
+
+[data-daytime='dusk'] {
+  --ground: #eddbc0;
+  --daytime-wash: rgba(138, 79, 46, 0.06);
+}
+
+[data-daytime='night'] {
+  --ground: var(--art-ground);
+  --ink: var(--art-ink);
+  --ink-muted: #b9b3a8;
+  --ink-faint: #3a3d40;
+  /* lighten the earth palette so existing var(--c-*) refs stay legible on dark */
+  --c-soil: #c9a06e;
+  --c-moss: #8fb079;
+  --c-ochre: #e6be73;
+  --c-chartreuse: #d2e08a;
+  --c-ink: var(--art-ink);
+  --daytime-wash: rgba(42, 58, 90, 0.18);
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    transition: none;
+  }
+}
