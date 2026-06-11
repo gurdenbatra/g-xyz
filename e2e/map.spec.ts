@@ -80,6 +80,21 @@ test.describe('Garden home page', () => {
     expect(order).toEqual(['flora', 'hive', 'mulch', 'roots', 'castings']);
   });
 
+  test('flora glyph renders larger than a base-scale zone (prime focus)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+    const widthOf = async (id: string) =>
+      (
+        await page
+          .locator(`#main-content a.zone-link[data-zone="${id}"] .zone-glyph svg`)
+          .first()
+          .boundingBox()
+      )?.width ?? 0;
+    const flora = await widthOf('flora');
+    const roots = await widthOf('roots');
+    expect(flora).toBeGreaterThan(roots);
+  });
+
   test('ascii earth horizon is present in static markup', async ({ page }) => {
     await page.goto('/');
     const text = await page.locator('.ascii-earth [data-earth-line]').textContent();

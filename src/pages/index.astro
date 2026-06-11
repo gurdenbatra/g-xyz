@@ -18,14 +18,23 @@ const orderedZones = ecologicalOrder.flatMap((id) => {
   return z;
 });
 
-// Interim placements (valid + non-overlapping). Phase 2 sets the final
-// prime/secondary composition and glyph sizing.
+// Ecological cross-section: sky (flora prime + hive) above the ~62% earth
+// horizon, mulch at the surface, roots + castings in the soil below.
 const zonePos: Record<ZoneId, { x: string; y: string }> = {
-  flora: { x: '32%', y: '24%' },
-  hive: { x: '70%', y: '20%' },
-  mulch: { x: '28%', y: '58%' },
-  roots: { x: '18%', y: '84%' },
-  castings: { x: '72%', y: '84%' },
+  flora: { x: '18%', y: '20%' },
+  hive: { x: '83%', y: '17%' },
+  mulch: { x: '13%', y: '64%' },
+  roots: { x: '87%', y: '62%' },
+  castings: { x: '50%', y: '90%' },
+};
+
+// Visual hierarchy: Flora is the prime focus, Mulch secondary.
+const zoneScale: Record<ZoneId, 'prime' | 'secondary' | 'base'> = {
+  flora: 'prime',
+  mulch: 'secondary',
+  hive: 'base',
+  roots: 'base',
+  castings: 'base',
 };
 ---
 
@@ -48,7 +57,7 @@ const zonePos: Record<ZoneId, { x: string; y: string }> = {
               data-zone={zone.id}
               style={`--zx:${pos.x};--zy:${pos.y};`}
             >
-              <ZoneGlyph id={zone.id} />
+              <ZoneGlyph id={zone.id} scale={zoneScale[zone.id]} />
               <span class="zone-label">{zone.longDesc}</span>
             </a>
           </li>
