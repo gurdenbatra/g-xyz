@@ -93,8 +93,15 @@ const SPECK_ROWS = [
     const start = () => {
       void init();
     };
-    if (typeof (window as Window & { requestIdleCallback?: unknown }).requestIdleCallback === 'function') {
-      (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(start);
+    const ric = (
+      window as Window & {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void;
+      }
+    ).requestIdleCallback;
+    // The { timeout } guarantees start runs even on a page that never goes idle
+    // (dev HMR sockets, prefetch keepalive), while still deferring past LCP.
+    if (typeof ric === 'function') {
+      ric(start, { timeout: 2000 });
     } else {
       setTimeout(start, 200);
     }
