@@ -1,0 +1,156 @@
+---
+// The homepage's living layer: sparse, slow passes (worm/insect/bird/butterfly/
+// critter + drifting seeds + a dew shimmer). Purely decorative (aria-hidden),
+// motion-gated, idle-loaded — never touches LCP. The scheduler is the pure
+// ambient.ts; this island owns timing, spawning, and cleanup.
+---
+
+<div class="ambient-ecology" aria-hidden="true" data-ambient-root></div>
+
+<style>
+  .ambient-ecology {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .ambient-sprite {
+    position: absolute;
+    left: 0;
+    font-family: var(--font-mono);
+    line-height: 1;
+    color: var(--c-soil);
+    opacity: 0.72;
+    will-change: transform, opacity;
+  }
+
+  .ambient-sprite svg {
+    display: block;
+    overflow: visible;
+  }
+
+  @keyframes ambient-ltr {
+    from {
+      transform: translateX(-8vw);
+    }
+    to {
+      transform: translateX(108vw);
+    }
+  }
+  @keyframes ambient-rtl {
+    from {
+      transform: translateX(108vw);
+    }
+    to {
+      transform: translateX(-8vw);
+    }
+  }
+  @keyframes ambient-pulse {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-ecology {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { planPass, IN_PLACE, type AmbientKind } from '../../lib/ambient';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduce) {
+    // Sprite markup per kind. Small life is ASCII (extends the site's texture
+    // language); larger fauna are simple SVG line-art in the glyph stroke style.
+    const SPRITES: Record<AmbientKind, { html: string; size: string }> = {
+      insect: { html: '·', size: '13px' },
+      seed: { html: ',', size: '13px' },
+      worm: { html: '∼', size: '17px' },
+      dew: { html: '∴', size: '14px' },
+      bird: {
+        html: '<svg width="22" height="10" viewBox="0 0 24 10"><path d="M1 7 Q6 1 12 7 Q18 1 23 7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+        size: '13px',
+      },
+      butterfly: {
+        html: '<svg width="16" height="14" viewBox="0 0 16 14"><path d="M8 7 Q1 1 2 7 Q1 13 8 7 Q15 1 14 7 Q15 13 8 7" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
+        size: '13px',
+      },
+      critter: {
+        html: '<svg width="26" height="16" viewBox="0 0 26 16"><path d="M2 15 Q4 5 13 5 Q22 5 24 15" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6 8 L5 3 M10 6 L10 2 M14 6 L15 2 M18 8 L20 4" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="23.5" cy="12" r="0.8" fill="currentColor"/></svg>',
+        size: '13px',
+      },
+    };
+
+    function spawn(root: HTMLElement, p: ReturnType<typeof planPass>) {
+      const el = document.createElement('span');
+      el.className = 'ambient-sprite';
+      el.dataset.ambient = p.kind;
+      el.style.top = `${p.laneTopPct}%`;
+      el.style.fontSize = SPRITES[p.kind].size;
+      el.innerHTML = SPRITES[p.kind].html;
+      if (IN_PLACE.has(p.kind)) {
+        el.style.left = `${20 + Math.random() * 60}%`;
+        el.style.animation = `ambient-pulse ${p.durationMs}ms ease-in-out forwards`;
+      } else {
+        el.style.animation = `ambient-${p.dir} ${p.durationMs}ms linear forwards`;
+      }
+      el.addEventListener('animationend', () => el.remove());
+      root.appendChild(el);
+    }
+
+    // The module persists across view-transitions, so start/stop is driven by
+    // page-load / before-preparation rather than a one-shot run. The layer is
+    // homepage-only: tick halts when the root element isn't on the page.
+    let timer = 0;
+    function stop() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = 0;
+      }
+    }
+    function tick() {
+      const root = document.querySelector<HTMLElement>('[data-ambient-root]');
+      if (!root) {
+        stop();
+        return; // navigated away from the homepage — go quiet
+      }
+      const p = planPass(Math.random);
+      if (!document.hidden) spawn(root, p);
+      timer = window.setTimeout(tick, p.delayMs);
+    }
+    function startSoon() {
+      stop();
+      if (!document.querySelector('[data-ambient-root]')) return; // homepage only
+      // First pass arrives soon so the garden feels alive on arrival; the rest
+      // are sparse (25–60s) per the scheduler.
+      timer = window.setTimeout(tick, 1800);
+    }
+    function onLoad() {
+      const ric = (
+        window as Window & {
+          requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void;
+        }
+      ).requestIdleCallback;
+      // The { timeout } guarantees the callback runs even on a page that never
+      // goes idle (dev HMR sockets, prefetch), while still deferring past LCP.
+      if (typeof ric === 'function') ric(startSoon, { timeout: 2000 });
+      else setTimeout(startSoon, 400);
+    }
+
+    // astro:page-load fires on the initial load too — binding only here (not at
+    // the top level) avoids a double start, and makes the layer restart when the
+    // visitor returns to the homepage after a view-transition.
+    document.addEventListener('astro:page-load', onLoad);
+    document.addEventListener('astro:before-preparation', stop);
+  }
+</script>

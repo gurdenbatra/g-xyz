@@ -4,6 +4,7 @@ import { zones, type ZoneId } from '../lib/zones';
 import ZoneGlyph from '../components/home/ZoneGlyph.astro';
 import GardenFlora from '../components/home/GardenFlora.astro';
 import AsciiEarth from '../components/home/AsciiEarth.astro';
+import AmbientEcology from '../components/home/AmbientEcology.astro';
 
 const ecologicalOrder: readonly ZoneId[] = [
   'flora',
@@ -41,6 +42,7 @@ const zoneScale: Record<ZoneId, 'prime' | 'secondary' | 'base'> = {
 <Garden title="Home">
   <section class="garden-home" aria-label="Garden home">
     <GardenFlora />
+    <AmbientEcology />
 
     <h1 class="garden-title"><span>Gurden's</span> <span>Garden</span></h1>
 
