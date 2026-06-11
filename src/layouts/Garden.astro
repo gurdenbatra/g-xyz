@@ -7,6 +7,7 @@ import MapToggle from '../components/map/MapToggle.astro';
 import MapOverlay from '../components/map/MapOverlay.astro';
 import PortalShader from '../components/transitions/PortalShader.astro';
 import { seasonFor } from '../lib/season';
+import DaytimeToggle from '../components/DaytimeToggle.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -23,11 +24,36 @@ const pageTitle = title === 'Home' ? 'Gurden Batra' : `${title} — Gurden Batra
 // SSG: season is baked into HTML at deploy time. Accurate as long as deploys
 // happen within each season. Phase 2+ may add a runtime fallback.
 const season = seasonFor(new Date());
+// SSG default; the pre-paint script below corrects it to the visitor's local
+// hour (and OS / manual-toggle override) before first paint.
+const daytime = 'day';
 ---
 
 <!doctype html>
-<html lang="en" data-season={season}>
+<html lang="en" data-season={season} data-daytime={daytime}>
   <head>
+    <script is:inline>
+      (function () {
+        function timeOfDay(h) {
+          h = ((Math.floor(h) % 24) + 24) % 24;
+          if (h >= 5 && h < 8) return 'dawn';
+          if (h >= 8 && h < 17) return 'day';
+          if (h >= 17 && h < 20) return 'dusk';
+          return 'night';
+        }
+        function resolve() {
+          var pref = null;
+          try { pref = localStorage.getItem('gg-daytime'); } catch (e) {}
+          if (pref === 'light') return 'day';
+          if (pref === 'dark') return 'night';
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'night';
+          return timeOfDay(new Date().getHours());
+        }
+        function apply() { document.documentElement.setAttribute('data-daytime', resolve()); }
+        apply();
+        document.addEventListener('astro:after-swap', apply);
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
@@ -51,6 +77,7 @@ const season = seasonFor(new Date());
       <slot />
     </main>
 
+    <DaytimeToggle />
     <Footer />
     <MapOverlay />
     <MapToggle />
