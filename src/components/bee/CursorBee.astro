@@ -48,8 +48,11 @@
   import { createBee, stepBee, type BeeState } from '../../lib/bee';
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // A cursor companion is meaningless on touch — skip it (and its rAF) there,
+  // so a scroll-drag never darts the bee under the finger.
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  if (!reduce) {
+  if (!reduce && finePointer) {
     let bee: BeeState = createBee({ x: -100, y: -100 });
     // Mutable so we can re-point it at the swapped node after navigation.
     let el: HTMLElement | null = document.getElementById('cursor-bee');

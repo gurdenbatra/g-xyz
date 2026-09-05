@@ -224,7 +224,9 @@ const zoneScale: Record<ZoneId, 'prime' | 'secondary' | 'base'> = {
   // bloom (lift + warm). Letter centres are cached (cheap); only the live bee
   // position is read per frame. Off entirely under prefers-reduced-motion.
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce) {
+  // Only where a cursor-bee exists (fine pointer) — no bee to approach on touch.
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!reduce && finePointer) {
     const RADIUS = 140; // px — bloom reach around the bee
     let letters: HTMLElement[] = [];
     let centres: { x: number; y: number }[] = [];
