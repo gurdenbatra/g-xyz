@@ -5,6 +5,7 @@ import ZoneGlyph from '../components/home/ZoneGlyph.astro';
 import GardenFlora from '../components/home/GardenFlora.astro';
 import AsciiEarth from '../components/home/AsciiEarth.astro';
 import AmbientEcology from '../components/home/AmbientEcology.astro';
+import AmbientShader from '../components/home/AmbientShader.astro';
 
 const ecologicalOrder: readonly ZoneId[] = [
   'flora',
@@ -41,10 +42,15 @@ const zoneScale: Record<ZoneId, 'prime' | 'secondary' | 'base'> = {
 
 <Garden title="Home">
   <section class="garden-home" aria-label="Garden home">
+    <AmbientShader />
     <GardenFlora />
     <AmbientEcology />
 
-    <h1 class="garden-title"><span>Gurden's</span> <span>Garden</span></h1>
+    <h1 class="garden-title">
+      <span class="gt-word">{"Gurden's".split('').map((ch) => <span class="gt-l">{ch}</span>)}</span>
+      {' '}
+      <span class="gt-word">{'Garden'.split('').map((ch) => <span class="gt-l">{ch}</span>)}</span>
+    </h1>
 
     <AsciiEarth />
 
@@ -108,8 +114,26 @@ const zoneScale: Record<ZoneId, 'prime' | 'secondary' | 'base'> = {
     z-index: 1;
   }
 
-  .garden-title span {
+  .garden-title .gt-word {
     display: block;
+  }
+
+  .gt-l {
+    display: inline-block;
+    transform: translateY(calc(var(--bloom, 0) * -0.1em));
+    color: color-mix(in srgb, var(--ink), var(--c-ochre) calc(var(--bloom, 0) * 65%));
+    transition:
+      transform 220ms var(--easing),
+      color 220ms var(--easing);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gt-l {
+      transform: none;
+      color: var(--ink);
+      transition: none;
+    }
   }
 
   .zone-field {
@@ -194,3 +218,56 @@ const zoneScale: Record<ZoneId, 'prime' | 'secondary' | 'base'> = {
     }
   }
 </style>
+
+<script>
+  // Bee ↔ title: the cursor-bee's approach makes the nearest title letters
+  // bloom (lift + warm). Letter centres are cached (cheap); only the live bee
+  // position is read per frame. Off entirely under prefers-reduced-motion.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) {
+    const RADIUS = 140; // px — bloom reach around the bee
+    let letters: HTMLElement[] = [];
+    let centres: { x: number; y: number }[] = [];
+    let bee: HTMLElement | null = null;
+    let rafId = 0;
+
+    function cache() {
+      letters = Array.from(document.querySelectorAll<HTMLElement>('.garden-title .gt-l'));
+      centres = letters.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      });
+    }
+    function stop() {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    }
+    function tick() {
+      if (!document.hidden && bee && letters.length) {
+        const b = bee.getBoundingClientRect();
+        const bx = b.left + b.width / 2;
+        const by = b.top + b.height / 2;
+        for (let i = 0; i < letters.length; i++) {
+          const dx = centres[i].x - bx;
+          const dy = centres[i].y - by;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          const bloom = Math.max(0, 1 - d / RADIUS);
+          letters[i].style.setProperty('--bloom', bloom.toFixed(3));
+        }
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+    function startOnLoad() {
+      stop();
+      if (!document.querySelector('.garden-title .gt-l')) return; // homepage only
+      bee = document.getElementById('cursor-bee');
+      cache();
+      rafId = requestAnimationFrame(tick);
+    }
+    document.addEventListener('astro:page-load', startOnLoad);
+    document.addEventListener('astro:before-preparation', stop);
+    window.addEventListener('resize', cache, { passive: true });
+  }
+</script>
