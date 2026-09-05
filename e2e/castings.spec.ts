@@ -30,9 +30,9 @@ test.describe('Castings page — structure', () => {
 
   test('shows source repository link', async ({ page }) => {
     await page.goto('/castings');
-    const repoLink = page.getByRole('link', { name: /gurden\/gurden\.xyz/i });
+    const repoLink = page.getByRole('link', { name: /gurdenbatra\/gurden\.xyz/i });
     await expect(repoLink).toBeVisible();
-    await expect(repoLink).toHaveAttribute('href', 'https://github.com/gurden/gurden.xyz');
+    await expect(repoLink).toHaveAttribute('href', 'https://github.com/gurdenbatra/gurden.xyz');
   });
 });
 
@@ -99,7 +99,7 @@ test.describe('Castings page — reduced motion', () => {
 test.describe('Castings page — keyboard navigation', () => {
   test('repository link is keyboard-reachable', async ({ page }) => {
     await page.goto('/castings');
-    const link = page.getByRole('link', { name: /gurden\/gurden\.xyz/i });
+    const link = page.getByRole('link', { name: /gurdenbatra\/gurden\.xyz/i });
     await link.focus();
     await expect(link).toBeFocused();
   });
