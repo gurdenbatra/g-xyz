@@ -179,15 +179,29 @@ test.describe('Hive page — accessibility (reduced motion)', () => {
   });
 });
 
-test.describe('Hive page — network section (formerly mycelium)', () => {
-  test('hive shows both the flock and the network sections', async ({ page }) => {
+test.describe('Hive page — swarm & talks', () => {
+  test('hive shows the live swarm section', async ({ page }) => {
     await page.goto('/hive');
     await expect(page.getByRole('heading', { name: /live swarm/i })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /network/i })).toBeVisible();
   });
 
-  test('hive renders the collaborator nodes canvas', async ({ page }) => {
+  test('network section is no longer rendered', async ({ page }) => {
     await page.goto('/hive');
-    await expect(page.locator('[data-nodes-graph]')).toBeAttached();
+    await expect(page.getByRole('heading', { name: /^network$/i })).toHaveCount(0);
+    await expect(page.locator('[data-nodes-graph]')).toHaveCount(0);
+  });
+
+  test('practice appears as an accessible swarm list', async ({ page }) => {
+    await page.goto('/hive');
+    await expect(page.getByRole('heading', { name: /^Practice$/i })).toBeVisible();
+    await expect(page.getByText('Generative Art', { exact: true })).toBeVisible();
+  });
+
+  test('talks section lists talks with external links', async ({ page }) => {
+    await page.goto('/hive');
+    await expect(page.getByRole('heading', { name: /^Talks$/i })).toBeVisible();
+    const mozfest = page.getByRole('link', { name: /MozFest House, Amsterdam/i });
+    await expect(mozfest).toBeVisible();
+    await expect(mozfest).toHaveAttribute('href', /pretalx\.com/);
   });
 });

@@ -7,7 +7,7 @@ import { noise2D } from '../../../lib/noise';
 export interface RawFlower {
   id: string;
   label: string;
-  kind: 'carrying' | 'reading' | 'contact';
+  kind: 'carrying' | 'reading' | 'contact' | 'practice';
   detail: string;
   url?: string;
 }

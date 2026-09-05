@@ -3,6 +3,7 @@
 
 import { getEntry } from 'astro:content';
 import type { RawFlower } from './flock';
+import { practices } from '../../../lib/practices';
 
 const nowEntry = await getEntry('now', 'index');
 if (!nowEntry) throw new Error('src/content/now/index.mdx not found');
@@ -15,6 +16,12 @@ const rawFlowers: RawFlower[] = [
     label: item.label,
     kind: 'carrying' as const,
     detail: item.detail,
+  })),
+  ...practices.map((label, i) => ({
+    id: `practice-${i}`,
+    label,
+    kind: 'practice' as const,
+    detail: label,
   })),
   ...contact.map((item, i) => ({
     id: `contact-${i}`,
@@ -48,6 +55,16 @@ const rawFlowers: RawFlower[] = [
         <li class="hive-list-item">
           <span class="hive-item-label label">{item.label}</span>
           <span class="hive-item-detail">{item.detail}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="hive-list-group">
+    <h3 class="label hive-list-title">Practice</h3>
+    <ul role="list" class="hive-list">
+      {practices.map((label) => (
+        <li class="hive-list-item">
+          <span class="hive-item-label label">{label}</span>
         </li>
       ))}
     </ul>
@@ -120,6 +137,7 @@ const rawFlowers: RawFlower[] = [
 
     function kindColor(kind: FlowerDef['kind']): string {
       if (kind === 'carrying') return cMoss;
+      if (kind === 'practice') return cChartreuse;
       return cSoil;
     }
 
