@@ -10,7 +10,7 @@ export const KIND_STYLE: Record<string, { bg: string; fg: string }> = {
 };
 
 const W_REF = 900;
-const COL_W = W_REF / 3; // 300px per column
+const COL_W = W_REF / 4; // 225px per column (4 columns)
 
 // LCG hash — deterministic unsigned 32-bit integer from a number
 export function lcg(n: number): number {
@@ -32,8 +32,8 @@ export interface NotePosition {
 
 export function positionNote(slug: string, kind: string): NotePosition {
   const h = slugHash(slug);
-  const col   = h % 3;
-  const xPx   = col * COL_W + ((h >>> 4)  % Math.floor(COL_W * 0.6));
+  const col   = h % 4;
+  const xPx   = col * COL_W + ((h >>> 4)  % Math.floor(COL_W * 0.5));
   const topPx = 20 +          ((h >>> 8)  % 480);
   const r     =               ((h >>> 12) % 17) - 8;
   const leftPct = ((xPx / W_REF) * 100).toFixed(2);

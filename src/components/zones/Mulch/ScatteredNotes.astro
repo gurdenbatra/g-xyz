@@ -155,14 +155,34 @@ const legend = [
     flex-shrink: 0;
   }
 
+  /* Phones can't fit 4 absolute columns — flow the notes into a centered wrap
+     instead. !important beats both the SSG inline positions and the wind
+     script's inline transform. */
   @media (max-width: 640px) {
     .scatter-wrap {
-      height: auto;
-      min-height: 720px;
+      height: auto !important;
+      min-height: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: flex-start;
+      gap: var(--space-3);
+      padding-bottom: var(--space-10);
     }
 
     .note {
-      max-width: 120px;
+      position: static !important;
+      left: auto !important;
+      top: auto !important;
+      transform: none !important;
+      max-width: 160px;
+    }
+
+    .colour-key {
+      position: static;
+      flex-basis: 100%;
+      justify-content: center;
+      margin-top: var(--space-6);
     }
   }
 </style>
