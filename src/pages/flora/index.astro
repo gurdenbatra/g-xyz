@@ -23,16 +23,26 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
 
     <SlowPlot />
 
-    <!-- Visually hidden: the keyboard/screen-reader equivalent of the plot. -->
-    <ol class="projects-list sr-only">
-      {sorted.map((p) => (
-        <li>
-          <a href={`/flora/${p.id.replace(/\.[^.]+$/, '')}`}>
-            {p.data.title} — {p.data.description}
-          </a>
-        </li>
-      ))}
-    </ol>
+    <!-- The plot is the desktop interface (hover + click). This list is its
+         a11y equivalent AND the primary, tappable project index on touch,
+         where there is no hover. Visually hidden on desktop; shown ≤640px. -->
+    <nav class="projects-index" aria-label="Projects">
+      <h2 class="projects-index__title label">Projects</h2>
+      <ol class="projects-index__list">
+        {sorted.map((p) => {
+          const slug = p.id.replace(/\.[^.]+$/, '');
+          return (
+            <li>
+              <a href={`/flora/${slug}`}>
+                <span class="pi-title">{p.data.title}</span>
+                <span class="pi-year label">{p.data.year}</span>
+                <span class="pi-desc">{p.data.description}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
 
     <section class="skills-section" aria-labelledby="skills-heading">
       <h2 id="skills-heading" class="label section-heading">What I do</h2>
@@ -67,6 +77,72 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     max-width: 50ch;
     margin: 0;
   }
+  /* Desktop: visually hidden (the plot is the interface); stays in the a11y tree. */
+  .projects-index {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Touch: no hover — reveal the list as the primary, tappable project index. */
+  @media (max-width: 640px) {
+    .projects-index {
+      position: static;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+      white-space: normal;
+    }
+    .projects-index__title {
+      display: block;
+      margin-bottom: var(--space-4);
+    }
+    .projects-index__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .projects-index__list li {
+      margin: 0;
+    }
+    .projects-index__list a {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-1) var(--space-3);
+      align-items: baseline;
+      padding: var(--space-4) 0;
+      border-bottom: 1px solid var(--ink-faint);
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .pi-title {
+      font-family: 'MaziusDisplay', serif;
+      font-style: italic;
+      font-size: var(--text-md);
+    }
+    .pi-year {
+      color: var(--ink-muted);
+      text-align: right;
+    }
+    .pi-desc {
+      grid-column: 1 / -1;
+      font-size: var(--text-sm);
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+  }
+
   .skills-section {
     padding-top: var(--space-12);
     border-top: 1px solid var(--ink-faint);

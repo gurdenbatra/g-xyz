@@ -45,7 +45,7 @@ import { talks } from '../../lib/talks';
               href={talk.url}
               target="_blank"
               rel="noopener noreferrer"
-            >{talk.venue}<span aria-hidden="true"> ↗</span></a>
+            >{talk.venue}<span aria-hidden="true">{' ↗︎'}</span></a>
             <span class="talk-year label">{talk.year}</span>
             <span class="talk-role">{talk.role}</span>
             {talk.topic && <span class="talk-topic">{talk.topic}</span>}

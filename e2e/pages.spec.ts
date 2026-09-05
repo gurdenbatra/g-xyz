@@ -74,3 +74,12 @@ test.describe('Social preview meta', () => {
     );
   });
 });
+
+test.describe('Footer', () => {
+  test('has an easy link back home', async ({ page }) => {
+    await page.goto('/roots');
+    const home = page.locator('.site-footer a[href="/"]');
+    await expect(home).toBeVisible();
+    await expect(home).toHaveText(/home/i);
+  });
+});

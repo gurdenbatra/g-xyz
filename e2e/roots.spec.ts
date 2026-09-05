@@ -152,3 +152,12 @@ test.describe('Roots page — experience', () => {
     }
   });
 });
+
+test.describe('Roots page — places', () => {
+  test('lists the cities of importance', async ({ page }) => {
+    await page.goto('/roots');
+    for (const city of ['Delhi', 'San Francisco', 'Helsinki', 'Berlin']) {
+      await expect(page.locator('.roots-places').getByText(city, { exact: false })).toBeVisible();
+    }
+  });
+});

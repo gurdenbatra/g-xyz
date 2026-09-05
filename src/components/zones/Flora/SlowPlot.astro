@@ -316,9 +316,13 @@ const seeds: PlantSeed[] = projects.map((p) => ({
     opacity: 1;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 640px) {
+    /* On touch the tappable project index below is the interface, so the plot
+       becomes a shorter, ambient band rather than the primary surface. */
     .slow-plot-wrap {
-      aspect-ratio: 4 / 3;
+      aspect-ratio: auto;
+      height: 34vh;
+      max-height: 34vh;
     }
   }
 </style>

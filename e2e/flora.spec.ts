@@ -83,12 +83,20 @@ test.describe('Flora — page structure', () => {
 
   test('/flora shows an accessible project list below the canvas', async ({ page }) => {
     await page.goto('/flora');
-    const list = page.locator('ol.projects-list');
-    // The list is visually hidden (sr-only) — it's the keyboard/screen-reader
-    // equivalent of the generative plot, not a visible element.
+    const list = page.locator('nav.projects-index ol.projects-index__list');
+    // Desktop: visually hidden (the a11y equivalent of the plot). Touch: visible.
     await expect(list).toBeAttached();
     const items = list.locator('li a');
     expect(await items.count()).toBeGreaterThan(0);
+    // Each item links to a project detail page.
+    await expect(items.first()).toHaveAttribute('href', /^\/flora\/.+/);
+  });
+
+  test('the project index becomes visible on a phone viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/flora');
+    const firstLink = page.locator('nav.projects-index ol.projects-index__list li a').first();
+    await expect(firstLink).toBeVisible();
   });
 
   test('flora shows the skills section', async ({ page }) => {

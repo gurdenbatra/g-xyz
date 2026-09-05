@@ -16,6 +16,12 @@ import { experience } from '../../lib/experience';
         Civic Tech Lead at Dark Matter Labs, Berlin. Background in Computer Science
         (Georgia Tech) and New Media Design (Aalto University). Originally from Delhi.
       </p>
+      <p class="roots-places">
+        <span class="label roots-places__label">Places that shaped me</span>
+        <span class="place">Delhi</span> · <span class="place">San Francisco</span> ·
+        <span class="place">Helsinki</span> ·
+        <span class="place place--now">Berlin <span class="roots-places__now">(now)</span></span>
+      </p>
     </header>
 
     <div class="strata-section" aria-labelledby="strata-heading">
@@ -68,6 +74,27 @@ import { experience } from '../../lib/experience';
     font-size: var(--text-md);
     line-height: 1.65;
     max-width: 560px;
+  }
+
+  .roots-places {
+    margin-top: var(--space-6);
+    font-size: var(--text-md);
+    color: var(--ink-muted);
+    line-height: 1.8;
+  }
+
+  .roots-places__label {
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .place--now {
+    color: var(--ink);
+  }
+
+  .roots-places__now {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
   }
 
   .section-heading {
