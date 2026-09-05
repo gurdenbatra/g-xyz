@@ -48,25 +48,14 @@ test.describe('Garden home page', () => {
     }
   });
 
-  test('glyph filled shapes actually render (fill not stripped by base rule)', async ({ page }) => {
-    // Regression guard: a lower-specificity .f-* class once lost to the
-    // `.zone-glyph circle { fill: none }` base rule, leaving the canopy
-    // crown (and every other filled shape) invisible.
-    await page.goto('/');
-    const fill = await page
-      .locator('#main-content a.zone-link[data-zone="mulch"] .zone-glyph .f-moss')
-      .first()
-      .evaluate((el) => getComputedStyle(el).fill);
-    expect(fill).not.toBe('none');
-  });
-
-  test('each glyph carries ASCII texture text', async ({ page }) => {
+  test('each glyph renders non-empty crisp ASCII', async ({ page }) => {
     await page.goto('/');
     for (const id of ['flora', 'hive', 'mulch', 'roots', 'castings']) {
-      const count = await page
-        .locator(`#main-content a.zone-link[data-zone="${id}"] .zone-glyph text`)
-        .count();
-      expect(count, `zone ${id} should have ASCII texture`).toBeGreaterThan(0);
+      const text = await page
+        .locator(`#main-content a.zone-link[data-zone="${id}"] .zone-glyph pre.zone-ascii`)
+        .first()
+        .textContent();
+      expect((text ?? '').trim().length, `zone ${id} should render ASCII`).toBeGreaterThan(0);
     }
   });
 
@@ -86,7 +75,7 @@ test.describe('Garden home page', () => {
     const widthOf = async (id: string) =>
       (
         await page
-          .locator(`#main-content a.zone-link[data-zone="${id}"] .zone-glyph svg`)
+          .locator(`#main-content a.zone-link[data-zone="${id}"] .zone-glyph pre.zone-ascii`)
           .first()
           .boundingBox()
       )?.width ?? 0;
