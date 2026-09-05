@@ -1,0 +1,152 @@
+---
+// Subtle ambient WebGL background behind the homepage garden. Idle-loaded,
+// day/night-tinted, paused when hidden, and entirely absent under
+// prefers-reduced-motion. Any WebGL failure hides the canvas (static paper stands).
+---
+
+<canvas class="ambient-shader" data-ambient-shader data-shader aria-hidden="true"></canvas>
+
+<style>
+  .ambient-shader {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.2s var(--easing);
+  }
+  .ambient-shader[data-on] {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-shader {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { VERT_SRC, FRAG_SRC, createShaderProgram } from '../../lib/shader';
+
+  const reduce =
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    window.matchMedia('(prefers-reduced-data: reduce)').matches;
+
+  if (!reduce) {
+    let canvas: HTMLCanvasElement | null = null;
+    let gl: WebGLRenderingContext | null = null;
+    let program: WebGLProgram | null = null;
+    let rafId = 0;
+    let uRes: WebGLUniformLocation | null = null;
+    let uTime: WebGLUniformLocation | null = null;
+    let uTint: WebGLUniformLocation | null = null;
+    let start = 0;
+    let last = 0;
+    const FRAME_MS = 33; // ~30fps
+
+    function tintRGB(): [number, number, number] {
+      // Warm by day, cool/indigo by night — read live palette so it tracks theme.
+      const cs = getComputedStyle(document.documentElement);
+      const night = document.documentElement.getAttribute('data-daytime') === 'night';
+      const raw = night ? cs.getPropertyValue('--c-indigo') : cs.getPropertyValue('--c-ochre');
+      const hex = (raw || '#D9A857').trim();
+      const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
+      if (!m) return [0.85, 0.66, 0.34];
+      return [parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255];
+    }
+
+    function resize() {
+      if (!canvas || !gl) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      // Render at reduced internal resolution — a soft blurry field, cheap on mobile GPUs.
+      const w = Math.max(1, Math.round((canvas.clientWidth * dpr) / 2));
+      const h = Math.max(1, Math.round((canvas.clientHeight * dpr) / 2));
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+      gl.viewport(0, 0, w, h);
+    }
+
+    function stop() {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    }
+
+    function tick(now: number) {
+      if (!gl || !program || !canvas) return;
+      if (!document.hidden && now - last >= FRAME_MS) {
+        last = now;
+        resize();
+        gl.useProgram(program);
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+        gl.uniform1f(uTime, (now - start) / 1000);
+        const [r, g, b] = tintRGB();
+        gl.uniform3f(uTint, r, g, b);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function init() {
+      canvas = document.querySelector<HTMLCanvasElement>('[data-ambient-shader]');
+      if (!canvas) return;
+      try {
+        gl =
+          canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false }) ||
+          (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null);
+        if (!gl) return;
+        program = createShaderProgram(gl, VERT_SRC, FRAG_SRC);
+        if (!program) {
+          gl = null;
+          return;
+        }
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+          gl.STATIC_DRAW,
+        );
+        const loc = gl.getAttribLocation(program, 'a_pos');
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        uRes = gl.getUniformLocation(program, 'u_res');
+        uTime = gl.getUniformLocation(program, 'u_time');
+        uTint = gl.getUniformLocation(program, 'u_tint');
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        start = performance.now();
+        canvas.setAttribute('data-on', '');
+        stop();
+        rafId = requestAnimationFrame(tick);
+      } catch {
+        canvas?.style.setProperty('display', 'none');
+        gl = null;
+        program = null;
+      }
+    }
+
+    function onLoad() {
+      if (!document.querySelector('[data-ambient-shader]')) {
+        stop();
+        return; // homepage only
+      }
+      const ric = (
+        window as Window & {
+          requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void;
+        }
+      ).requestIdleCallback;
+      if (typeof ric === 'function') ric(init, { timeout: 2000 });
+      else setTimeout(init, 300);
+    }
+
+    document.addEventListener('astro:page-load', onLoad);
+    document.addEventListener('astro:before-preparation', stop);
+  }
+</script>
