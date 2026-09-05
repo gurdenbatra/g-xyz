@@ -7,19 +7,13 @@ import type { RawFlower } from './flock';
 const nowEntry = await getEntry('now', 'index');
 if (!nowEntry) throw new Error('src/content/now/index.mdx not found');
 
-const { carrying, reading, contact } = nowEntry.data;
+const { carrying, contact } = nowEntry.data;
 
 const rawFlowers: RawFlower[] = [
   ...carrying.map((item, i) => ({
     id: `carrying-${i}`,
     label: item.label,
     kind: 'carrying' as const,
-    detail: item.detail,
-  })),
-  ...reading.map((item, i) => ({
-    id: `reading-${i}`,
-    label: item.label,
-    kind: 'reading' as const,
     detail: item.detail,
   })),
   ...contact.map((item, i) => ({
@@ -36,7 +30,7 @@ const rawFlowers: RawFlower[] = [
   <canvas
     data-live-flock
     class="live-flock-canvas"
-    aria-label="An animated swarm of bees tending a field of flowers — each flower is a current thread of work, reading, or contact. The list below is the keyboard-navigable equivalent."
+    aria-label="An animated swarm of bees tending a field of flowers — each flower is a current thread of work or contact. The list below is the keyboard-navigable equivalent."
   ></canvas>
   <!-- Hover card — purely visual, aria-hidden; screen readers use the list below -->
   <div class="hive-card" data-hive-card aria-hidden="true">
@@ -51,17 +45,6 @@ const rawFlowers: RawFlower[] = [
     <h3 class="label hive-list-title">Now</h3>
     <ul role="list" class="hive-list">
       {carrying.map((item) => (
-        <li class="hive-list-item">
-          <span class="hive-item-label label">{item.label}</span>
-          <span class="hive-item-detail">{item.detail}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-  <div class="hive-list-group">
-    <h3 class="label hive-list-title">Reading</h3>
-    <ul role="list" class="hive-list">
-      {reading.map((item) => (
         <li class="hive-list-item">
           <span class="hive-item-label label">{item.label}</span>
           <span class="hive-item-detail">{item.detail}</span>
@@ -135,9 +118,8 @@ const rawFlowers: RawFlower[] = [
     const cPaper       = style.getPropertyValue('--c-paper').trim()       || '#F1E8D0';
     const fontMono     = style.getPropertyValue('--font-mono').trim()     || 'monospace';
 
-    function kindColor(kind: 'carrying' | 'reading' | 'contact'): string {
+    function kindColor(kind: FlowerDef['kind']): string {
       if (kind === 'carrying') return cMoss;
-      if (kind === 'reading')  return cOchre;
       return cSoil;
     }
 

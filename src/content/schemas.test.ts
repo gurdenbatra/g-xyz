@@ -118,7 +118,6 @@ describe('projectSchema', () => {
 describe('nowSchema', () => {
   const valid = {
     carrying: [{ label: 'Work', detail: 'Civic tech in Berlin' }],
-    reading:  [{ label: 'A Book', detail: 'Author — subtitle' }],
     contact:  [{ label: 'Email', url: 'mailto:test@example.com', detail: 'test@example.com' }],
   };
 
@@ -165,6 +164,14 @@ describe('nowSchema', () => {
   it('rejects empty contact array', () => {
     const data = { ...valid, contact: [] };
     expect(nowSchema.safeParse(data).success).toBe(false);
+  });
+
+  it('parses a now entry without a reading field', () => {
+    const result = nowSchema.safeParse({
+      carrying: [{ label: 'Civic Tech @ DML', detail: 'Systems change through civic technology' }],
+      contact: [{ label: 'Email', url: 'mailto:gurden@darkmatterlabs.org', detail: 'gurden@darkmatterlabs.org' }],
+    });
+    expect(result.success).toBe(true);
   });
 });
 

@@ -31,7 +31,6 @@ export const mulchSchema = z.object({
 
 export const nowSchema = z.object({
   carrying: z.array(z.object({ label: z.string().min(1), detail: z.string().min(1) })).min(1),
-  reading:  z.array(z.object({ label: z.string().min(1), detail: z.string().min(1) })).min(1),
   contact:  z.array(z.object({
     label:  z.string().min(1),
     url:    z.union([z.string().url(), z.string().startsWith('mailto:')]),
