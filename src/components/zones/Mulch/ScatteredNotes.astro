@@ -14,6 +14,15 @@ const positionedPieces = pieces.map(piece => {
   const { leftPct, topPx, r, bg, fg } = positionNote(slug, piece.data.kind);
   return { piece, slug, leftPct, topPx, r, bg, fg };
 });
+
+// The colour key is generated from KIND_STYLE so the swatches can never drift
+// from the note colours they document.
+const legend = [
+  { label: 'Poem', kind: 'poem' },
+  { label: 'Essay', kind: 'essay' },
+  { label: 'Music', kind: 'music' },
+  { label: 'A/V', kind: 'av' },
+] as const;
 ---
 
 <div class="scatter-wrap" data-scatter-wrap>
@@ -36,10 +45,11 @@ const positionedPieces = pieces.map(piece => {
 
   <div class="colour-key" data-colour-key aria-hidden="true">
     <span class="key-label">Key:</span>
-    <span class="key-item"><span class="key-swatch" style="background:#4a6e39"></span>Poem</span>
-    <span class="key-item"><span class="key-swatch" style="background:#D9A857"></span>Essay</span>
-    <span class="key-item"><span class="key-swatch" style="background:#8A4F2E"></span>Music</span>
-    <span class="key-item"><span class="key-swatch" style="background:#2a3a5a"></span>A/V</span>
+    {legend.map(({ label, kind }) => (
+      <span class="key-item"
+        ><span class="key-swatch" style={`background:${KIND_STYLE[kind].bg}`}></span>{label}</span
+      >
+    ))}
   </div>
 </div>
 
@@ -118,10 +128,10 @@ const positionedPieces = pieces.map(piece => {
   }
 
   .key-label {
-    font-size: 8px;
+    font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #B8B0A0;
+    color: var(--ink-muted);
   }
 
   .key-item {
@@ -129,7 +139,7 @@ const positionedPieces = pieces.map(piece => {
     align-items: center;
     gap: 5px;
     font-size: 9px;
-    color: #4A4A48;
+    color: var(--ink-muted);
     font-style: normal;
   }
 
