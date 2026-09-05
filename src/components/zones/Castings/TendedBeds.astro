@@ -10,7 +10,7 @@ interface BedItem {
 interface Bed {
   id: string;
   label: string;
-  emoji: string;
+  icon: string;
   items: BedItem[];
 }
 
@@ -18,7 +18,7 @@ const beds: Bed[] = [
   {
     id: 'stack',
     label: 'Stack',
-    emoji: '⚙️',
+    icon: '[=]',
     items: [
       { term: 'Framework', detail: 'Astro 5 — static, MDX, islands architecture' },
       {
@@ -32,7 +32,7 @@ const beds: Bed[] = [
   {
     id: 'accessibility',
     label: 'Accessibility',
-    emoji: '♿',
+    icon: '[+]',
     items: [
       { term: 'Standard', detail: 'WCAG 2.2 AA' },
       { term: 'Auditing', detail: 'axe-core in CI — zero violations required' },
@@ -49,7 +49,7 @@ const beds: Bed[] = [
   {
     id: 'performance',
     label: 'Performance',
-    emoji: '⚡',
+    icon: '[>]',
     items: [
       { term: 'LCP', detail: '< 2.5s on mid-tier mobile (Moto G4, throttled)' },
       { term: 'TBT', detail: '< 200ms' },
@@ -60,7 +60,7 @@ const beds: Bed[] = [
   {
     id: 'source',
     label: 'Source',
-    emoji: '📖',
+    icon: '</>',
     items: [
       {
         term: 'Repository',
@@ -73,7 +73,7 @@ const beds: Bed[] = [
   {
     id: 'sustainability',
     label: 'Sustainability',
-    emoji: '🌱',
+    icon: '[~]',
     items: [
       { term: 'Architecture', detail: 'Static site — no server-side compute per request' },
       { term: 'Tracking', detail: 'None. No third-party scripts or beacons.' },
@@ -128,7 +128,7 @@ const beds: Bed[] = [
         <li class="bed-item">
           <article class="bed" data-bed={bed.id}>
             <h2 class="bed-label">
-              <span aria-hidden="true" class="bed-emoji">{bed.emoji}</span>
+              <span aria-hidden="true" class="bed-icon">{bed.icon}</span>
               {bed.label}
             </h2>
             <dl class="bed-items">
@@ -296,8 +296,12 @@ const beds: Bed[] = [
     border-bottom: 1px solid var(--ink-faint);
   }
 
-  .bed-emoji {
+  .bed-icon {
+    font-family: var(--font-mono);
     font-style: normal;
+    font-size: 0.85em;
+    color: var(--c-moss);
+    letter-spacing: -0.05em;
   }
 
   .bed-items {

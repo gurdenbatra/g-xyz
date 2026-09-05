@@ -113,3 +113,17 @@ test.describe('Castings page — accessibility', () => {
     expect(results.violations).toEqual([]);
   });
 });
+
+test.describe('Castings page — ASCII bed icons', () => {
+  const EMOJI = ['⚙️', '♿', '⚡', '📖', '🌱'];
+
+  test('bed icons are ASCII, not emoji', async ({ page }) => {
+    await page.goto('/castings');
+    const icons = page.locator('.bed-icon');
+    await expect(icons.first()).toBeVisible();
+    const text = (await icons.allInnerTexts()).join(' ');
+    expect(text).toContain('</>');
+    const body = await page.locator('main').innerText();
+    for (const e of EMOJI) expect(body).not.toContain(e);
+  });
+});
