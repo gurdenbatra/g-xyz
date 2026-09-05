@@ -1,5 +1,5 @@
 // src/lib/collaborators.ts
-// Seed data for The Mycelium zone — collaborators, organisations, and idea nodes.
+// Seed data for the Hive's Network section — collaborators, organisations, and idea nodes.
 // Connections are bidirectional: if A lists B, B also lists A.
 
 export type NodeKind = 'person' | 'org' | 'idea';
