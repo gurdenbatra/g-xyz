@@ -53,3 +53,24 @@ test.describe('Castings page (design, tech & care)', () => {
     await expect(page.getByText(/Mazius/i).first()).toBeVisible();
   });
 });
+
+test.describe('Social preview meta', () => {
+  test('home has Open Graph + Twitter card tags with an absolute image', async ({ page }) => {
+    await page.goto('/');
+    const og = (p: string) => page.locator(`meta[property="${p}"]`).getAttribute('content');
+    expect(await og('og:type')).toBe('website');
+    expect(await og('og:title')).toBeTruthy();
+    const img = await og('og:image');
+    expect(img).toMatch(/^https?:\/\/.+\/og\.png$/);
+    expect(await page.locator('meta[name="twitter:card"]').getAttribute('content')).toBe(
+      'summary_large_image',
+    );
+  });
+
+  test('interior pages carry a page-specific og:title', async ({ page }) => {
+    await page.goto('/hive');
+    expect(await page.locator('meta[property="og:title"]').getAttribute('content')).toMatch(
+      /Hive/i,
+    );
+  });
+});
