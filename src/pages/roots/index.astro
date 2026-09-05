@@ -22,36 +22,10 @@ import Strata from '../../components/zones/Roots/Strata.astro';
       <Strata />
     </div>
 
-    <section class="contact-section" aria-labelledby="contact-heading">
-      <h2 id="contact-heading" class="label section-heading">Get in touch</h2>
-      <ul class="contact-list" role="list">
-        <li>
-          <a href="mailto:gurden@darkmatterlabs.org" class="contact-link label">
-            gurden@darkmatterlabs.org
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://www.linkedin.com/in/gurdenbatra"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="contact-link label"
-          >
-            LinkedIn <span aria-hidden="true">→</span>
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://github.com/gurden"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="contact-link label"
-          >
-            GitHub <span aria-hidden="true">→</span>
-          </a>
-        </li>
-      </ul>
-    </section>
+    <p class="roots-footnote">
+      Want to reach out, or see what's growing right now? That all lives in
+      <a href="/hive">The Hive</a>.
+    </p>
 
   </div>
 </Garden>
@@ -86,31 +60,25 @@ import Strata from '../../components/zones/Roots/Strata.astro';
   }
 
   .strata-section {
-    margin-bottom: var(--space-20);
-  }
-
-  .contact-section {
     margin-bottom: var(--space-16);
-    padding-top: var(--space-12);
-    border-top: 1px solid var(--ink-faint);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--ink-faint);
   }
 
-  .contact-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+  .roots-footnote {
+    font-size: var(--text-md);
+    line-height: 1.65;
+    max-width: 560px;
+    color: var(--ink-muted);
   }
 
-  .contact-link {
+  .roots-footnote a {
     color: var(--ink);
-    text-decoration: none;
+    text-underline-offset: 2px;
     transition: color var(--duration-fast) var(--easing);
   }
 
-  .contact-link:hover {
+  .roots-footnote a:hover {
     color: var(--ink-muted);
   }
 </style>

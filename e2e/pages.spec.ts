@@ -34,9 +34,9 @@ test.describe('Roots page (story & origins)', () => {
     await expect(page.getByText(/Delhi/i).first()).toBeVisible();
   });
 
-  test('shows contact email', async ({ page }) => {
+  test('points to the Hive for contact instead of duplicating it', async ({ page }) => {
     await page.goto('/roots');
-    await expect(page.getByRole('link', { name: /gurden@darkmatterlabs/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /the hive/i })).toHaveAttribute('href', '/hive');
   });
 });
 

@@ -25,9 +25,11 @@ test.describe('Roots page — structure', () => {
     await expect(page.getByText(/Delhi/i).first()).toBeVisible();
   });
 
-  test('shows contact email link', async ({ page }) => {
+  test('points to the Hive for contact (no duplicate contact block)', async ({ page }) => {
     await page.goto('/roots');
-    await expect(page.getByRole('link', { name: /gurden@darkmatterlabs/i })).toBeVisible();
+    // Contact & network live in the Hive now; Roots only links there.
+    await expect(page.getByRole('link', { name: /the hive/i })).toHaveAttribute('href', '/hive');
+    await expect(page.getByRole('link', { name: /gurden@darkmatterlabs/i })).toHaveCount(0);
   });
 });
 
@@ -123,11 +125,11 @@ test.describe('Roots page — reduced motion', () => {
 });
 
 test.describe('Roots page — keyboard navigation', () => {
-  test('contact links are keyboard-reachable', async ({ page }) => {
+  test('the Hive pointer link is keyboard-reachable', async ({ page }) => {
     await page.goto('/roots');
-    const email = page.getByRole('link', { name: /gurden@darkmatterlabs/i });
-    await email.focus();
-    await expect(email).toBeFocused();
+    const hiveLink = page.getByRole('link', { name: /the hive/i });
+    await hiveLink.focus();
+    await expect(hiveLink).toBeFocused();
   });
 });
 
