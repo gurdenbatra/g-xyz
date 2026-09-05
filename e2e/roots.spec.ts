@@ -142,3 +142,13 @@ test.describe('Roots page — accessibility', () => {
     expect(results.violations).toEqual([]);
   });
 });
+
+test.describe('Roots page — experience', () => {
+  test('shows the experience timeline with key roles', async ({ page }) => {
+    await page.goto('/roots');
+    await expect(page.getByRole('heading', { name: /^Experience$/i })).toBeVisible();
+    for (const org of ['Fjord', 'Redfin', 'Microsoft']) {
+      await expect(page.getByText(org, { exact: false }).first()).toBeVisible();
+    }
+  });
+});

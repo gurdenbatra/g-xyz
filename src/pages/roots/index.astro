@@ -1,6 +1,7 @@
 ---
 import Garden from '@layouts/Garden.astro';
 import Strata from '../../components/zones/Roots/Strata.astro';
+import { experience } from '../../lib/experience';
 ---
 
 <Garden
@@ -21,6 +22,21 @@ import Strata from '../../components/zones/Roots/Strata.astro';
       <h2 id="strata-heading" class="label section-heading">Strata</h2>
       <Strata />
     </div>
+
+    <section class="experience-section" aria-labelledby="experience-heading">
+      <h2 id="experience-heading" class="label section-heading">Experience</h2>
+      <ul class="experience-list" role="list">
+        {experience.map((role) => (
+          <li class="role">
+            <div class="role-main">
+              <span class="role-title">{role.title}</span>
+              <span class="role-org">{role.org}{role.location && `, ${role.location}`}</span>
+            </div>
+            <span class="role-period label">{role.period}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
 
     <p class="roots-footnote">
       Want to reach out, or see what's growing right now? That all lives in
@@ -63,6 +79,52 @@ import Strata from '../../components/zones/Roots/Strata.astro';
     margin-bottom: var(--space-16);
     padding-bottom: var(--space-12);
     border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .experience-section {
+    margin-bottom: var(--space-16);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .experience-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    max-width: 640px;
+  }
+
+  .role {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+  }
+
+  .role-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .role-title {
+    font-size: var(--text-md);
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  .role-org {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+
+  .role-period {
+    color: var(--ink-muted);
+    white-space: nowrap;
+    text-align: right;
   }
 
   .roots-footnote {
