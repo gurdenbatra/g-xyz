@@ -4,7 +4,6 @@ import {
   assignPlantType,
   generatePlant,
   type PlantType,
-  type Segment,
 } from './plants';
 
 describe('hashSlug', () => {

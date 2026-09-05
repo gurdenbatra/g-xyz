@@ -77,36 +77,51 @@ const SPECK_ROWS = [
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (!reducedMotion) {
-    let el: HTMLElement | null = document.querySelector('[data-earth-line]');
-    document.addEventListener('astro:page-load', () => {
-      el = document.querySelector('[data-earth-line]');
-    });
+    const COLUMNS = 240; // must match the server-side groundFrame(240, 0) call
+    const FRAME_MS = 80; // ~12 fps intentional — ornamental, not smooth
 
+    let el: HTMLElement | null = null;
     let rafId: number | null = null;
-    document.addEventListener('astro:before-preparation', () => {
+    let metrics: CharMetric[] | null = null; // measured once, reused across visits
+    let cellWidth = 0;
+    let loading = false;
+    let last = 0;
+
+    function stop() {
       if (rafId !== null) {
         cancelAnimationFrame(rafId);
         rafId = null;
       }
-    });
-
-    const start = () => {
-      void init();
-    };
-    const ric = (
-      window as Window & {
-        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void;
-      }
-    ).requestIdleCallback;
-    // The { timeout } guarantees start runs even on a page that never goes idle
-    // (dev HMR sockets, prefetch keepalive), while still deferring past LCP.
-    if (typeof ric === 'function') {
-      ric(start, { timeout: 2000 });
-    } else {
-      setTimeout(start, 200);
     }
 
-    async function init() {
+    function tick(now: number) {
+      if (!document.hidden && el && metrics && now - last >= FRAME_MS) {
+        last = now;
+        const t = now / 1000;
+        let line = '';
+        for (let i = 0; i < COLUMNS; i++) {
+          line += pickChar(metrics, groundHeight(i, t), cellWidth);
+        }
+        el.textContent = line;
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+
+    // Re-acquire the (freshly swapped) line and (re)start the loop. Safe to call
+    // on every page-load — this is what makes the ripple survive returning to
+    // the homepage after a view-transition, instead of freezing forever.
+    function run() {
+      el = document.querySelector<HTMLElement>('[data-earth-line]');
+      if (!el || !metrics) return;
+      el.classList.add('ascii-earth__line--vivid');
+      stop();
+      rafId = requestAnimationFrame(tick);
+    }
+
+    // Measure character widths once (the expensive pretext import); then run.
+    async function ensureMetrics() {
+      if (metrics || loading) return;
+      loading = true;
       try {
         const pretext = await import('@chenglou/pretext');
         const font = 'italic 13px Georgia, serif';
@@ -116,7 +131,7 @@ const SPECK_ROWS = [
           '.': 0.15, "'": 0.2, ',': 0.3, '-': 0.4, '~': 0.55,
           ':': 0.6, ';': 0.7, '^': 0.8, '"': 0.85, '*': 1,
         };
-        const metrics: CharMetric[] = Object.keys(BRIGHTNESS).map((ch) => {
+        const measured: CharMetric[] = Object.keys(BRIGHTNESS).map((ch) => {
           const prepared = pretext.prepareWithSegments(ch, font);
           return {
             char: ch,
@@ -124,30 +139,41 @@ const SPECK_ROWS = [
             brightness: BRIGHTNESS[ch],
           };
         });
-        const cell = metrics.find((m) => m.char === '~');
-        if (!cell || !metrics.every((m) => Number.isFinite(m.width) && m.width > 0)) return;
-
-        el?.classList.add('ascii-earth__line--vivid');
-
-        const COLUMNS = 240; // must match server-side groundFrame(240, 0) call
-        const FRAME_MS = 80; // ~12 fps intentional — ornamental, not smooth
-        let last = 0;
-        function tick(now: number) {
-          if (!document.hidden && el && now - last >= FRAME_MS) {
-            last = now;
-            const t = now / 1000;
-            let line = '';
-            for (let i = 0; i < COLUMNS; i++) {
-              line += pickChar(metrics, groundHeight(i, t), cell!.width);
-            }
-            el.textContent = line;
-          }
-          rafId = requestAnimationFrame(tick);
-        }
-        rafId = requestAnimationFrame(tick);
+        const cell = measured.find((m) => m.char === '~');
+        if (!cell || !measured.every((m) => Number.isFinite(m.width) && m.width > 0)) return;
+        metrics = measured;
+        cellWidth = cell.width;
+        run();
       } catch {
         // pretext unavailable or measurement failed — static frame stands
+      } finally {
+        loading = false;
       }
     }
+
+    function onLoad() {
+      if (!document.querySelector('[data-earth-line]')) {
+        stop(); // not on the homepage — go quiet
+        return;
+      }
+      if (metrics) {
+        run(); // already measured — just restart against the fresh element
+        return;
+      }
+      const ric = (
+        window as Window & {
+          requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void;
+        }
+      ).requestIdleCallback;
+      // The { timeout } guarantees start even on a page that never goes idle
+      // (dev HMR sockets, prefetch keepalive), while still deferring past LCP.
+      if (typeof ric === 'function') ric(() => void ensureMetrics(), { timeout: 2000 });
+      else setTimeout(() => void ensureMetrics(), 200);
+    }
+
+    // Bind only on page-load (it fires on the initial load too) so the ripple
+    // both starts and *restarts* on every homepage visit; stop before a swap.
+    document.addEventListener('astro:page-load', onLoad);
+    document.addEventListener('astro:before-preparation', stop);
   }
 </script>
