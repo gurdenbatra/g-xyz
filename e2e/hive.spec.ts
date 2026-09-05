@@ -38,6 +38,13 @@ test.describe('Hive page — structure', () => {
     await expect(emailLink).toBeVisible();
     await expect(emailLink).toHaveAttribute('href', 'mailto:gurden@darkmatterlabs.org');
   });
+
+  test('hive shows the hats/roles section', async ({ page }) => {
+    await page.goto('/hive');
+    await expect(page.getByRole('heading', { name: /hats i wear/i })).toBeVisible();
+    await expect(page.getByText('Civic Tech Lead', { exact: true })).toBeVisible();
+    await expect(page.getByText('Bid Writing', { exact: true })).toBeVisible();
+  });
 });
 
 test.describe('Hive page — canvas', () => {
