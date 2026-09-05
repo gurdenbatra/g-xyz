@@ -180,7 +180,7 @@ test.describe('Hive page — accessibility (reduced motion)', () => {
 test.describe('Hive page — network section (formerly mycelium)', () => {
   test('hive shows both the flock and the network sections', async ({ page }) => {
     await page.goto('/hive');
-    await expect(page.getByRole('heading', { name: /live flock/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /live swarm/i })).toBeVisible();
     await expect(page.getByRole('heading', { name: /network/i })).toBeVisible();
   });
 

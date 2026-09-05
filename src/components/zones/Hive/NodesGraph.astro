@@ -27,45 +27,45 @@ const rawNodes: RawNode[] = [...collaborators];
 </div>
 
 <!-- Accessible lists — keyboard-navigable equivalent of the canvas -->
-<div class="mycelium-lists">
-  <div class="mycelium-list-group">
-    <h3 class="label mycelium-list-title">People</h3>
-    <ul role="list" class="mycelium-list">
+<div class="network-lists">
+  <div class="network-list-group">
+    <h3 class="label network-list-title">People</h3>
+    <ul role="list" class="network-list">
       {people.map((n: CollaboratorNode) => (
-        <li class="mycelium-list-item">
+        <li class="network-list-item">
           {n.url
-            ? <a href={n.url} class="mycelium-item-label label mycelium-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
-            : <span class="mycelium-item-label label">{n.label}</span>
+            ? <a href={n.url} class="network-item-label label network-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
+            : <span class="network-item-label label">{n.label}</span>
           }
-          {n.role && <span class="mycelium-item-role">{n.role}</span>}
+          {n.role && <span class="network-item-role">{n.role}</span>}
         </li>
       ))}
     </ul>
   </div>
-  <div class="mycelium-list-group">
-    <h3 class="label mycelium-list-title">Organisations</h3>
-    <ul role="list" class="mycelium-list">
+  <div class="network-list-group">
+    <h3 class="label network-list-title">Organisations</h3>
+    <ul role="list" class="network-list">
       {orgs.map((n: CollaboratorNode) => (
-        <li class="mycelium-list-item">
+        <li class="network-list-item">
           {n.url
-            ? <a href={n.url} class="mycelium-item-label label mycelium-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
-            : <span class="mycelium-item-label label">{n.label}</span>
+            ? <a href={n.url} class="network-item-label label network-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
+            : <span class="network-item-label label">{n.label}</span>
           }
-          {n.role && <span class="mycelium-item-role">{n.role}</span>}
+          {n.role && <span class="network-item-role">{n.role}</span>}
         </li>
       ))}
     </ul>
   </div>
-  <div class="mycelium-list-group">
-    <h3 class="label mycelium-list-title">Ideas</h3>
-    <ul role="list" class="mycelium-list">
+  <div class="network-list-group">
+    <h3 class="label network-list-title">Ideas</h3>
+    <ul role="list" class="network-list">
       {ideas.map((n: CollaboratorNode) => (
-        <li class="mycelium-list-item">
+        <li class="network-list-item">
           {n.url
-            ? <a href={n.url} class="mycelium-item-label label mycelium-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
-            : <span class="mycelium-item-label label">{n.label}</span>
+            ? <a href={n.url} class="network-item-label label network-item-link" target="_blank" rel="noopener noreferrer">{n.label}</a>
+            : <span class="network-item-label label">{n.label}</span>
           }
-          {n.role && <span class="mycelium-item-role">{n.role}</span>}
+          {n.role && <span class="network-item-role">{n.role}</span>}
         </li>
       ))}
     </ul>
@@ -272,6 +272,12 @@ const rawNodes: RawNode[] = [...collaborators];
     }
 
     function loop(ts: number): void {
+      // Idle in a backgrounded tab — skip the O(n²) physics step + redraw but
+      // keep the rAF alive so the graph resumes on return.
+      if (document.hidden) {
+        rafId = requestAnimationFrame(loop);
+        return;
+      }
       if (startTime === null) startTime = ts;
       const t = ts - startTime;
       state   = stepSimulation(state, cssW, cssH);
@@ -448,7 +454,7 @@ const rawNodes: RawNode[] = [...collaborators];
   }
 
   /* Accessible lists */
-  .mycelium-lists {
+  .network-lists {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: var(--space-8);
@@ -456,13 +462,13 @@ const rawNodes: RawNode[] = [...collaborators];
     border-top: 1px solid var(--ink-faint);
   }
 
-  .mycelium-list-title {
+  .network-list-title {
     display: block;
     margin-bottom: var(--space-4);
     color: var(--ink-muted);
   }
 
-  .mycelium-list {
+  .network-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -471,27 +477,27 @@ const rawNodes: RawNode[] = [...collaborators];
     gap: var(--space-4);
   }
 
-  .mycelium-list-item {
+  .network-list-item {
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
   }
 
-  .mycelium-item-label {
+  .network-item-label {
     color: var(--ink);
   }
 
-  .mycelium-item-link {
+  .network-item-link {
     text-decoration: none;
     color: var(--ink);
     transition: color var(--duration-fast) var(--easing);
   }
 
-  .mycelium-item-link:hover {
+  .network-item-link:hover {
     color: var(--ink-muted);
   }
 
-  .mycelium-item-role {
+  .network-item-role {
     font-size: var(--text-sm);
     color: var(--ink-muted);
     line-height: 1.5;

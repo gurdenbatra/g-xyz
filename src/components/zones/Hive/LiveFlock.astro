@@ -36,7 +36,7 @@ const rawFlowers: RawFlower[] = [
   <canvas
     data-live-flock
     class="live-flock-canvas"
-    aria-label="An animated field of flowers representing current work, reading, and contact. The list below is the keyboard-navigable equivalent."
+    aria-label="An animated swarm of bees tending a field of flowers — each flower is a current thread of work, reading, or contact. The list below is the keyboard-navigable equivalent."
   ></canvas>
   <!-- Hover card — purely visual, aria-hidden; screen readers use the list below -->
   <div class="hive-card" data-hive-card aria-hidden="true">
@@ -270,6 +270,12 @@ const rawFlowers: RawFlower[] = [
 
     // ── Animation loop ────────────────────────────────────────────────────────
     function loop(ts: number): void {
+      // Idle in a backgrounded tab — skip the physics step + canvas redraw but
+      // keep the rAF alive so it resumes seamlessly on return.
+      if (document.hidden) {
+        rafId = requestAnimationFrame(loop);
+        return;
+      }
       if (startTime === null) startTime = ts;
       const t = ts - startTime;
 

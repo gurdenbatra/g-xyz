@@ -59,8 +59,12 @@
     }
 
     function loop() {
-      bee = stepBee(bee, 0.18);
-      if (el) el.style.transform = `translate3d(${bee.x}px, ${bee.y}px, 0)`;
+      // Skip the step + style write in a backgrounded tab; the rAF keeps
+      // ticking so the bee self-resumes on return (matches the other islands).
+      if (!document.hidden) {
+        bee = stepBee(bee, 0.18);
+        if (el) el.style.transform = `translate3d(${bee.x}px, ${bee.y}px, 0)`;
+      }
       requestAnimationFrame(loop);
     }
 
