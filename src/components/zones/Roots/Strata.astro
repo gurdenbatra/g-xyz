@@ -162,21 +162,25 @@ const wormDefs: WormDefPublic[] = [
     transition: opacity 0s, transform 0s;
   }
 
+  /* The strata are physical earth, so they use FIXED colours (not theme tokens,
+     which flip at night and previously left light text on light layers). Each
+     layer pairs its ground with a text colour that clears WCAG AA in both modes:
+     depth-0 ≈ 11:1 · depth-1 ≈ 7.8:1 · depth-2 ≈ 6.6:1 · depth-3 ≈ 8.2:1. */
   .strata-layer--depth-0 {
-    background-color: color-mix(in srgb, var(--c-paper) 82%, var(--c-soil) 18%);
-    color: var(--ink);
+    background-color: color-mix(in srgb, #f1e8d0 82%, #8a4f2e 18%);
+    color: #1a1a1a;
   }
   .strata-layer--depth-1 {
-    background-color: color-mix(in srgb, var(--c-paper) 58%, var(--c-soil) 42%);
-    color: var(--ink);
+    background-color: color-mix(in srgb, #f1e8d0 58%, #8a4f2e 42%);
+    color: #1a1a1a;
   }
   .strata-layer--depth-2 {
-    background-color: color-mix(in srgb, var(--c-paper) 30%, var(--c-soil) 70%);
-    color: var(--c-paper);
+    background-color: color-mix(in srgb, #8a4f2e 85%, #1a1a1a 15%);
+    color: #f1e8d0;
   }
   .strata-layer--depth-3 {
-    background-color: color-mix(in srgb, var(--c-soil) 88%, var(--c-ink) 12%);
-    color: var(--c-paper);
+    background-color: color-mix(in srgb, #8a4f2e 65%, #1a1a1a 35%);
+    color: #f1e8d0;
   }
 
   .strata-layer::before {
@@ -196,10 +200,14 @@ const wormDefs: WormDefPublic[] = [
     max-width: 560px;
   }
 
+  /* Era/location inherit the layer's text colour (the global .label grey flips
+     at night and, faded, failed AA on every layer). Hierarchy comes from the
+     small mono type, not from lowered opacity. */
   .strata-era {
     display: block;
     margin-bottom: var(--space-2);
-    opacity: 0.7;
+    color: inherit;
+    opacity: 1;
   }
 
   .strata-title {
@@ -211,7 +219,8 @@ const wormDefs: WormDefPublic[] = [
   .strata-location {
     display: block;
     margin-bottom: var(--space-4);
-    opacity: 0.65;
+    color: inherit;
+    opacity: 1;
   }
 
   .strata-body {
@@ -223,8 +232,9 @@ const wormDefs: WormDefPublic[] = [
   .strata-anecdote {
     position: fixed;
     z-index: 10;
-    background: var(--c-paper);
-    color: var(--ink);
+    /* Fixed paper card with fixed dark text — legible in both modes. */
+    background: #f1e8d0;
+    color: #1a1a1a;
     border: 1px solid var(--ink-faint);
     border-radius: 2px;
     padding: var(--space-4) var(--space-6);
@@ -249,12 +259,12 @@ const wormDefs: WormDefPublic[] = [
     cursor: pointer;
     padding: 0;
     font-size: var(--text-sm);
-    color: var(--ink-muted);
+    color: #4a4a48;
     line-height: 1;
   }
 
   .strata-anecdote-close:hover {
-    color: var(--ink);
+    color: #1a1a1a;
   }
 
   @media (prefers-reduced-motion: reduce) {
