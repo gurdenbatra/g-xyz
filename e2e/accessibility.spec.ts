@@ -50,8 +50,7 @@ test.describe('Garden layout accessibility', () => {
 
   test('navigation between pages completes without error', async ({ page }) => {
     await page.goto('/');
-    await page.locator('#map-toggle').click();
-    await page.locator('#map-overlay a[href="/flora"]').click();
+    await page.locator('#main-content a.zone-link[href="/flora"]').first().click();
     await expect(page).toHaveURL(/\/flora/);
     await expect(page.locator('main#main-content')).toBeVisible();
   });
@@ -70,7 +69,7 @@ test.describe('Nav component', () => {
     await expect(nav.locator('a[href="/"]')).toBeAttached();
   });
 
-  test('nav does not contain old zone links (navigation is via map overlay)', async ({ page }) => {
+  test('nav does not contain old zone links (navigation is via the homepage garden)', async ({ page }) => {
     await page.goto('/flora');
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav.locator('a[href="/flora"]')).not.toBeAttached();
@@ -83,97 +82,10 @@ test.describe('Nav component', () => {
     await expect(page.getByText('gurden.xyz')).toHaveCount(0);
   });
 
-  test('active zones are reachable via the map overlay', async ({ page }) => {
+  test('active zones are reachable from the homepage garden', async ({ page }) => {
     await page.goto('/');
-    const overlay = page.locator('#map-overlay');
-    await expect(overlay.locator('a[href="/flora"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/roots"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/castings"]')).toBeAttached();
-  });
-});
-
-test.describe('MapToggle', () => {
-  test('map toggle button is present on every page', async ({ page }) => {
-    await page.goto('/');
-    const toggle = page.locator('#map-toggle');
-    await expect(toggle).toBeAttached();
-    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(toggle).toHaveAttribute('aria-controls', 'map-overlay');
-  });
-
-  test('map toggle has accessible label', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('#map-toggle')).toHaveAttribute('aria-label', 'Open garden map');
-  });
-
-  test('map toggle is present on non-home pages too', async ({ page }) => {
-    await page.goto('/flora');
-    await expect(page.locator('#map-toggle')).toBeAttached();
-  });
-});
-
-test.describe('MapOverlay', () => {
-  test('overlay element is in the DOM with correct ARIA attributes', async ({ page }) => {
-    await page.goto('/');
-    const overlay = page.locator('#map-overlay');
-    await expect(overlay).toBeAttached();
-    await expect(overlay).toHaveAttribute('role', 'dialog');
-    await expect(overlay).toHaveAttribute('aria-modal', 'true');
-    await expect(overlay).toHaveAttribute('aria-hidden', 'true');
-  });
-
-  test('overlay contains links for the three active zones', async ({ page }) => {
-    await page.goto('/');
-    const overlay = page.locator('#map-overlay');
-    await expect(overlay.locator('a[href="/flora"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/roots"]')).toBeAttached();
-    await expect(overlay.locator('a[href="/castings"]')).toBeAttached();
-  });
-
-  test('overlay contains entries for all 5 zones', async ({ page }) => {
-    await page.goto('/');
-    const overlay = page.locator('#map-overlay');
-    await expect(overlay.locator('[data-zone="flora"]')).toBeAttached();
-    await expect(overlay.locator('[data-zone="hive"]')).toBeAttached();
-    await expect(overlay.locator('[data-zone="mulch"]')).toBeAttached();
-    await expect(overlay.locator('[data-zone="roots"]')).toBeAttached();
-    await expect(overlay.locator('[data-zone="castings"]')).toBeAttached();
-  });
-
-  test('clicking map toggle opens the overlay', async ({ page }) => {
-    await page.goto('/');
-    await page.locator('#map-toggle').click();
-    await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'false');
-    await expect(page.locator('#map-toggle')).toHaveAttribute('aria-expanded', 'true');
-  });
-
-  test('toggle aria-label changes to "Close" when overlay is open', async ({ page }) => {
-    await page.goto('/');
-    await page.locator('#map-toggle').click();
-    await expect(page.locator('#map-toggle')).toHaveAttribute('aria-label', 'Close garden map');
-  });
-
-  test('pressing Escape closes the overlay', async ({ page }) => {
-    await page.goto('/');
-    await page.locator('#map-toggle').click();
-    await page.keyboard.press('Escape');
-    await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'true');
-    await expect(page.locator('#map-toggle')).toHaveAttribute('aria-expanded', 'false');
-  });
-
-  test('clicking the backdrop closes the overlay', async ({ page }) => {
-    await page.goto('/');
-    await page.locator('#map-toggle').click();
-    await page.locator('.map-overlay-backdrop').click();
-    await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'true');
-  });
-
-  test('map toggle stays functional after view-transition navigation', async ({ page }) => {
-    await page.goto('/');
-    await page.locator('#map-toggle').click();
-    await page.locator('#map-overlay a[href="/flora"]').click();
-    await expect(page).toHaveURL(/\/flora/);
-    await page.locator('#map-toggle').click();
-    await expect(page.locator('#map-overlay')).toHaveAttribute('aria-hidden', 'false');
+    for (const href of ['/flora', '/hive', '/mulch', '/roots', '/castings']) {
+      await expect(page.locator(`#main-content a.zone-link[href="${href}"]`)).toBeAttached();
+    }
   });
 });
