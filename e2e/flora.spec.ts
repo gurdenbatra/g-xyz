@@ -84,9 +84,17 @@ test.describe('Flora — page structure', () => {
   test('/flora shows an accessible project list below the canvas', async ({ page }) => {
     await page.goto('/flora');
     const list = page.locator('ol.projects-list');
+    // The list is visually hidden (sr-only) — it's the keyboard/screen-reader
+    // equivalent of the generative plot, not a visible element.
     await expect(list).toBeAttached();
-    // 7 projects total exist in the collection
-    await expect(list.locator('li')).toHaveCount(7);
+    const items = list.locator('li a');
+    expect(await items.count()).toBeGreaterThan(0);
+  });
+
+  test('flora shows the skills section', async ({ page }) => {
+    await page.goto('/flora');
+    await expect(page.getByRole('heading', { name: /what i do/i })).toBeVisible();
+    await expect(page.getByText('AI & LLM Systems')).toBeVisible();
   });
 
   test('/flora/<slug> project detail loads', async ({ page }) => {

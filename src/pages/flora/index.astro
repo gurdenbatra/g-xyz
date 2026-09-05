@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Garden from '@layouts/Garden.astro';
-import ProjectRow from '@components/ProjectRow.astro';
 import SlowPlot from '@components/zones/Flora/SlowPlot.astro';
+import { skills } from '../../lib/skills';
 
 const projects = await getCollection('projects');
 const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
@@ -14,7 +14,7 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
 >
   <section class="poly-wrap page-wrap">
     <header class="poly-header">
-      <p class="label">The Flora & Fauna</p>
+      <p class="label">The Flora &amp; Fauna</p>
       <h1 class="poly-title">A wild plot of work.</h1>
       <p class="poly-subtitle">
         Each plant is a project. Hover to see its name; click to walk into it.
@@ -23,20 +23,26 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
 
     <SlowPlot />
 
-    <ol class="projects-list" aria-label="All projects">
-      {sorted.map((p, i) => (
+    <!-- Visually hidden: the keyboard/screen-reader equivalent of the plot. -->
+    <ol class="projects-list sr-only">
+      {sorted.map((p) => (
         <li>
-          <ProjectRow
-            index={i + 1}
-            title={p.data.title}
-            tag={p.data.tags[0]}
-            year={p.data.year}
-            slug={p.id.replace(/\.[^.]+$/, '')}
-            description={p.data.description}
-          />
+          <a href={`/flora/${p.id.replace(/\.[^.]+$/, '')}`}>
+            {p.data.title} — {p.data.description}
+          </a>
         </li>
       ))}
     </ol>
+
+    <section class="skills-section" aria-labelledby="skills-heading">
+      <h2 id="skills-heading" class="label section-heading">What I do</h2>
+      <p class="skills-intro">
+        A generalist's toolkit — I take civic ideas from zero to shipped, across:
+      </p>
+      <ul class="skills-list" role="list">
+        {skills.map((skill) => <li class="skill label">{skill}</li>)}
+      </ul>
+    </section>
   </section>
 </Garden>
 
@@ -47,13 +53,7 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     flex-direction: column;
     gap: var(--space-10);
   }
-
-  .poly-header {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
+  .poly-header { display: flex; flex-direction: column; gap: var(--space-3); }
   .poly-title {
     font-family: 'MaziusDisplay', serif;
     font-style: italic;
@@ -61,18 +61,38 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     line-height: 1.05;
     margin: 0;
   }
-
   .poly-subtitle {
     font-size: var(--text-md);
     color: var(--ink-muted);
     max-width: 50ch;
     margin: 0;
   }
-
-  .projects-list {
+  .skills-section {
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--ink-faint);
+  }
+  .section-heading { display: block; margin-bottom: var(--space-6); }
+  .skills-intro {
+    font-size: var(--text-md);
+    line-height: 1.65;
+    max-width: 560px;
+    margin-bottom: var(--space-8);
+  }
+  .skills-list {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--ink);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .skill {
+    border: 1px solid var(--ink-muted);
+    border-radius: 999px;
+    padding: var(--space-1) var(--space-3);
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: var(--text-xs);
   }
 </style>
