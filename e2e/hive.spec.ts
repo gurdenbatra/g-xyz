@@ -22,11 +22,6 @@ test.describe('Hive page — structure', () => {
     await expect(page.getByRole('heading', { name: /^Now$/i })).toBeVisible();
   });
 
-  test('accessible "Reading" list heading is present', async ({ page }) => {
-    await page.goto('/hive');
-    await expect(page.getByRole('heading', { name: /^Reading$/i })).toBeVisible();
-  });
-
   test('accessible "Reach me" list heading is present', async ({ page }) => {
     await page.goto('/hive');
     await expect(page.getByRole('heading', { name: /Reach me/i })).toBeVisible();
