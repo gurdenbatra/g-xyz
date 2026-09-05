@@ -7,6 +7,7 @@
  */
 :root {
   --daytime-wash: transparent; /* sky/light wash, per phase — consumed by the ambient layer */
+  --shader-tint: #d9a857; /* ambient WebGL background glow, per phase (default: day ochre) */
 }
 
 html {
@@ -17,17 +18,20 @@ html {
 [data-daytime='dawn'] {
   --ground: #f3e9d6;
   --daytime-wash: rgba(217, 168, 87, 0.05);
+  --shader-tint: #e6b36a; /* soft morning gold */
 }
 
 [data-daytime='day'] {
   /* defaults from tokens.css — explicit for clarity */
   --ground: var(--c-paper);
   --daytime-wash: transparent;
+  --shader-tint: #d9a857; /* ochre */
 }
 
 [data-daytime='dusk'] {
   --ground: #eddbc0;
   --daytime-wash: rgba(138, 79, 46, 0.06);
+  --shader-tint: #c77f4e; /* burnt sienna */
 }
 
 [data-daytime='night'] {
@@ -42,6 +46,7 @@ html {
   --c-chartreuse: #d2e08a;
   --c-ink: var(--art-ink);
   --daytime-wash: rgba(42, 58, 90, 0.18);
+  --shader-tint: #6e7ca8; /* moonlit slate-blue — reads on the near-black night ground */
   color-scheme: dark;
 }
 

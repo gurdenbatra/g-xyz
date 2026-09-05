@@ -253,7 +253,8 @@ const zoneScale: Record<ZoneId, 'prime' | 'secondary' | 'base'> = {
           const dx = centres[i].x - bx;
           const dy = centres[i].y - by;
           const d = Math.sqrt(dx * dx + dy * dy);
-          const bloom = Math.max(0, 1 - d / RADIUS);
+          const t = Math.max(0, 1 - d / RADIUS);
+          const bloom = t * t * (3 - 2 * t); // smoothstep — organic ease-in/out
           letters[i].style.setProperty('--bloom', bloom.toFixed(3));
         }
       }

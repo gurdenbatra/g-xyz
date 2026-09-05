@@ -48,10 +48,9 @@
     const FRAME_MS = 33; // ~30fps
 
     function tintRGB(): [number, number, number] {
-      // Warm by day, cool/indigo by night — read live palette so it tracks theme.
-      const cs = getComputedStyle(document.documentElement);
-      const night = document.documentElement.getAttribute('data-daytime') === 'night';
-      const raw = night ? cs.getPropertyValue('--c-indigo') : cs.getPropertyValue('--c-ochre');
+      // The theme owns the glow colour per time-of-day (--shader-tint), so this
+      // tracks day/dawn/dusk/night automatically.
+      const raw = getComputedStyle(document.documentElement).getPropertyValue('--shader-tint');
       const hex = (raw || '#D9A857').trim();
       const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
       if (!m) return [0.85, 0.66, 0.34];
