@@ -13,6 +13,7 @@ const num = String(index).padStart(2, '0');
 ---
 
 <a href={`/flora/${slug}`} class="project-row">
+  <span class="project-num" aria-hidden="true">{num}</span>
   <div class="project-main">
     <span class="project-title">{title}</span>
     {description && (
@@ -28,7 +29,7 @@ const num = String(index).padStart(2, '0');
 <style>
   .project-row {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
     gap: var(--space-6);
     padding: var(--space-8) var(--space-4);
     border-bottom: 1px solid var(--ink-faint);
@@ -39,6 +40,20 @@ const num = String(index).padStart(2, '0');
                 border-left-color var(--duration-fast) var(--easing);
     border-left: 2px solid transparent;
     margin-left: -2px;
+  }
+
+  .project-num {
+    font-family: 'NectoMono', monospace;
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+    transition: color var(--duration-fast) var(--easing);
+  }
+
+  .project-row:hover .project-num {
+    color: var(--ink-muted);
   }
 
   .project-row:hover {
