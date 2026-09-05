@@ -11,7 +11,6 @@ export default defineConfig({
     '/polyculture': '/flora',
     '/polyculture/[slug]': '/flora/[slug]',
     '/canopy': '/mulch',
-    '/canopy/[slug]': '/mulch/[slug]',
     '/about': '/roots',
     '/compost': '/roots',
     '/colophon': '/castings',

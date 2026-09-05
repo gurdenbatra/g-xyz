@@ -24,7 +24,7 @@ export function slugHash(slug: string): number {
 
 export interface NotePosition {
   leftPct: string; // percentage string e.g. "33.33"
-  topPx:   number; // 20–359
+  topPx:   number; // 20–499
   r:       number; // -8 to +8 degrees
   bg:      string;
   fg:      string;
@@ -34,7 +34,7 @@ export function positionNote(slug: string, kind: string): NotePosition {
   const h = slugHash(slug);
   const col   = h % 3;
   const xPx   = col * COL_W + ((h >>> 4)  % Math.floor(COL_W * 0.6));
-  const topPx = 20 +          ((h >>> 8)  % 340);
+  const topPx = 20 +          ((h >>> 8)  % 480);
   const r     =               ((h >>> 12) % 17) - 8;
   const leftPct = ((xPx / W_REF) * 100).toFixed(2);
   const { bg, fg } = KIND_STYLE[kind] ?? KIND_STYLE.poem;

@@ -7,6 +7,18 @@
   to = "/work/:splat"
   status = 301
 
+# Mulch pieces link out to where they live; old per-piece detail URLs now
+# land on the Mulch index.
+[[redirects]]
+  from = "/canopy/*"
+  to = "/mulch"
+  status = 301
+
+[[redirects]]
+  from = "/mulch/*"
+  to = "/mulch"
+  status = 301
+
 [[headers]]
   for = "/*"
   [headers.values]

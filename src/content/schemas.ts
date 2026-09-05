@@ -21,13 +21,12 @@ export const projectSchema = z.object({
 export const mulchSchema = z.object({
   title:       z.string(),
   kind:        z.enum(['poem', 'essay', 'music', 'av']),
-  year:        z.number().int().min(1900).max(2100),
+  year:        z.number().int().min(1900).max(2100).optional(),
   description: z.string().optional(),
-  embedUrl:    z.string().url().optional(),
-}).refine(
-  (d) => !['music', 'av'].includes(d.kind) || d.embedUrl !== undefined,
-  { message: 'embedUrl required for music and av', path: ['embedUrl'] }
-);
+  // Each piece links out to where it lives (Tumblr, SoundCloud, Instagram).
+  // Link-out keeps the site free of third-party embeds/scripts (see Built With).
+  url:         z.string().url().optional(),
+});
 
 export const nowSchema = z.object({
   carrying: z.array(z.object({ label: z.string().min(1), detail: z.string().min(1) })).min(1),

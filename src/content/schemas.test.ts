@@ -195,42 +195,30 @@ describe('mulchSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('accepts music with embedUrl', () => {
+  it('accepts music with an external url', () => {
     const result = mulchSchema.safeParse({
-      title: 'Eternal noises III',
+      title: 'thurs',
       kind: 'music',
-      year: 2024,
-      embedUrl: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1',
+      url: 'https://soundcloud.com/enu3/thurs',
     });
     expect(result.success).toBe(true);
   });
 
-  it('accepts av with embedUrl', () => {
+  it('accepts av with an external url and no year', () => {
     const result = mulchSchema.safeParse({
-      title: 'Reactive study #4',
+      title: 'Moving image — I',
       kind: 'av',
-      year: 2023,
-      embedUrl: 'https://www.instagram.com/p/placeholder/embed/',
+      url: 'https://www.instagram.com/p/placeholder/',
     });
     expect(result.success).toBe(true);
   });
 
-  it('rejects music without embedUrl', () => {
+  it('accepts a piece with no year (year is optional)', () => {
     const result = mulchSchema.safeParse({
       title: 'A track',
       kind: 'music',
-      year: 2024,
     });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects av without embedUrl', () => {
-    const result = mulchSchema.safeParse({
-      title: 'A video',
-      kind: 'av',
-      year: 2023,
-    });
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('rejects an invalid kind', () => {
@@ -242,12 +230,11 @@ describe('mulchSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('rejects a non-URL embedUrl', () => {
+  it('rejects a non-URL url', () => {
     const result = mulchSchema.safeParse({
       title: 'A track',
       kind: 'music',
-      year: 2024,
-      embedUrl: 'not-a-url',
+      url: 'not-a-url',
     });
     expect(result.success).toBe(false);
   });

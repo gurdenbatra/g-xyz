@@ -72,65 +72,31 @@ test.describe('Mulch — accessibility', () => {
   });
 });
 
-// ── Detail page — poem ────────────────────────────────────────────────────────
+// ── Link-out ──────────────────────────────────────────────────────────────────
 
-test.describe('Mulch detail — poem', () => {
-  test('shows h1 and back link', async ({ page }) => {
-    await page.goto('/mulch/elegy-for-the-undercommons');
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.getByRole('link', { name: /← The Mulch/i })).toBeVisible();
-  });
-
-  test('shows poem body text', async ({ page }) => {
-    await page.goto('/mulch/elegy-for-the-undercommons');
-    await expect(page.locator('.piece-body')).toBeVisible();
-  });
-
-  test('back link navigates to /mulch', async ({ page }) => {
-    await page.goto('/mulch/elegy-for-the-undercommons');
-    await page.getByRole('link', { name: /← The Mulch/i }).click();
-    await expect(page).toHaveURL('/mulch');
-  });
-});
-
-// ── Detail page — music/AV ────────────────────────────────────────────────────
-
-test.describe('Mulch detail — music', () => {
-  test('shows iframe embed', async ({ page }) => {
-    await page.goto('/mulch/eternal-noises-iii');
-    const iframe = page.locator('.piece-embed');
-    await expect(iframe).toBeAttached();
-    const src = await iframe.getAttribute('src');
-    expect(src).toBeTruthy();
-  });
-
-  test('shows fallback source link', async ({ page }) => {
-    await page.goto('/mulch/eternal-noises-iii');
-    await expect(page.locator('.piece-source-link')).toBeVisible();
-  });
-});
-
-// ── Navigation ────────────────────────────────────────────────────────────────
-
-test.describe('Mulch index — navigation', () => {
+test.describe('Mulch index — external links', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } });
 
-  test('clicking a note navigates to its detail page', async ({ page }) => {
+  test('notes link out to where the work lives', async ({ page }) => {
     await page.goto('/mulch');
-    const firstNote = page.locator('[data-note]').first();
-    const href = await firstNote.getAttribute('href');
-    expect(href).toMatch(/^\/mulch\//);
-    await firstNote.click();
-    await expect(page).toHaveURL(/\/mulch\/.+/);
+    const notes = page.locator('[data-note]');
+    const count = await notes.count();
+    expect(count).toBeGreaterThanOrEqual(10);
+    for (let i = 0; i < count; i++) {
+      const note = notes.nth(i);
+      await expect(note).toHaveAttribute('href', /^https?:\/\//);
+      await expect(note).toHaveAttribute('target', '_blank');
+      await expect(note).toHaveAttribute('rel', /noopener/);
+    }
   });
-});
 
-// ── Accessibility ─────────────────────────────────────────────────────────────
-
-test.describe('Mulch detail — accessibility', () => {
-  test('poem detail passes axe audit', async ({ page }) => {
-    await page.goto('/mulch/elegy-for-the-undercommons');
-    const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations).toEqual([]);
+  test('the three media live where expected (tumblr, soundcloud, instagram)', async ({ page }) => {
+    await page.goto('/mulch');
+    const hrefs = await page.locator('[data-note]').evaluateAll((els) =>
+      els.map((e) => (e as HTMLAnchorElement).href),
+    );
+    expect(hrefs.some((h) => h.includes('eternalnoises.tumblr.com'))).toBe(true);
+    expect(hrefs.some((h) => h.includes('soundcloud.com'))).toBe(true);
+    expect(hrefs.some((h) => h.includes('instagram.com'))).toBe(true);
   });
 });

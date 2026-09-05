@@ -26,20 +26,22 @@ const legend = [
 ---
 
 <div class="scatter-wrap" data-scatter-wrap>
-  {positionedPieces.map(({ piece, slug, leftPct, topPx, r, bg, fg }) => (
+  {positionedPieces.map(({ piece, leftPct, topPx, r, bg, fg }) => (
     <a
-      href={`/mulch/${slug}`}
+      href={piece.data.url ?? '#'}
       class="note"
       data-note
+      target="_blank"
+      rel="noopener noreferrer"
       data-left-pct={leftPct}
       data-top-px={topPx}
       data-r={r}
       style={`left:${leftPct}%;top:${topPx}px;transform:rotate(${r}deg);background:${bg};color:${fg};`}
     >
-      <span class="note-kind">{piece.data.kind}</span>
+      <span class="note-kind">{piece.data.kind}<span class="note-arrow" aria-hidden="true"> ↗</span></span>
       <span class="note-title">{piece.data.title}</span>
       {piece.data.description && <span class="note-desc">{piece.data.description}</span>}
-      <span class="note-year">{piece.data.year}</span>
+      {piece.data.year && <span class="note-year">{piece.data.year}</span>}
     </a>
   ))}
 
@@ -56,7 +58,7 @@ const legend = [
 <style>
   .scatter-wrap {
     position: relative;
-    height: 420px;
+    height: 620px;
     overflow: visible;
     margin-bottom: var(--space-8, 2rem);
   }
@@ -156,7 +158,7 @@ const legend = [
   @media (max-width: 640px) {
     .scatter-wrap {
       height: auto;
-      min-height: 520px;
+      min-height: 720px;
     }
 
     .note {

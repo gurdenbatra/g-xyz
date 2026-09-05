@@ -51,7 +51,7 @@ describe('positionNote — seed slugs', () => {
       expect(leftPct).toBeGreaterThanOrEqual(0);
       expect(leftPct).toBeLessThanOrEqual(100);
       expect(pos.topPx).toBeGreaterThanOrEqual(20);
-      expect(pos.topPx).toBeLessThanOrEqual(359);
+      expect(pos.topPx).toBeLessThanOrEqual(499);
       expect(pos.r).toBeGreaterThanOrEqual(-8);
       expect(pos.r).toBeLessThanOrEqual(8);
     });
