@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Garden from '@layouts/Garden.astro';
 import SlowPlot from '@components/zones/Flora/SlowPlot.astro';
 import { skills } from '../../lib/skills';
@@ -34,6 +35,16 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
           return (
             <li>
               <a href={`/flora/${slug}`}>
+                {p.data.heroImage && (
+                  <Image
+                    class="pi-thumb"
+                    src={p.data.heroImage}
+                    alt=""
+                    widths={[192, 384]}
+                    sizes="96px"
+                    loading="lazy"
+                  />
+                )}
                 <span class="pi-title">{p.data.title}</span>
                 <span class="pi-year label">{p.data.year}</span>
                 <span class="pi-desc">{p.data.description}</span>
@@ -118,13 +129,29 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     }
     .projects-index__list a {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 96px 1fr auto;
+      grid-template-rows: auto auto;
       gap: var(--space-1) var(--space-3);
       align-items: baseline;
       padding: var(--space-4) 0;
       border-bottom: 1px solid var(--ink-faint);
       text-decoration: none;
       color: var(--ink);
+    }
+    .projects-index__list a:has(.pi-thumb) .pi-desc {
+      grid-column: 2 / -1;
+    }
+    .projects-index__list a:not(:has(.pi-thumb)) {
+      grid-template-columns: 1fr auto;
+    }
+    .projects-index__list :global(.pi-thumb) {
+      grid-row: 1 / span 2;
+      align-self: start;
+      width: 96px;
+      height: 60px;
+      object-fit: cover;
+      object-position: top;
+      border: 1px solid var(--ink-faint);
     }
     .pi-title {
       font-family: 'MaziusDisplay', serif;

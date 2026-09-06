@@ -223,3 +223,25 @@ Manuel is an accessibility expert. The menu I'm using is from one of his article
 Bernard wrote the article on which the Open Graph Images implementation is based.
 
 - https://bnijenhuis.nl/notes/automatically-generate-open-graph-images-in-eleventy/
+
+## Adding project visuals
+
+Each project can carry a hero screenshot and a media gallery (images and self-hosted video), all optimised by Astro at build time.
+
+- **Hero:** drop an image at `src/assets/projects/<slug>/hero.webp` (or `.png`/`.jpg`) and set in the project's frontmatter:
+  ```yaml
+  heroImage: ../../assets/projects/<slug>/hero.webp
+  heroAlt: "What the screenshot shows"
+  ```
+- **Gallery images:** put files in `src/assets/projects/<slug>/` and add:
+  ```yaml
+  media:
+    - kind: image
+      src: ../../assets/projects/<slug>/process-01.jpg
+      alt: "Whiteboard from the first workshop"
+      caption: "Optional"
+  ```
+- **GIFs / video:** don't ship GIFs (huge, and they can't pause for reduced-motion). Convert with
+  `scripts/gif2video.sh <slug> path/to/clip.gif` — it writes WebM + MP4 + a poster and prints the `media:` entry to paste.
+
+Hero screenshots of the live sites were captured with Playwright; replace any with a better shot, photo, or process image by overwriting the file.

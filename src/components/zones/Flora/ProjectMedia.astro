@@ -1,0 +1,126 @@
+---
+// Real artifacts for a project: an optimised hero plus an optional gallery of
+// images and self-hosted videos (GIFs are converted to WebM/MP4 — far smaller,
+// and pausable under prefers-reduced-motion, which a GIF never is).
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+type ImageItem = { kind: 'image'; src: ImageMetadata; alt: string; caption?: string };
+type VideoItem = { kind: 'video'; src: string; poster?: ImageMetadata; alt: string; caption?: string };
+export type MediaItem = ImageItem | VideoItem;
+
+interface Props {
+  hero?: ImageMetadata;
+  heroAlt: string;
+  media?: MediaItem[];
+}
+
+const { hero, heroAlt, media = [] } = Astro.props;
+---
+
+{hero && (
+  <figure class="project-hero">
+    <Image
+      src={hero}
+      alt={heroAlt}
+      widths={[720, 1200, 1600]}
+      sizes="(max-width: 720px) 100vw, 1200px"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </figure>
+)}
+
+{media.length > 0 && (
+  <section class="project-gallery" aria-label="Project media">
+    {media.map((m) => (
+      <figure class="gallery-item">
+        {m.kind === 'image' ? (
+          <Image
+            src={m.src}
+            alt={m.alt}
+            widths={[600, 1200]}
+            sizes="(max-width: 720px) 100vw, 600px"
+            loading="lazy"
+          />
+        ) : (
+          <video
+            src={m.src}
+            poster={m.poster?.src}
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label={m.alt}
+            data-project-video
+          ></video>
+        )}
+        {m.caption && <figcaption class="gallery-caption">{m.caption}</figcaption>}
+      </figure>
+    ))}
+  </section>
+)}
+
+<script>
+  // Respect reduced motion: never autoplay looping video for those users.
+  function settleVideos() {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll<HTMLVideoElement>('video[data-project-video]').forEach((v) => {
+      v.removeAttribute('autoplay');
+      v.pause();
+    });
+  }
+  settleVideos();
+  document.addEventListener('astro:page-load', settleVideos);
+</script>
+
+<style>
+  /* A real artifact, pinned slightly off-square — the one place a hint of the
+     hand is welcome. */
+  .project-hero {
+    margin: 0 0 var(--space-12);
+    transform: rotate(-0.4deg);
+  }
+
+  .project-hero :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--ink-faint);
+    box-shadow: 0 10px 30px rgba(26, 26, 26, 0.12);
+  }
+
+  .project-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+    margin-block: var(--space-12);
+  }
+
+  .gallery-item {
+    margin: 0;
+  }
+
+  .gallery-item :global(img),
+  .gallery-item video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--ink-faint);
+    background: var(--ground);
+  }
+
+  .gallery-caption {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-hero {
+      transform: none;
+    }
+  }
+</style>

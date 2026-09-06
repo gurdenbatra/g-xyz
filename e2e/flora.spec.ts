@@ -136,3 +136,24 @@ test.describe('Flora — redirects', () => {
     expect(page.url()).toMatch(/\/flora\/circulaw\/?$/);
   });
 });
+
+test.describe('Flora — real project visuals', () => {
+  test('a project page shows an optimised, eager hero screenshot', async ({ page }) => {
+    await page.goto('/flora/circulaw');
+    const hero = page.locator('figure.project-hero img');
+    await expect(hero).toBeVisible();
+    await expect(hero).toHaveAttribute('alt', /CircuLaw/i);
+    await expect(hero).toHaveAttribute('srcset', /\.webp/);
+    await expect(hero).toHaveAttribute('loading', 'eager');
+    const natural = await hero.evaluate((img) => (img as HTMLImageElement).naturalWidth);
+    expect(natural).toBeGreaterThan(0); // actually decoded, not a broken asset
+  });
+
+  test('the phone project index carries thumbnails of the real work', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/flora');
+    const thumbs = page.locator('.projects-index .pi-thumb');
+    expect(await thumbs.count()).toBeGreaterThanOrEqual(10);
+    await expect(thumbs.first()).toBeVisible();
+  });
+});

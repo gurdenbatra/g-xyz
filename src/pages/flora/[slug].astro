@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Garden from '@layouts/Garden.astro';
+import ProjectMedia from '@components/zones/Flora/ProjectMedia.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -15,8 +16,10 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, description, role, year, tags, collaborators, links } = project.data;
+const { title, description, role, year, tags, collaborators, links, heroImage, heroAlt, media } =
+  project.data;
 const { Content } = await project.render();
+const alt = heroAlt ?? `Screenshot of ${title}`;
 ---
 
 <Garden title={title} description={description}>
@@ -26,6 +29,8 @@ const { Content } = await project.render();
       <h1 class="project-title">{title}</h1>
       <p class="project-description">{description}</p>
     </header>
+
+    <ProjectMedia hero={heroImage} heroAlt={alt} />
 
     <dl class="project-meta">
       <div class="meta-row">
@@ -57,6 +62,8 @@ const { Content } = await project.render();
     <div class="project-content">
       <Content />
     </div>
+
+    <ProjectMedia heroAlt={alt} media={media} />
 
     <footer class="project-footer">
       <a href="/flora" class="back-link label"><span aria-hidden="true">← </span>The Flora &amp; Fauna</a>
