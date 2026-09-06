@@ -9,7 +9,7 @@ test.describe('Castings page — structure', () => {
 
   test('shows intro text', async ({ page }) => {
     await page.goto('/castings');
-    await expect(page.getByText(/cared for/i).first()).toBeVisible();
+    await expect(page.getByText(/looked after/i).first()).toBeVisible();
   });
 
   test('renders 5 bed articles', async ({ page }) => {

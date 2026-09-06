@@ -14,13 +14,17 @@ const pieces = await getCollection('mulch');
 
     <header class="mulch-header">
       <h1>The Mulch</h1>
+      <!-- DRAFT (your voice) — edit freely; see docs/COPY-REVIEW.md -->
       <p class="mulch-intro">
-        Poems, essays, music, and audio-visual work — the art that grows alongside the rest.
+        The stuff that isn't work. Poems I've been posting since 2013, a couple
+        of tracks I make as enu3, and some moving-image experiments. It piles up
+        like leaf litter — pick a note and it'll take you to where the piece
+        lives.
       </p>
     </header>
 
     <section class="scatter-section" aria-labelledby="scatter-heading">
-      <h2 id="scatter-heading" class="label section-heading">All pieces</h2>
+      <h2 id="scatter-heading" class="section-heading">All pieces</h2>
       <ScatteredNotes pieces={pieces} />
     </section>
 

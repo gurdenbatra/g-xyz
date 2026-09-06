@@ -12,9 +12,13 @@ import { experience } from '../../lib/experience';
 
     <header class="roots-header">
       <h1>The Roots</h1>
+      <!-- DRAFT (your voice) — edit freely; see docs/COPY-REVIEW.md -->
       <p class="roots-intro">
-        Civic Tech Lead at Dark Matter Labs, Berlin. Background in Computer Science
-        (Georgia Tech) and New Media Design (Aalto University). Originally from Delhi.
+        I grew up in Delhi, studied computer science at Georgia Tech, then went
+        to Helsinki for a master's in New Media Design at Aalto — the place where
+        code stopped being an engineering problem and became a design material
+        for me. Berlin now, leading civic tech at Dark Matter Labs. The layers
+        below are the strata all of this sits on.
       </p>
       <p class="roots-places">
         <span class="label roots-places__label">Places that shaped me</span>
@@ -25,12 +29,12 @@ import { experience } from '../../lib/experience';
     </header>
 
     <div class="strata-section" aria-labelledby="strata-heading">
-      <h2 id="strata-heading" class="label section-heading">Strata</h2>
+      <h2 id="strata-heading" class="section-heading">Strata</h2>
       <Strata />
     </div>
 
     <section class="experience-section" aria-labelledby="experience-heading">
-      <h2 id="experience-heading" class="label section-heading">Experience</h2>
+      <h2 id="experience-heading" class="section-heading">Experience</h2>
       <ul class="experience-list" role="list">
         {experience.map((role) => (
           <li class="role">

@@ -36,9 +36,9 @@ test.describe('Hive page — structure', () => {
 
   test('hive shows the hats/roles section', async ({ page }) => {
     await page.goto('/hive');
-    await expect(page.getByRole('heading', { name: /hats i wear/i })).toBeVisible();
-    await expect(page.getByText('Civic Tech Lead', { exact: true })).toBeVisible();
-    await expect(page.getByText('Bid Writing', { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /one job title/i })).toBeVisible();
+    await expect(page.getByText(/Civic Tech Lead/i).first()).toBeVisible();
+    await expect(page.getByText(/strategy and bids/i)).toBeVisible();
   });
 });
 
@@ -79,6 +79,7 @@ test.describe('Hive page — hover card', () => {
     await page.waitForTimeout(300);
 
     const canvas = page.locator('[data-live-flock]');
+    await canvas.scrollIntoViewIfNeeded();
     const box = await canvas.boundingBox();
     expect(box).not.toBeNull();
 
@@ -100,6 +101,7 @@ test.describe('Hive page — hover card', () => {
     await page.waitForTimeout(300);
 
     const canvas = page.locator('[data-live-flock]');
+    await canvas.scrollIntoViewIfNeeded();
     const box = await canvas.boundingBox();
     expect(box).not.toBeNull();
 

@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Garden from '@layouts/Garden.astro';
 import SlowPlot from '@components/zones/Flora/SlowPlot.astro';
-import { skills } from '../../lib/skills';
 
 const projects = await getCollection('projects');
 const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
@@ -17,18 +16,21 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     <header class="poly-header">
       <p class="label">The Flora &amp; Fauna</p>
       <h1 class="poly-title">A wild plot of work.</h1>
+      <!-- DRAFT (your voice) — edit freely; see docs/COPY-REVIEW.md -->
       <p class="poly-subtitle">
-        Each plant is a project. Hover to see its name; click to walk into it.
+        Most of this is civic tech: tools for councils, cities and the people who
+        have to live with what they decide. Each plant is a project — hover for
+        its name, click to walk in. The actual screenshots are below, because a
+        plot of ASCII plants only says so much.
       </p>
     </header>
 
     <SlowPlot />
 
-    <!-- The plot is the desktop interface (hover + click). This list is its
-         a11y equivalent AND the primary, tappable project index on touch,
-         where there is no hover. Visually hidden on desktop; shown ≤640px. -->
+    <!-- The real work: a grid of screenshots on desktop, a tappable row list on
+         phones. Also the keyboard/screen-reader equivalent of the plot above. -->
     <nav class="projects-index" aria-label="Projects">
-      <h2 class="projects-index__title label">Projects</h2>
+      <h2 class="projects-index__title section-heading">The work</h2>
       <ol class="projects-index__list">
         {sorted.map((p) => {
           const slug = p.id.replace(/\.[^.]+$/, '');
@@ -40,8 +42,8 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
                     class="pi-thumb"
                     src={p.data.heroImage}
                     alt=""
-                    widths={[192, 384]}
-                    sizes="96px"
+                    widths={[400, 800]}
+                    sizes="(max-width: 640px) 96px, 400px"
                     loading="lazy"
                   />
                 )}
@@ -56,13 +58,15 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     </nav>
 
     <section class="skills-section" aria-labelledby="skills-heading">
-      <h2 id="skills-heading" class="label section-heading">What I do</h2>
+      <h2 id="skills-heading" class="section-heading">What I do</h2>
+      <!-- DRAFT (your voice) — edit freely; see docs/COPY-REVIEW.md -->
       <p class="skills-intro">
-        A generalist's toolkit — I take civic ideas from zero to shipped, across:
+        I'm a generalist on purpose. I write the code — full-stack, and lately a
+        lot of LLM and agent plumbing — I do the product and service design, I
+        prototype fast and throw most of it away, and I've written more bids and
+        partner emails than I'd like to admit. If a civic idea needs to go from
+        zero to something a council can actually use, that's the part I'm for.
       </p>
-      <ul class="skills-list" role="list">
-        {skills.map((skill) => <li class="skill label">{skill}</li>)}
-      </ul>
     </section>
   </section>
 </Garden>
@@ -88,55 +92,86 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     max-width: 50ch;
     margin: 0;
   }
-  /* Desktop: visually hidden (the plot is the interface); stays in the a11y tree. */
+  /* The work, as real artifacts: a grid of screenshots on desktop, a tappable
+     row list on phones. Doubles as the keyboard/screen-reader equivalent of
+     the plot. Slightly off-square thumbnails — pinned, not templated. */
   .projects-index {
-    position: absolute;
-    width: 1px;
-    height: 1px;
+    margin-top: var(--space-2);
+  }
+  .projects-index__title {
+    display: block;
+    margin-bottom: var(--space-6);
+  }
+  .projects-index__list {
+    list-style: none;
+    margin: 0;
     padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-10) var(--space-6);
+  }
+  .projects-index__list li {
+    margin: 0;
+  }
+  .projects-index__list a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-1) var(--space-3);
+    align-items: baseline;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .projects-index__list :global(.pi-thumb) {
+    grid-column: 1 / -1;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    border: 1px solid var(--ink-faint);
+    box-shadow: 2px 3px 10px rgba(26, 26, 26, 0.1);
+    margin-bottom: var(--space-3);
+    transform: rotate(-0.35deg);
+    transition: transform var(--duration-base) var(--easing);
+  }
+  .projects-index__list li:nth-child(3n) :global(.pi-thumb) {
+    transform: rotate(0.4deg);
+  }
+  .projects-index__list li:nth-child(3n + 2) :global(.pi-thumb) {
+    transform: rotate(-0.15deg);
+  }
+  .projects-index__list a:hover :global(.pi-thumb),
+  .projects-index__list a:focus-visible :global(.pi-thumb) {
+    transform: rotate(0deg) translateY(-2px);
+  }
+  .pi-title {
+    font-family: 'MaziusDisplay', serif;
+    font-style: italic;
+    font-size: var(--text-md);
+  }
+  .pi-year {
+    color: var(--ink-muted);
+    text-align: right;
+  }
+  .pi-desc {
+    grid-column: 1 / -1;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    line-height: 1.5;
   }
 
-  /* Touch: no hover — reveal the list as the primary, tappable project index. */
   @media (max-width: 640px) {
-    .projects-index {
-      position: static;
-      width: auto;
-      height: auto;
-      margin: 0;
-      overflow: visible;
-      clip: auto;
-      white-space: normal;
-    }
-    .projects-index__title {
-      display: block;
-      margin-bottom: var(--space-4);
-    }
     .projects-index__list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
       display: flex;
       flex-direction: column;
       gap: 0;
     }
-    .projects-index__list li {
-      margin: 0;
-    }
     .projects-index__list a {
-      display: grid;
       grid-template-columns: 96px 1fr auto;
       grid-template-rows: auto auto;
-      gap: var(--space-1) var(--space-3);
-      align-items: baseline;
       padding: var(--space-4) 0;
       border-bottom: 1px solid var(--ink-faint);
-      text-decoration: none;
-      color: var(--ink);
     }
     .projects-index__list a:has(.pi-thumb) .pi-desc {
       grid-column: 2 / -1;
@@ -145,28 +180,21 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
       grid-template-columns: 1fr auto;
     }
     .projects-index__list :global(.pi-thumb) {
+      grid-column: 1;
       grid-row: 1 / span 2;
       align-self: start;
       width: 96px;
       height: 60px;
-      object-fit: cover;
-      object-position: top;
-      border: 1px solid var(--ink-faint);
+      aspect-ratio: auto;
+      margin-bottom: 0;
+      box-shadow: none;
+      transform: none;
     }
-    .pi-title {
-      font-family: 'MaziusDisplay', serif;
-      font-style: italic;
-      font-size: var(--text-md);
-    }
-    .pi-year {
-      color: var(--ink-muted);
-      text-align: right;
-    }
-    .pi-desc {
-      grid-column: 1 / -1;
-      font-size: var(--text-sm);
-      color: var(--ink-muted);
-      line-height: 1.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .projects-index__list :global(.pi-thumb) {
+      transition: none;
     }
   }
 
@@ -180,22 +208,5 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     line-height: 1.65;
     max-width: 560px;
     margin-bottom: var(--space-8);
-  }
-  .skills-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-  .skill {
-    border: 1px solid var(--ink-muted);
-    border-radius: 999px;
-    padding: var(--space-1) var(--space-3);
-    color: var(--ink-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: var(--text-xs);
   }
 </style>

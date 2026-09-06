@@ -1,7 +1,6 @@
 ---
 import Garden from '@layouts/Garden.astro';
 import LiveFlock from '../../components/zones/Hive/LiveFlock.astro';
-import { hats } from '../../lib/hats';
 import { talks } from '../../lib/talks';
 ---
 
@@ -13,30 +12,33 @@ import { talks } from '../../lib/talks';
 
     <header class="hive-header">
       <h1>The Hive</h1>
+      <!-- DRAFT (your voice) — edit freely; see docs/COPY-REVIEW.md -->
       <p class="hive-intro">
-        What I'm carrying right now, the many practices the work draws on,
-        how to reach me — and where I've spoken along the way.
+        This is the busy corner of the garden. What I'm carrying right now at
+        Dark Matter Labs, the practices the work keeps pulling on, where I've
+        spoken, and how to reach me — the email actually gets read.
       </p>
     </header>
 
     <section class="flock-section" aria-labelledby="flock-heading">
-      <h2 id="flock-heading" class="label section-heading">Live Swarm</h2>
+      <h2 id="flock-heading" class="section-heading">Live Swarm</h2>
       <LiveFlock />
     </section>
 
     <section class="hats-section" aria-labelledby="hats-heading">
-      <h2 id="hats-heading" class="label section-heading">Hats I wear</h2>
+      <h2 id="hats-heading" class="section-heading">One job title, several jobs</h2>
+      <!-- DRAFT (your voice) — edit freely; see docs/COPY-REVIEW.md -->
       <p class="hats-intro">
-        One role on paper, many in practice — the work at Dark Matter Labs spans
-        strategy to shipping code.
+        On paper I'm the Civic Tech Lead. In practice, at a small organisation
+        like Dark Matter Labs, that means I also run IT, write strategy and bids,
+        hold partner relationships, take ideas from zero to one, build the
+        websites, and set up the AI and automation workflows the team runs on.
+        Service design is in there too. Many hats — I like it that way.
       </p>
-      <ul class="hats-list" role="list">
-        {hats.map((hat) => <li class="hat label">{hat}</li>)}
-      </ul>
     </section>
 
     <section class="talks-section" aria-labelledby="talks-heading">
-      <h2 id="talks-heading" class="label section-heading">Talks</h2>
+      <h2 id="talks-heading" class="section-heading">Talks</h2>
       <ul class="talks-list" role="list">
         {talks.map((talk) => (
           <li class="talk">
@@ -78,7 +80,7 @@ import { talks } from '../../lib/talks';
   .hive-intro {
     font-size: var(--text-md);
     line-height: 1.65;
-    max-width: 560px;
+    max-width: 640px;
   }
 
   .section-heading {
@@ -103,24 +105,7 @@ import { talks } from '../../lib/talks';
     margin-bottom: var(--space-8);
   }
 
-  .hats-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
 
-  .hat {
-    border: 1px solid var(--ink-muted);
-    border-radius: 999px;
-    padding: var(--space-1) var(--space-3);
-    color: var(--ink-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: var(--text-xs);
-  }
 
   .talks-section {
     margin-bottom: var(--space-20);

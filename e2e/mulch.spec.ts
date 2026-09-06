@@ -11,7 +11,7 @@ test.describe('Mulch index — structure', () => {
 
   test('shows intro text', async ({ page }) => {
     await page.goto('/mulch');
-    await expect(page.getByText(/Poems, essays, music/i).first()).toBeVisible();
+    await expect(page.getByText(/leaf litter/i).first()).toBeVisible();
   });
 
   test('note cards are visible', async ({ page }) => {

@@ -91,3 +91,15 @@ html {
   text-transform: uppercase;
   color: var(--ink-muted);
 }
+
+/* Section headings read as a person's subheads, not system labels. Mono caps
+   stay for tiny metadata (years, tags, keys) — not for every heading. */
+.section-heading {
+  font-family: 'MaziusDisplay', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--text-lg);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink);
+}

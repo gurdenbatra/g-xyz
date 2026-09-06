@@ -84,7 +84,7 @@ test.describe('Flora — page structure', () => {
   test('/flora shows an accessible project list below the canvas', async ({ page }) => {
     await page.goto('/flora');
     const list = page.locator('nav.projects-index ol.projects-index__list');
-    // Desktop: visually hidden (the a11y equivalent of the plot). Touch: visible.
+    // Visible at every size: a screenshot grid on desktop, a row list on phones.
     await expect(list).toBeAttached();
     const items = list.locator('li a');
     expect(await items.count()).toBeGreaterThan(0);
@@ -102,7 +102,7 @@ test.describe('Flora — page structure', () => {
   test('flora shows the skills section', async ({ page }) => {
     await page.goto('/flora');
     await expect(page.getByRole('heading', { name: /what i do/i })).toBeVisible();
-    await expect(page.getByText('AI & LLM Systems')).toBeVisible();
+    await expect(page.getByText(/generalist on purpose/i)).toBeVisible();
   });
 
   test('/flora/<slug> project detail loads', async ({ page }) => {
