@@ -37,7 +37,7 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
           return (
             <li>
               <a href={`/flora/${slug}`}>
-                {p.data.heroImage && (
+                {p.data.heroImage ? (
                   <Image
                     class="pi-thumb"
                     src={p.data.heroImage}
@@ -46,6 +46,8 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
                     sizes="(max-width: 640px) 96px, 400px"
                     loading="lazy"
                   />
+                ) : (
+                  <span class="pi-thumb pi-thumb--empty" aria-hidden="true">^ ^ ^</span>
                 )}
                 <span class="pi-title">{p.data.title}</span>
                 <span class="pi-year label">{p.data.year}</span>
@@ -145,6 +147,17 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
   .projects-index__list a:focus-visible :global(.pi-thumb) {
     transform: rotate(0deg) translateY(-2px);
   }
+  /* No screenshot yet: a paper tile with ASCII sprouts keeps the row aligned. */
+  .projects-index__list .pi-thumb--empty {
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--ground) 92%, var(--c-soil) 8%);
+    /* ink-muted clears AA on this tile at dawn/day/dusk/night (soil dipped to 4.3 at dusk) */
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+    letter-spacing: 0.4em;
+  }
   .pi-title {
     font-family: 'MaziusDisplay', serif;
     font-style: italic;
@@ -176,9 +189,6 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
     .projects-index__list a:has(.pi-thumb) .pi-desc {
       grid-column: 2 / -1;
     }
-    .projects-index__list a:not(:has(.pi-thumb)) {
-      grid-template-columns: 1fr auto;
-    }
     .projects-index__list :global(.pi-thumb) {
       grid-column: 1;
       grid-row: 1 / span 2;
@@ -189,6 +199,10 @@ const sorted = [...projects].sort((a, b) => b.data.year - a.data.year);
       margin-bottom: 0;
       box-shadow: none;
       transform: none;
+    }
+    .projects-index__list .pi-thumb--empty {
+      font-size: var(--text-xs);
+      letter-spacing: 0.2em;
     }
   }
 

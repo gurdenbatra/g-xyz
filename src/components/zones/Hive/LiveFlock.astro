@@ -61,11 +61,11 @@ const rawFlowers: RawFlower[] = [
   </div>
   <div class="hive-list-group">
     <h3 class="label hive-list-title">Practice</h3>
-    <ul role="list" class="hive-list">
+    <!-- Inline, sentence-case: thirteen practices as a running list, not a
+         thirteen-row wall of mono caps. -->
+    <ul role="list" class="hive-list hive-list--inline">
       {practices.map((label) => (
-        <li class="hive-list-item">
-          <span class="hive-item-label label">{label}</span>
-        </li>
+        <li class="hive-inline-item">{label}</li>
       ))}
     </ul>
   </div>
@@ -472,6 +472,25 @@ const rawFlowers: RawFlower[] = [
 
   .hive-item-label {
     color: var(--ink);
+  }
+
+  .hive-list--inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 var(--space-2);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    color: var(--ink);
+    max-width: 44ch;
+  }
+
+  .hive-inline-item::after {
+    content: ' ·';
+    color: var(--ink-muted);
+  }
+
+  .hive-inline-item:last-child::after {
+    content: '';
   }
 
   .hive-item-detail {

@@ -76,10 +76,10 @@ test.describe('Nav component', () => {
     await expect(nav.locator('a[href="/roots"]')).not.toBeAttached();
   });
 
-  test('homepage has no main nav and no gurden.xyz logo', async ({ page }) => {
+  test('homepage has no main nav and no gurden.garden logo', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('navigation', { name: 'Main navigation' })).toHaveCount(0);
-    await expect(page.getByText('gurden.xyz')).toHaveCount(0);
+    await expect(page.getByText('gurden.garden')).toHaveCount(0);
   });
 
   test('active zones are reachable from the homepage garden', async ({ page }) => {

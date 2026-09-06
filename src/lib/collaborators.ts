@@ -16,7 +16,7 @@ export interface CollaboratorNode {
 
 export const collaborators: readonly CollaboratorNode[] = [
   // ── People (co-inceptors named across projects — owner: verify/prune) ──
-  { id: 'gurden', label: 'Gurden', kind: 'person', role: 'Design technologist', url: 'https://gurden.xyz',
+  { id: 'gurden', label: 'Gurden', kind: 'person', role: 'Design technologist', url: 'https://gurden.garden',
     connections: ['dml', 'circulaw', 'treesai', 'life-pact', 'sheffield', 'planetary-civics'] },
   { id: 'romy', label: 'Romy Snijders', kind: 'person', role: 'CircuLaw', connections: ['circulaw'] },
   { id: 'sofia', label: 'Sofia Valentini', kind: 'person', role: 'TreesAI', connections: ['treesai'] },

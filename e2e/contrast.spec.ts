@@ -72,6 +72,7 @@ function scan(): Fail[] {
   const SKIP = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'SVG', 'PATH', 'CANVAS', 'PRE']);
   for (const el of Array.from(document.querySelectorAll('body *'))) {
     if (SKIP.has(el.tagName)) continue;
+    if (el.closest('[aria-hidden="true"]')) continue; // decorative — exempt under WCAG 1.4.3
     const text = Array.from(el.childNodes)
       .filter((n) => n.nodeType === 3)
       .map((n) => n.textContent ?? '')
